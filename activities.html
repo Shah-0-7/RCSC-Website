@@ -546,40 +546,65 @@
     }
   </script>
 
-<script>
-(function(){
-  try {
-    const raw = localStorage.getItem('rcsc_events');
-    if (!raw) return;
-    const events = JSON.parse(raw);
-    if (!events || !events.length) return;
+  <!-- Firebase SDK Compat -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+
+  <script>
+  (function(){
     const container = document.getElementById('dynamic-events-container');
     if (!container) return;
-    // IDs of hardcoded events to skip
-    const hardcoded = ['chess-hub','devsprint','science-fest'];
-    const newEvents = events.filter(e => !hardcoded.includes(e.id));
-    if (!newEvents.length) return;
-    container.classList.remove('hidden');
-    container.innerHTML = newEvents.map(ev => `
-      <div class="activity-card">
-        <div class="relative">
-          <img src="${ev.banner||'logo.png'}" alt="${ev.title}" class="w-full h-48 object-cover" />
-          ${ev.deadline ? `<span class="absolute top-3 right-3 bg-orange-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">Deadline: ${ev.deadline}</span>` : ''}
-        </div>
-        <div class="p-6 flex flex-col gap-3 flex-1">
-          <div class="flex gap-2 flex-wrap">
-            <span class="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">Event</span>
+
+    function renderEvents(events) {
+      if (!events || !events.length) return;
+      const hardcoded = ['chess-hub-2026', 'devsprint-2026', 'science-fest-10', 'chess-hub', 'devsprint', 'science-fest'];
+      const newEvents = events.filter(e => !hardcoded.includes(e.id));
+      if (!newEvents.length) {
+        container.classList.add('hidden');
+        return;
+      }
+      container.classList.remove('hidden');
+      container.innerHTML = newEvents.map(ev => `
+        <div class="activity-card">
+          <div class="relative">
+            <img src="${ev.banner || 'logo.png'}" alt="${ev.title}" class="w-full h-48 object-cover" onerror="this.src='logo.png'" />
+            ${ev.deadline && ev.deadline !== 'TBA' ? `<span class="absolute top-3 right-3 bg-orange-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">Deadline: ${ev.deadline}</span>` : ''}
           </div>
-          <h3 class="text-white font-bold text-xl leading-snug">${ev.title}</h3>
-          <p class="text-gray-400 text-sm leading-relaxed flex-1">${ev.description||''}</p>
-          <div class="flex gap-3 mt-2">
-            ${ev.registrationLink ? `<a href="${ev.registrationLink}" target="_blank" class="learn-more-button self-start">REGISTER</a>` : ''}
+          <div class="p-6 flex flex-col gap-3 flex-1">
+            <div class="flex gap-2 flex-wrap">
+              <span class="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">Event</span>
+              ${ev.date && ev.date !== 'TBA' ? `<span class="bg-gray-100 text-gray-700 text-xs font-semibold px-3 py-1 rounded-full">📅 ${ev.date}</span>` : ''}
+            </div>
+            <h3 class="text-white font-bold text-xl leading-snug">${ev.title}</h3>
+            ${ev.subtitle ? `<p class="text-blue-400 text-xs font-semibold">${ev.subtitle}</p>` : ''}
+            <p class="text-gray-400 text-sm leading-relaxed flex-1">${ev.description || ''}</p>
+            <div class="flex gap-3 mt-2">
+              ${ev.regLink ? `<a href="${ev.regLink}" target="_blank" class="learn-more-button self-start">REGISTER</a>` : ''}
+              ${ev.detailPage ? `<a href="${ev.detailPage}" class="learn-more-button self-start">DETAILS</a>` : ''}
+            </div>
           </div>
-        </div>
-      </div>`).join('');
-  } catch(e) { console.warn('Activities localStorage error:', e); }
-})();
-</script>
+        </div>`).join('');
+    }
+
+    // 1. Instant local render
+    try {
+      const raw = localStorage.getItem('rcsc_events');
+      if (raw) renderEvents(JSON.parse(raw));
+    } catch(e) {}
+
+    // 2. Live fetch from Firestore
+    if (db) {
+      db.collection('events').get().then(snap => {
+        if (!snap.empty) {
+          const events = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          localStorage.setItem('rcsc_events', JSON.stringify(events));
+          renderEvents(events);
+        }
+      }).catch(err => console.warn('Firestore events error:', err));
+    }
+  })();
+  </script>
 
 </body>
 

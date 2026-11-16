@@ -179,7 +179,7 @@
               <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
             </svg>
           </div>
-          <div class="font-bold text-lg text-gray-800">Principal & Patron</div>
+          <div class="font-bold text-lg text-gray-800" id="principalNameDisplay">Principal & Patron</div>
           <div class="text-blue-500 font-medium text-sm">Rajshahi College</div>
           <div class="text-gray-400 text-xs mt-1">Honorary Head of RCSC</div>
         </div>
@@ -190,7 +190,7 @@
               <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
             </svg>
           </div>
-          <div class="font-bold text-lg text-gray-800">Club Moderator</div>
+          <div class="font-bold text-lg text-gray-800" id="moderatorNameDisplay">Club Moderator</div>
           <div class="text-blue-500 font-medium text-sm">Faculty Advisor</div>
           <div class="text-gray-400 text-xs mt-1">Department of Science</div>
         </div>
@@ -430,35 +430,65 @@
     </div>
   </footer>
 
-</body>
-<script>
-// ── Load executive data from dashboard localStorage ──
-(function(){
-  const AVATAR_SVG = `<svg class="w-14 h-14 text-gray-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>`;
-  try {
-    const raw = localStorage.getItem('rcsc_exec');
-    if (!raw) return;
-    const data = JSON.parse(raw);
+  <!-- Firebase SDK Compat -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
 
-    // Update session title
-    if (data.year) {
-      const title = document.getElementById('execSessionTitle');
-      if (title) title.innerHTML = `Session <span class="text-blue-500">${data.year}</span>`;
+  <script>
+  (function(){
+    const AVATAR_SVG = `<svg class="w-14 h-14 text-gray-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>`;
+
+    function renderExec(data) {
+      if (!data) return;
+
+      // Update session title
+      if (data.year) {
+        const title = document.getElementById('execSessionTitle');
+        if (title) title.innerHTML = `Session <span class="text-blue-500">${data.year}</span>`;
+      }
+
+      // Update leadership
+      if (data.principal) {
+        const pEl = document.getElementById('principalNameDisplay');
+        if (pEl) pEl.textContent = data.principal;
+      }
+      if (data.moderator) {
+        const mEl = document.getElementById('moderatorNameDisplay');
+        if (mEl) mEl.textContent = data.moderator;
+      }
+
+      // Render member grid
+      const grid = document.getElementById('execDynamicGrid');
+      if (!grid || !data.members?.length) return;
+      grid.innerHTML = data.members.map(m => `
+        <div class="exec-card">
+          <div class="avatar-placeholder" style="${m.photo?'padding:0;overflow:hidden;':''}">
+            ${m.photo ? `<img src="${m.photo}" alt="${m.name}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.parentElement.innerHTML=AVATAR_SVG" />` : AVATAR_SVG}
+          </div>
+          <div class="font-bold text-gray-800">${m.name || 'Member Name'}</div>
+          <div class="text-blue-500 font-semibold text-sm mt-0.5">${m.position || 'Position'}</div>
+          <div class="text-gray-400 text-xs mt-1">${m.dept || ''}</div>
+        </div>`).join('');
     }
 
-    // Render member grid
-    const grid = document.getElementById('execDynamicGrid');
-    if (!grid || !data.members?.length) return;
-    grid.innerHTML = data.members.map(m => `
-      <div class="exec-card">
-        <div class="avatar-placeholder" style="${m.photo?'padding:0;overflow:hidden;':''}" >
-          ${m.photo ? `<img src="${m.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />` : AVATAR_SVG}
-        </div>
-        <div class="font-bold text-gray-800">${m.name||'Member Name'}</div>
-        <div class="text-blue-500 font-semibold text-sm mt-0.5">${m.position||'Position'}</div>
-        <div class="text-gray-400 text-xs mt-1">${m.dept||''}</div>
-      </div>`).join('');
-  } catch(e) {}
-})();
-</script>
+    // 1. Instant local render
+    try {
+      const raw = localStorage.getItem('rcsc_exec');
+      if (raw) renderExec(JSON.parse(raw));
+    } catch(e) {}
+
+    // 2. Live fetch from Firestore
+    if (db) {
+      db.collection('content').doc('executives').get().then(doc => {
+        if (doc.exists) {
+          const data = doc.data();
+          localStorage.setItem('rcsc_exec', JSON.stringify(data));
+          renderExec(data);
+        }
+      }).catch(err => console.warn('Firestore exec error:', err));
+    }
+  })();
+  </script>
+</body>
 </html>

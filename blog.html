@@ -288,15 +288,16 @@
     </div>
   </footer>
 
-<script>
-(function(){
-  try {
-    const raw = localStorage.getItem('rcsc_blog');
-    if (!raw) return;
-    const posts = JSON.parse(raw);
-    if (!posts || !posts.length) return;
+  <!-- Firebase SDK Compat -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+
+  <script>
+  (function(){
     const container = document.querySelector('main .flex.flex-col.gap-8');
     if (!container) return;
+
     const staticTitles = [
       'Why C++ Outpaces Python In Speed',
       'The Fragile Art of Attention in the Digital Age',
@@ -304,24 +305,50 @@
       'DNA Hard Drives',
       'The False Alarm That Could Have Started World War III'
     ];
-    const newPosts = posts.filter(p => !staticTitles.includes(p.title));
-    if (!newPosts.length) return;
-    const html = newPosts.map(p => `
-      <article class="blog-card">
-        <div class="blog-img"><img src="${p.thumbnail||'logo.png'}" alt="${p.title}" style="width:100%;height:100%;object-fit:cover;" /></div>
-        <div class="p-6 flex flex-col justify-center gap-3">
-          <div class="flex gap-2 flex-wrap">
-            ${(p.tags||'').split(',').map(t=>`<span class="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">${t.trim()}</span>`).join('')}
+
+    function renderBlog(posts) {
+      if (!posts || !posts.length) return;
+      const newPosts = posts.filter(p => !staticTitles.includes(p.title));
+      if (!newPosts.length) return;
+
+      // Remove any previously rendered dynamic posts to avoid duplication
+      document.querySelectorAll('.dynamic-blog-card').forEach(el => el.remove());
+
+      const html = newPosts.map(p => `
+        <article class="blog-card dynamic-blog-card">
+          <div class="blog-img">
+            <img src="${p.thumbnail || 'logo.png'}" alt="${p.title}" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='logo.png'" />
           </div>
-          <h2 class="font-bold text-xl text-gray-900 leading-snug hover:text-blue-500 cursor-pointer">${p.title}</h2>
-          <p class="text-gray-500 text-sm leading-relaxed">${p.excerpt||''}</p>
-          <div class="text-xs text-gray-400 font-ShareTechTown mt-auto">By ${p.author||'RCSC'} &bull; ${p.date||''}</div>
-        </div>
-      </article>`).join('');
-    container.insertAdjacentHTML('afterbegin', html);
-  } catch(e) { console.warn('Blog localStorage error:', e); }
-})();
-</script>
+          <div class="p-6 flex flex-col justify-center gap-3">
+            <div class="flex gap-2 flex-wrap">
+              ${(p.tags || '').split(',').map(t => `<span class="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">${t.trim()}</span>`).join('')}
+            </div>
+            <h2 class="font-bold text-xl text-gray-900 leading-snug hover:text-blue-500 cursor-pointer">${p.title}</h2>
+            <p class="text-gray-500 text-sm leading-relaxed">${p.excerpt || p.content || ''}</p>
+            <div class="text-xs text-gray-400 font-ShareTechTown mt-auto">By ${p.author || 'RCSC Team'} &bull; ${p.date || ''}</div>
+          </div>
+        </article>`).join('');
+      container.insertAdjacentHTML('afterbegin', html);
+    }
+
+    // 1. Instant local render
+    try {
+      const raw = localStorage.getItem('rcsc_blog');
+      if (raw) renderBlog(JSON.parse(raw));
+    } catch(e) {}
+
+    // 2. Live fetch from Firestore
+    if (db) {
+      db.collection('blogs').get().then(snap => {
+        if (!snap.empty) {
+          const posts = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          localStorage.setItem('rcsc_blog', JSON.stringify(posts));
+          renderBlog(posts);
+        }
+      }).catch(err => console.warn('Firestore blog error:', err));
+    }
+  })();
+  </script>
 
 </body>
 </html>

@@ -6,6 +6,10 @@
   <title>RCSC Admin Dashboard</title>
   <link rel="icon" href="logo.png" />
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Firebase SDK Compat -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Bebas+Neue&display=swap" rel="stylesheet" />
   <style>
     body { font-family: 'Inter', sans-serif; }
@@ -136,10 +140,16 @@
         <h1 id="pageTitle" class="font-bold text-gray-900 text-xl">Events</h1>
         <p id="pageSubtitle" class="text-gray-400 text-xs mt-0.5">Manage club events and competitions</p>
       </div>
-      <button id="topAddBtn" onclick="openAddModal()" class="btn-primary">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
-        <span id="topAddLabel">Add Event</span>
-      </button>
+      <div class="flex items-center gap-3">
+        <div id="cloudStatus" class="flex items-center gap-1.5 px-3 py-1 bg-green-50 text-green-700 text-xs font-semibold rounded-full border border-green-200">
+          <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+          <span>Connecting to Cloud...</span>
+        </div>
+        <button id="topAddBtn" onclick="openAddModal()" class="btn-primary">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+          <span id="topAddLabel">Add Event</span>
+        </button>
+      </div>
     </header>
 
     <!-- Content -->
@@ -303,7 +313,7 @@ function changePassword() {
 }
 
 // ══════════════════════════════════════════════
-// DATA HELPERS
+// DATA HELPERS & INITIAL SEED
 // ══════════════════════════════════════════════
 const KEYS = { events:'rcsc_events', gallery:'rcsc_gallery', exec:'rcsc_exec', blog:'rcsc_blog', settings:'rcsc_settings' };
 
@@ -314,7 +324,7 @@ const SEED_EVENTS = [
 ];
 
 const SEED_EXEC = {
-  year:'2025–2026', principal:'Principal Name', moderator:'Moderator Name',
+  year:'2025–2026', principal:'Prof. Dr. Md. Abdul Khalek', moderator:'Dr. Shariful Islam',
   members: [
     { id:'e1', name:'Member Name', position:'President', dept:'Administration', photo:'' },
     { id:'e2', name:'Member Name', position:'Vice President', dept:'Administration', photo:'' },
@@ -345,12 +355,103 @@ function getD(key, seed) {
   try { return JSON.parse(s); } catch(e) { return JSON.parse(JSON.stringify(seed)); }
 }
 function setD(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
-
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
 
-// ══════════════════════════════════════════════
+// Global memory store initialized with local cache
+let appData = {
+  events: getD(KEYS.events, SEED_EVENTS),
+  gallery: getD(KEYS.gallery, []),
+  exec: getD(KEYS.exec, SEED_EXEC),
+  blog: getD(KEYS.blog, SEED_BLOG),
+  settings: getD(KEYS.settings, {})
+};
+
+function updateSyncStatus(text, color = 'green') {
+  const el = document.getElementById('cloudStatus');
+  if (!el) return;
+  const colors = {
+    green: 'bg-green-50 text-green-700 border-green-200',
+    blue: 'bg-blue-50 text-blue-700 border-blue-200',
+    orange: 'bg-amber-50 text-amber-700 border-amber-200',
+    red: 'bg-red-50 text-red-700 border-red-200'
+  };
+  const dotColors = {
+    green: 'bg-green-500',
+    blue: 'bg-blue-500',
+    orange: 'bg-amber-500',
+    red: 'bg-red-500'
+  };
+  el.className = `flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full border ${colors[color] || colors.green}`;
+  el.innerHTML = `<span class="w-2 h-2 rounded-full ${dotColors[color] || dotColors.green} animate-pulse"></span> <span>${text}</span>`;
+}
+
+// Synchronize with Firestore on dashboard load
+async function syncWithFirestore() {
+  if (!db) {
+    updateSyncStatus('Local Mode (No DB)', 'orange');
+    return;
+  }
+  updateSyncStatus('Syncing with Cloud...', 'blue');
+  try {
+    // 1. Events
+    const evSnap = await db.collection('events').get();
+    if (!evSnap.empty) {
+      appData.events = evSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } else {
+      for (const ev of SEED_EVENTS) {
+        await db.collection('events').doc(ev.id).set(ev);
+      }
+      appData.events = [...SEED_EVENTS];
+    }
+    setD(KEYS.events, appData.events);
+
+    // 2. Gallery
+    const albSnap = await db.collection('albums').get();
+    if (!albSnap.empty) {
+      appData.gallery = albSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setD(KEYS.gallery, appData.gallery);
+    }
+
+    // 3. Exec
+    const execDoc = await db.collection('content').doc('executives').get();
+    if (execDoc.exists) {
+      appData.exec = execDoc.data();
+    } else {
+      await db.collection('content').doc('executives').set(SEED_EXEC);
+      appData.exec = JSON.parse(JSON.stringify(SEED_EXEC));
+    }
+    setD(KEYS.exec, appData.exec);
+
+    // 4. Blogs
+    const blogSnap = await db.collection('blogs').get();
+    if (!blogSnap.empty) {
+      appData.blog = blogSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } else {
+      for (const b of SEED_BLOG) {
+        await db.collection('blogs').doc(b.id).set(b);
+      }
+      appData.blog = [...SEED_BLOG];
+    }
+    setD(KEYS.blog, appData.blog);
+
+    // 5. Settings
+    const setDoc = await db.collection('content').doc('settings').get();
+    if (setDoc.exists) {
+      appData.settings = setDoc.data();
+      setD(KEYS.settings, appData.settings);
+    }
+
+    updateSyncStatus('Cloud Live (Firestore)', 'green');
+    renderSection(currentSection);
+  } catch (err) {
+    console.warn('Firestore sync note:', err);
+    updateSyncStatus('Local Mode (Check rules)', 'orange');
+  }
+}
+
+// ══════════════════════════════════════════════════════════
 // NAVIGATION
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 const NAV_CONFIG = {
   events:     { title:'Events', subtitle:'Manage club events and competitions', addLabel:'Add Event' },
   gallery:    { title:'Gallery', subtitle:'Manage photo albums by event', addLabel:'Add Album' },
@@ -395,11 +496,11 @@ function openAddModal() {
   if (currentSection === 'blog')       openBlogModal();
 }
 
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 // EVENTS
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 function renderEvents() {
-  const events = getD(KEYS.events, SEED_EVENTS);
+  const events = appData.events || [];
   const container = document.getElementById('eventsList');
   if (!events.length) { container.innerHTML = '<div class="card text-center text-gray-400 py-12">No events yet. Click "Add Event" to create one.</div>'; return; }
   container.innerHTML = events.map(ev => `
@@ -431,8 +532,7 @@ function renderEvents() {
 }
 
 function openEventModal(id) {
-  const events = getD(KEYS.events, SEED_EVENTS);
-  const ev = id ? events.find(e => e.id === id) : null;
+  const ev = id ? appData.events.find(e => e.id === id) : null;
   document.getElementById('modalTitle').textContent = ev ? 'Edit Event' : 'Add New Event';
   document.getElementById('modalBody').innerHTML = `
     <div class="space-y-4">
@@ -450,7 +550,16 @@ function openEventModal(id) {
         <div><label class="form-label">Detail Page (HTML file)</label><input id="ev_page" class="form-input" value="${esc(ev?.detailPage||'')}" placeholder="chess-hub.html" /></div>
       </div>
       <div class="grid grid-cols-2 gap-4">
-        <div><label class="form-label">Banner Image (filename or URL)</label><input id="ev_banner" class="form-input" value="${esc(ev?.banner||'')}" placeholder="banner-chess.jpg" /></div>
+        <div>
+          <label class="form-label">Banner Image</label>
+          <div class="flex items-center gap-2">
+            <input id="ev_banner" class="form-input flex-1" value="${esc(ev?.banner||'')}" placeholder="banner-chess.jpg or https://..." />
+            <label class="btn-secondary cursor-pointer flex-shrink-0 text-xs flex items-center gap-1">
+              <span>Upload</span>
+              <input type="file" accept="image/*" class="hidden" onchange="uploadEventBanner(this)" />
+            </label>
+          </div>
+        </div>
         <div><label class="form-label">Tags (comma-separated)</label><input id="ev_tags" class="form-input" value="${esc(ev?.tags||'')}" placeholder="Chess, Free Entry" /></div>
       </div>
       <div><label class="form-label">Status</label>
@@ -464,10 +573,21 @@ function openEventModal(id) {
   document.getElementById('modalOverlay').classList.remove('hidden');
 }
 
-function saveEvent(id) {
+async function uploadEventBanner(input) {
+  if (!input.files || !input.files[0]) return;
+  showToast('Uploading banner to ImgBB...', 'success');
+  try {
+    const url = await uploadToImgBB(input.files[0]);
+    document.getElementById('ev_banner').value = url;
+    showToast('Banner uploaded successfully!', 'success');
+  } catch(err) {
+    showToast('Upload failed: ' + err.message, 'error');
+  }
+}
+
+async function saveEvent(id) {
   const title = document.getElementById('ev_title').value.trim();
   if (!title) { showToast('Event title is required.', 'error'); return; }
-  const events = getD(KEYS.events, SEED_EVENTS);
   const data = {
     id: id || uid(), title,
     subtitle:    document.getElementById('ev_subtitle').value.trim(),
@@ -478,29 +598,51 @@ function saveEvent(id) {
     detailPage:  document.getElementById('ev_page').value.trim(),
     banner:      document.getElementById('ev_banner').value.trim(),
     tags:        document.getElementById('ev_tags').value.trim(),
-    status:      document.getElementById('ev_status').value
+    status:      document.getElementById('ev_status').value,
+    updatedAt:   Date.now()
   };
-  if (id) { const idx = events.findIndex(e => e.id === id); if (idx !== -1) events[idx] = data; }
-  else events.unshift(data);
-  setD(KEYS.events, events);
-  closeModal(); renderEvents();
-  showToast(id ? 'Event updated!' : 'Event added!', 'success');
+  if (id) {
+    const idx = appData.events.findIndex(e => e.id === id);
+    if (idx !== -1) appData.events[idx] = data;
+  } else {
+    appData.events.unshift(data);
+  }
+  setD(KEYS.events, appData.events);
+  closeModal();
+  renderEvents();
+  showToast('Saving to cloud...', 'success');
+  if (db) {
+    try {
+      await db.collection('events').doc(data.id).set(data);
+      showToast(id ? 'Event updated live!' : 'Event published live!', 'success');
+    } catch(err) {
+      showToast('Saved locally (Check Firebase rules)', 'orange');
+    }
+  }
 }
 
-function deleteEvent(id) {
+async function deleteEvent(id) {
   if (!confirm('Delete this event?')) return;
-  const events = getD(KEYS.events, SEED_EVENTS).filter(e => e.id !== id);
-  setD(KEYS.events, events); renderEvents();
-  showToast('Event deleted.', 'success');
+  appData.events = appData.events.filter(e => e.id !== id);
+  setD(KEYS.events, appData.events);
+  renderEvents();
+  if (db) {
+    try {
+      await db.collection('events').doc(id).delete();
+      showToast('Event removed from cloud.', 'success');
+    } catch(err) {
+      showToast('Removed locally.', 'orange');
+    }
+  }
 }
 
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 // GALLERY
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 let currentAlbumId = null;
 
 function renderAlbums() {
-  const gallery = getD(KEYS.gallery, []);
+  const gallery = appData.gallery || [];
   document.getElementById('albumGrid').classList.remove('hidden');
   document.getElementById('albumView').classList.add('hidden');
   const grid = document.getElementById('albumGrid');
@@ -524,8 +666,7 @@ function renderAlbums() {
 
 function openAlbum(id) {
   currentAlbumId = id;
-  const gallery = getD(KEYS.gallery, []);
-  const album = gallery.find(a => a.id === id);
+  const album = (appData.gallery || []).find(a => a.id === id);
   if (!album) return;
   document.getElementById('albumGrid').classList.add('hidden');
   document.getElementById('albumView').classList.remove('hidden');
@@ -551,57 +692,99 @@ function openAlbumModal() {
     <div><label class="form-label">Album Name *</label><input id="albumName" class="form-input" placeholder="e.g. Chess Tournament 2026" /></div>
     <div><label class="form-label">Event / Category</label><input id="albumEvent" class="form-input" placeholder="e.g. RCSC Chess Hub" /></div>
   </div>`;
-  document.getElementById('modalSaveBtn').onclick = () => {
-    const name = document.getElementById('albumName').value.trim();
-    if (!name) { showToast('Album name required.', 'error'); return; }
-    const gallery = getD(KEYS.gallery, []);
-    gallery.push({ id: uid(), name, event: document.getElementById('albumEvent').value.trim(), photos: [] });
-    setD(KEYS.gallery, gallery); closeModal(); renderAlbums();
-    showToast('Album created!', 'success');
-  };
+  document.getElementById('modalSaveBtn').onclick = () => saveAlbum();
   document.getElementById('modalOverlay').classList.remove('hidden');
 }
 
-function deleteAlbum(id) {
+async function saveAlbum() {
+  const name = document.getElementById('albumName').value.trim();
+  if (!name) { showToast('Album name required.', 'error'); return; }
+  const newAlbum = {
+    id: uid(),
+    name,
+    event: document.getElementById('albumEvent').value.trim(),
+    photos: [],
+    createdAt: Date.now()
+  };
+  if (!appData.gallery) appData.gallery = [];
+  appData.gallery.push(newAlbum);
+  setD(KEYS.gallery, appData.gallery);
+  closeModal();
+  renderAlbums();
+  showToast('Creating album...', 'success');
+  if (db) {
+    try {
+      await db.collection('albums').doc(newAlbum.id).set(newAlbum);
+      showToast('Album created & synced!', 'success');
+    } catch(err) {
+      showToast('Album created locally.', 'orange');
+    }
+  }
+}
+
+async function deleteAlbum(id) {
   if (!confirm('Delete this album and all its photos?')) return;
-  const gallery = getD(KEYS.gallery, []).filter(a => a.id !== id);
-  setD(KEYS.gallery, gallery); renderAlbums();
-  showToast('Album deleted.', 'success');
+  appData.gallery = (appData.gallery || []).filter(a => a.id !== id);
+  setD(KEYS.gallery, appData.gallery);
+  renderAlbums();
+  if (db) {
+    try {
+      await db.collection('albums').doc(id).delete();
+      showToast('Album removed from cloud.', 'success');
+    } catch(err) {}
+  }
 }
 
 async function addPhotosToAlbum(files) {
-  if (!currentAlbumId || !files.length) return;
-  const gallery = getD(KEYS.gallery, []);
-  const album = gallery.find(a => a.id === currentAlbumId);
+  if (!currentAlbumId || !files || !files.length) return;
+  const album = (appData.gallery || []).find(a => a.id === currentAlbumId);
   if (!album) return;
-  showToast('Uploading photos...', 'success');
-  for (const file of files) {
+  if (!album.photos) album.photos = [];
+
+  let count = 0;
+  for (let i = 0; i < files.length; i++) {
+    showToast(`Uploading photo ${i+1} of ${files.length} to ImgBB...`, 'success');
     try {
-      const dataURL = await compressImage(file, 1200);
-      album.photos.push(dataURL);
-    } catch(e) {}
+      const url = await uploadToImgBB(files[i]);
+      album.photos.push(url);
+      count++;
+      renderPhotos(album);
+    } catch(err) {
+      console.error('Photo upload failed:', err);
+    }
   }
-  setD(KEYS.gallery, gallery);
-  renderPhotos(album);
+  setD(KEYS.gallery, appData.gallery);
+  if (db) {
+    try {
+      await db.collection('albums').doc(album.id).set(album);
+      showToast(`${count} photo(s) uploaded to cloud!`, 'success');
+    } catch(err) {
+      showToast(`${count} photo(s) uploaded locally.`, 'orange');
+    }
+  }
   document.getElementById('photoUpload').value = '';
-  showToast(`${files.length} photo(s) added!`, 'success');
 }
 
-function deletePhoto(idx) {
+async function deletePhoto(idx) {
   if (!confirm('Delete this photo?')) return;
-  const gallery = getD(KEYS.gallery, []);
-  const album = gallery.find(a => a.id === currentAlbumId);
+  const album = (appData.gallery || []).find(a => a.id === currentAlbumId);
   if (!album) return;
   album.photos.splice(idx, 1);
-  setD(KEYS.gallery, gallery); renderPhotos(album);
-  showToast('Photo deleted.', 'success');
+  setD(KEYS.gallery, appData.gallery);
+  renderPhotos(album);
+  if (db) {
+    try {
+      await db.collection('albums').doc(album.id).set(album);
+      showToast('Photo deleted from cloud.', 'success');
+    } catch(err) {}
+  }
 }
 
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 // EXECUTIVES
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 function renderExec() {
-  const data = getD(KEYS.exec, SEED_EXEC);
+  const data = appData.exec || SEED_EXEC;
   document.getElementById('execYear').value = data.year || '';
   document.getElementById('principalName').value = data.principal || '';
   document.getElementById('moderatorName').value = data.moderator || '';
@@ -619,17 +802,26 @@ function renderExec() {
     </div>`).join('');
 }
 
-function saveExecHeader() {
-  const data = getD(KEYS.exec, SEED_EXEC);
-  data.year      = document.getElementById('execYear').value.trim();
-  data.principal = document.getElementById('principalName').value.trim();
-  data.moderator = document.getElementById('moderatorName').value.trim();
-  setD(KEYS.exec, data); showToast('Header saved!', 'success');
+async function saveExecHeader() {
+  if (!appData.exec) appData.exec = JSON.parse(JSON.stringify(SEED_EXEC));
+  appData.exec.year      = document.getElementById('execYear').value.trim();
+  appData.exec.principal = document.getElementById('principalName').value.trim();
+  appData.exec.moderator = document.getElementById('moderatorName').value.trim();
+  setD(KEYS.exec, appData.exec);
+  showToast('Saving leadership info...', 'success');
+  if (db) {
+    try {
+      await db.collection('content').doc('executives').set(appData.exec);
+      showToast('Leadership saved to cloud!', 'success');
+    } catch(err) {
+      showToast('Saved locally.', 'orange');
+    }
+  }
 }
 
 function openExecModal(id) {
-  const data    = getD(KEYS.exec, SEED_EXEC);
-  const member  = id ? data.members.find(m => m.id === id) : null;
+  const data = appData.exec || SEED_EXEC;
+  const member = id ? data.members.find(m => m.id === id) : null;
   document.getElementById('modalTitle').textContent = member ? 'Edit Executive Member' : 'Add Executive Member';
   document.getElementById('modalBody').innerHTML = `<div class="space-y-4">
     <div class="grid grid-cols-2 gap-4">
@@ -653,36 +845,69 @@ function openExecModal(id) {
 }
 
 async function previewExecPhoto(input) {
-  if (!input.files[0]) return;
-  const dataURL = await compressImage(input.files[0], 400);
-  document.getElementById('ex_photo').value = dataURL;
-  document.getElementById('photoPreview').innerHTML = `<img src="${dataURL}" class="w-full h-full object-cover" />`;
+  if (!input.files || !input.files[0]) return;
+  showToast('Uploading photo to ImgBB...', 'success');
+  try {
+    const url = await uploadToImgBB(input.files[0]);
+    document.getElementById('ex_photo').value = url;
+    document.getElementById('photoPreview').innerHTML = `<img src="${url}" class="w-full h-full object-cover" />`;
+    showToast('Photo uploaded!', 'success');
+  } catch(err) {
+    showToast('Upload failed: ' + err.message, 'error');
+  }
 }
 
-function saveExecMember(id) {
+async function saveExecMember(id) {
   const name = document.getElementById('ex_name').value.trim();
   if (!name) { showToast('Name is required.', 'error'); return; }
-  const data = getD(KEYS.exec, SEED_EXEC);
-  const memberData = { id: id || uid(), name, position: document.getElementById('ex_pos').value.trim(), dept: document.getElementById('ex_dept').value.trim(), photo: document.getElementById('ex_photo').value };
-  if (id) { const idx = data.members.findIndex(m => m.id === id); if (idx !== -1) data.members[idx] = memberData; }
-  else data.members.push(memberData);
-  setD(KEYS.exec, data); closeModal(); renderExec();
-  showToast(id ? 'Member updated!' : 'Member added!', 'success');
+  if (!appData.exec) appData.exec = JSON.parse(JSON.stringify(SEED_EXEC));
+  if (!appData.exec.members) appData.exec.members = [];
+  const memberData = {
+    id: id || uid(),
+    name,
+    position: document.getElementById('ex_pos').value.trim(),
+    dept: document.getElementById('ex_dept').value.trim(),
+    photo: document.getElementById('ex_photo').value
+  };
+  if (id) {
+    const idx = appData.exec.members.findIndex(m => m.id === id);
+    if (idx !== -1) appData.exec.members[idx] = memberData;
+  } else {
+    appData.exec.members.push(memberData);
+  }
+  setD(KEYS.exec, appData.exec);
+  closeModal();
+  renderExec();
+  showToast('Saving member...', 'success');
+  if (db) {
+    try {
+      await db.collection('content').doc('executives').set(appData.exec);
+      showToast(id ? 'Member updated in cloud!' : 'Member added to cloud!', 'success');
+    } catch(err) {
+      showToast('Saved locally.', 'orange');
+    }
+  }
 }
 
-function deleteExecMember(id) {
+async function deleteExecMember(id) {
   if (!confirm('Remove this executive member?')) return;
-  const data = getD(KEYS.exec, SEED_EXEC);
-  data.members = data.members.filter(m => m.id !== id);
-  setD(KEYS.exec, data); renderExec();
-  showToast('Member removed.', 'success');
+  if (!appData.exec || !appData.exec.members) return;
+  appData.exec.members = appData.exec.members.filter(m => m.id !== id);
+  setD(KEYS.exec, appData.exec);
+  renderExec();
+  if (db) {
+    try {
+      await db.collection('content').doc('executives').set(appData.exec);
+      showToast('Member removed from cloud.', 'success');
+    } catch(err) {}
+  }
 }
 
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 // BLOG
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 function renderBlog() {
-  const posts = getD(KEYS.blog, SEED_BLOG);
+  const posts = appData.blog || [];
   const container = document.getElementById('blogList');
   if (!posts.length) { container.innerHTML = '<div class="card text-center text-gray-400 py-12">No posts yet. Click "New Post" to write one.</div>'; return; }
   container.innerHTML = posts.map(p => `
@@ -706,8 +931,7 @@ function renderBlog() {
 }
 
 function openBlogModal(id) {
-  const posts = getD(KEYS.blog, SEED_BLOG);
-  const post  = id ? posts.find(p => p.id === id) : null;
+  const post = id ? (appData.blog || []).find(p => p.id === id) : null;
   document.getElementById('modalTitle').textContent = post ? 'Edit Blog Post' : 'New Blog Post';
   document.getElementById('modalBody').innerHTML = `<div class="space-y-4">
     <div><label class="form-label">Title *</label><input id="bl_title" class="form-input" value="${esc(post?.title||'')}" placeholder="Post title" /></div>
@@ -737,11 +961,17 @@ function openBlogModal(id) {
 }
 
 async function previewBlogThumb(input) {
-  if (!input.files[0]) return;
-  const dataURL = await compressImage(input.files[0], 800);
-  document.getElementById('bl_thumb').value = dataURL;
-  document.getElementById('bl_thumbUrl').value = '';
-  document.getElementById('blogThumbPreview').innerHTML = `<img src="${dataURL}" class="w-full h-full object-cover" />`;
+  if (!input.files || !input.files[0]) return;
+  showToast('Uploading thumbnail to ImgBB...', 'success');
+  try {
+    const url = await uploadToImgBB(input.files[0]);
+    document.getElementById('bl_thumb').value = url;
+    document.getElementById('bl_thumbUrl').value = url;
+    document.getElementById('blogThumbPreview').innerHTML = `<img src="${url}" class="w-full h-full object-cover" />`;
+    showToast('Thumbnail uploaded!', 'success');
+  } catch(err) {
+    showToast('Upload failed: ' + err.message, 'error');
+  }
 }
 
 function updateBlogThumbFromUrl(url) {
@@ -749,10 +979,10 @@ function updateBlogThumbFromUrl(url) {
   document.getElementById('blogThumbPreview').innerHTML = url ? `<img src="${url}" class="w-full h-full object-cover" onerror="this.style.opacity=0" />` : 'No image';
 }
 
-function saveBlogPost(id) {
+async function saveBlogPost(id) {
   const title = document.getElementById('bl_title').value.trim();
   if (!title) { showToast('Title is required.', 'error'); return; }
-  const posts = getD(KEYS.blog, SEED_BLOG);
+  if (!appData.blog) appData.blog = [];
   const data = {
     id: id || uid(), title,
     excerpt:   document.getElementById('bl_excerpt').value.trim(),
@@ -760,26 +990,47 @@ function saveBlogPost(id) {
     author:    document.getElementById('bl_author').value.trim() || 'RCSC Team',
     date:      document.getElementById('bl_date').value,
     tags:      document.getElementById('bl_tags').value.trim(),
-    thumbnail: document.getElementById('bl_thumb').value || document.getElementById('bl_thumbUrl').value
+    thumbnail: document.getElementById('bl_thumb').value || document.getElementById('bl_thumbUrl').value,
+    createdAt: Date.now()
   };
-  if (id) { const idx = posts.findIndex(p => p.id === id); if (idx !== -1) posts[idx] = data; }
-  else posts.unshift(data);
-  setD(KEYS.blog, posts); closeModal(); renderBlog();
-  showToast(id ? 'Post updated!' : 'Post published!', 'success');
+  if (id) {
+    const idx = appData.blog.findIndex(p => p.id === id);
+    if (idx !== -1) appData.blog[idx] = data;
+  } else {
+    appData.blog.unshift(data);
+  }
+  setD(KEYS.blog, appData.blog);
+  closeModal();
+  renderBlog();
+  showToast('Publishing post...', 'success');
+  if (db) {
+    try {
+      await db.collection('blogs').doc(data.id).set(data);
+      showToast(id ? 'Post updated live!' : 'Post published live!', 'success');
+    } catch(err) {
+      showToast('Saved locally.', 'orange');
+    }
+  }
 }
 
-function deletePost(id) {
+async function deletePost(id) {
   if (!confirm('Delete this post?')) return;
-  const posts = getD(KEYS.blog, SEED_BLOG).filter(p => p.id !== id);
-  setD(KEYS.blog, posts); renderBlog();
-  showToast('Post deleted.', 'success');
+  appData.blog = (appData.blog || []).filter(p => p.id !== id);
+  setD(KEYS.blog, appData.blog);
+  renderBlog();
+  if (db) {
+    try {
+      await db.collection('blogs').doc(id).delete();
+      showToast('Post deleted from cloud.', 'success');
+    } catch(err) {}
+  }
 }
 
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 // SETTINGS
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 function loadSettings() {
-  const s = getD(KEYS.settings, {});
+  const s = appData.settings || {};
   if (s.name)    document.getElementById('settingName').value    = s.name;
   if (s.email)   document.getElementById('settingEmail').value   = s.email;
   if (s.address) document.getElementById('settingAddress').value = s.address;
@@ -787,15 +1038,24 @@ function loadSettings() {
   if (s.ig)      document.getElementById('settingIG').value      = s.ig;
 }
 
-function saveSettings() {
-  setD(KEYS.settings, {
+async function saveSettings() {
+  appData.settings = {
     name:    document.getElementById('settingName').value.trim(),
     email:   document.getElementById('settingEmail').value.trim(),
     address: document.getElementById('settingAddress').value.trim(),
     fb:      document.getElementById('settingFB').value.trim(),
     ig:      document.getElementById('settingIG').value.trim()
-  });
-  showToast('Settings saved!', 'success');
+  };
+  setD(KEYS.settings, appData.settings);
+  showToast('Saving settings...', 'success');
+  if (db) {
+    try {
+      await db.collection('content').doc('settings').set(appData.settings);
+      showToast('Settings saved to cloud!', 'success');
+    } catch(err) {
+      showToast('Settings saved locally.', 'orange');
+    }
+  }
 }
 
 function exportData() {
@@ -813,11 +1073,11 @@ function importDataPrompt() { document.getElementById('importFile').click(); }
 function importData(input) {
   const file = input.files[0]; if (!file) return;
   const reader = new FileReader();
-  reader.onload = e => {
+  reader.onload = async e => {
     try {
       const data = JSON.parse(e.target.result);
       Object.entries(data).forEach(([k,v]) => localStorage.setItem(k, JSON.stringify(v)));
-      showToast('Backup imported! Refreshing...', 'success');
+      showToast('Backup imported! Syncing with cloud...', 'success');
       setTimeout(() => location.reload(), 1200);
     } catch(err) { showToast('Invalid backup file.', 'error'); }
   };
@@ -832,14 +1092,14 @@ function resetAll() {
   setTimeout(() => location.reload(), 1200);
 }
 
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 // MODAL HELPERS
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 function closeModal() { document.getElementById('modalOverlay').classList.add('hidden'); }
 
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 // TOAST
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 let toastTimeout;
 function showToast(msg, type='success') {
   const t = document.getElementById('toast');
@@ -849,38 +1109,20 @@ function showToast(msg, type='success') {
   toastTimeout = setTimeout(() => { t.className = ''; }, 3000);
 }
 
-// ══════════════════════════════════════════════
-// IMAGE COMPRESSION
-// ══════════════════════════════════════════════
-function compressImage(file, maxW=1200) {
-  return new Promise(resolve => {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    const img = new Image();
-    img.onload = () => {
-      const ratio = Math.min(maxW / img.width, 1);
-      canvas.width  = img.width  * ratio;
-      canvas.height = img.height * ratio;
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      resolve(canvas.toDataURL('image/jpeg', 0.78));
-    };
-    img.src = URL.createObjectURL(file);
-  });
-}
-
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 // HELPERS
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 function esc(str) {
   if (!str) return '';
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 // INIT
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
 function initDashboard() {
   navigate('events');
+  syncWithFirestore();
 }
 </script>
 </body>

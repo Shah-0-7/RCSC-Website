@@ -429,46 +429,69 @@
     });
   </script>
 
-<script>
-(function(){
-  try {
-    const raw = localStorage.getItem('rcsc_gallery');
-    if (!raw) return;
-    const albums = JSON.parse(raw);
-    if (!albums || !albums.length) return;
+  <!-- Firebase SDK Compat -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+
+  <script>
+  (function(){
     const container = document.getElementById('dynamicAlbums');
     const tabContainer = document.getElementById('gallery-tabs');
     if (!container) return;
-    albums.forEach(album => {
-      if (!album.photos || !album.photos.length) return;
-      // Add tab button
-      if (tabContainer) {
-        const btn = document.createElement('button');
-        btn.className = 'tab-pill';
-        btn.textContent = album.name;
-        btn.onclick = function() { filterGallery(this, album.id); };
-        tabContainer.appendChild(btn);
-      }
-      // Add photos as gallery items
-      album.photos.forEach((src, i) => {
-        const div = document.createElement('div');
-        div.className = 'gallery-item overflow-hidden rounded-xl';
-        div.dataset.event = album.id;
-        const img = document.createElement('img');
-        img.src = src;
-        img.alt = album.name + ' photo ' + (i + 1);
-        img.className = 'h-56 md:h-72 w-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500';
-        img.dataset.caption = album.name + ' · ' + (i + 1);
-        img.onclick = function() { openLightbox(this); };
-        img.loading = 'lazy';
-        div.appendChild(img);
-        container.appendChild(div);
+
+    function renderAlbums(albums) {
+      if (!albums || !albums.length) return;
+      container.innerHTML = '';
+      document.querySelectorAll('.dynamic-album-tab').forEach(b => b.remove());
+
+      albums.forEach(album => {
+        if (!album.photos || !album.photos.length) return;
+        // Add tab button
+        if (tabContainer) {
+          const btn = document.createElement('button');
+          btn.className = 'tab-pill dynamic-album-tab';
+          btn.textContent = album.name;
+          btn.onclick = function() { filterGallery(this, album.id); };
+          tabContainer.appendChild(btn);
+        }
+        // Add photos as gallery items
+        album.photos.forEach((src, i) => {
+          const div = document.createElement('div');
+          div.className = 'gallery-item overflow-hidden rounded-xl';
+          div.dataset.event = album.id;
+          const img = document.createElement('img');
+          img.src = src;
+          img.alt = album.name + ' photo ' + (i + 1);
+          img.className = 'h-56 md:h-72 w-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500';
+          img.dataset.caption = album.name + ' · ' + (i + 1);
+          img.onclick = function() { openLightbox(this); };
+          img.loading = 'lazy';
+          div.appendChild(img);
+          container.appendChild(div);
+        });
       });
-    });
-    buildIndex();
-  } catch(e) { console.warn('Gallery localStorage error:', e); }
-})();
-</script>
+      if (typeof buildIndex === 'function') buildIndex();
+    }
+
+    // 1. Instant local render
+    try {
+      const raw = localStorage.getItem('rcsc_gallery');
+      if (raw) renderAlbums(JSON.parse(raw));
+    } catch(e) {}
+
+    // 2. Live fetch from Firestore
+    if (db) {
+      db.collection('albums').get().then(snap => {
+        if (!snap.empty) {
+          const albums = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          localStorage.setItem('rcsc_gallery', JSON.stringify(albums));
+          renderAlbums(albums);
+        }
+      }).catch(err => console.warn('Firestore gallery error:', err));
+    }
+  })();
+  </script>
 
 </body>
 </html>
