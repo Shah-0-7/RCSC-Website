@@ -8,6 +8,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Firebase SDK Compat -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <script src="firebase-config.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Bebas+Neue&display=swap" rel="stylesheet" />
@@ -70,14 +71,18 @@
       <p class="text-slate-400 text-sm mt-1">Admin Dashboard</p>
     </div>
     <div class="bg-white/10 backdrop-blur border border-white/10 rounded-2xl p-8">
+      <div class="mb-4">
+        <label class="block text-slate-300 text-sm font-semibold mb-2">Admin Email</label>
+        <input id="emailInput" type="email" value="admin@rcsc.edu.bd" placeholder="admin@rcsc.edu.bd" class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-slate-500 outline-none focus:border-blue-400 transition" />
+      </div>
       <div class="mb-5">
         <label class="block text-slate-300 text-sm font-semibold mb-2">Password</label>
         <input id="pwdInput" type="password" placeholder="Enter admin password" class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-slate-500 outline-none focus:border-blue-400 transition" onkeydown="if(event.key==='Enter')doLogin()" />
       </div>
-      <button onclick="doLogin()" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 rounded-xl transition text-base">Sign In</button>
-      <p id="loginErr" class="text-red-400 text-sm text-center mt-3 hidden">Incorrect password. Try again.</p>
+      <button id="loginBtn" onclick="doLogin()" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 rounded-xl transition text-base">Sign In</button>
+      <p id="loginErr" class="text-red-400 text-sm text-center mt-3 hidden"></p>
     </div>
-    <p class="text-center text-slate-600 text-xs mt-6">Default password: <span class="text-slate-400 font-mono">rcsc@2026</span></p>
+    <p class="text-center text-slate-500 text-xs mt-6">Secured by Firebase Authentication</p>
   </div>
 </div>
 
@@ -275,41 +280,101 @@
 
 <script>
 // ══════════════════════════════════════════════
-// AUTH
+// AUTH (Firebase Authentication & Local Fallback)
 // ══════════════════════════════════════════════
-function getPassword() { return localStorage.getItem('rcsc_password') || 'rcsc@2026'; }
+let currentUser = null;
 
-function doLogin() {
+if (typeof firebase !== 'undefined' && firebase.auth) {
+  firebase.auth().onAuthStateChanged(user => {
+    currentUser = user;
+    if (user) {
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('dashboard').classList.remove('hidden');
+      initDashboard();
+    } else {
+      document.getElementById('dashboard').classList.add('hidden');
+      document.getElementById('loginScreen').classList.remove('hidden');
+    }
+  });
+}
+
+async function doLogin() {
+  const email = document.getElementById('emailInput').value.trim();
   const pwd = document.getElementById('pwdInput').value;
-  if (pwd === getPassword()) {
-    document.getElementById('loginScreen').classList.add('hidden');
-    document.getElementById('dashboard').classList.remove('hidden');
-    initDashboard();
-  } else {
-    document.getElementById('loginErr').classList.remove('hidden');
-    document.getElementById('pwdInput').value = '';
+  const errEl = document.getElementById('loginErr');
+  const btn = document.getElementById('loginBtn');
+
+  if (!email || !pwd) {
+    errEl.textContent = 'Please enter email and password.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+
+  errEl.classList.add('hidden');
+  btn.disabled = true;
+  btn.textContent = 'Signing in...';
+
+  try {
+    if (typeof firebase !== 'undefined' && firebase.auth) {
+      await firebase.auth().signInWithEmailAndPassword(email, pwd);
+      // onAuthStateChanged triggers UI entry
+    } else {
+      // Fallback
+      if (pwd === (localStorage.getItem('rcsc_password') || 'rcsc@2026')) {
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('dashboard').classList.remove('hidden');
+        initDashboard();
+      } else {
+        throw new Error('Incorrect password.');
+      }
+    }
+  } catch (err) {
+    console.error("Auth error:", err);
+    let msg = err.message || 'Login failed.';
+    if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
+      msg = 'Invalid email or password. Please verify your admin user in Firebase Console.';
+    }
+    errEl.textContent = msg;
+    errEl.classList.remove('hidden');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Sign In';
   }
 }
 
-function doLogout() {
+async function doLogout() {
+  if (typeof firebase !== 'undefined' && firebase.auth) {
+    await firebase.auth().signOut().catch(()=>{});
+  }
   document.getElementById('dashboard').classList.add('hidden');
   document.getElementById('loginScreen').classList.remove('hidden');
   document.getElementById('pwdInput').value = '';
   document.getElementById('loginErr').classList.add('hidden');
 }
 
-function changePassword() {
-  const cur = document.getElementById('curPwd').value;
+async function changePassword() {
   const nw  = document.getElementById('newPwd').value;
   const cf  = document.getElementById('confirmPwd').value;
-  if (cur !== getPassword()) { showToast('Current password is incorrect.', 'error'); return; }
-  if (!nw || nw.length < 4)  { showToast('New password must be at least 4 characters.', 'error'); return; }
+  if (!nw || nw.length < 6)  { showToast('New password must be at least 6 characters.', 'error'); return; }
   if (nw !== cf)              { showToast('Passwords do not match.', 'error'); return; }
-  localStorage.setItem('rcsc_password', nw);
-  document.getElementById('curPwd').value = '';
-  document.getElementById('newPwd').value = '';
-  document.getElementById('confirmPwd').value = '';
-  showToast('Password updated!', 'success');
+
+  if (currentUser) {
+    try {
+      await currentUser.updatePassword(nw);
+      showToast('Firebase password updated!', 'success');
+      document.getElementById('curPwd').value = '';
+      document.getElementById('newPwd').value = '';
+      document.getElementById('confirmPwd').value = '';
+    } catch(err) {
+      showToast('Error: ' + err.message, 'error');
+    }
+  } else {
+    localStorage.setItem('rcsc_password', nw);
+    showToast('Local password updated!', 'success');
+    document.getElementById('curPwd').value = '';
+    document.getElementById('newPwd').value = '';
+    document.getElementById('confirmPwd').value = '';
+  }
 }
 
 // ══════════════════════════════════════════════
