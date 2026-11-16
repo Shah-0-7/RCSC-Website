@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RCSC DevSprint | App Building Competition</title>
+  <meta name="description" content="RCSC DevSprint — A 2-week app building competition where teams design, develop, and ship a complete application from scratch." />
+  <link rel="icon" href="logo.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Nunito:wght@300;400;600;700&family=Share+Tech+Mono&family=Bebas+Neue&display=swap"
+    rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            Inter: ['Inter', 'sans-serif'],
+            Nunito: ['Nunito', 'sans-serif'],
+            ShareTechMono: ['Share Tech Mono', 'monospace'],
+            Bebas: ['Bebas Neue', 'sans-serif'],
+          },
+          colors: {
+            primary: '#3b82f6',
+          },
+          container: {
+            center: true,
+            padding: '1rem',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .nav-link { @apply text-sm font-medium text-gray-700 hover:text-blue-500 transition-colors duration-200; }
+    .nav-link.active { @apply text-blue-500; }
+
+    /* Hero gradient overlay */
+    .hero-overlay {
+      background: linear-gradient(135deg, rgba(15,23,42,0.78) 0%, rgba(30,58,138,0.55) 100%);
+    }
+
+    /* Phase/step card */
+    .phase-card {
+      border-left: 4px solid #3b82f6;
+      background: white;
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      transition: transform 0.2s;
+    }
+    .phase-card:hover { transform: translateY(-3px); }
+
+    /* Stat badge */
+    .stat-badge {
+      background: rgba(59,130,246,0.1);
+      border: 1px solid rgba(59,130,246,0.25);
+      border-radius: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      text-align: center;
+    }
+
+    /* Track card */
+    .track-card {
+      border-radius: 1rem;
+      padding: 1.75rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .track-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,0.15); }
+
+    /* Countdown ring */
+    .count-ring {
+      width: 90px; height: 90px;
+      border-radius: 50%;
+      border: 3px solid rgba(255,255,255,0.3);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.08);
+    }
+
+    /* Register button pulse */
+    @keyframes subtlePulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(59,130,246,0.4); }
+      50% { box-shadow: 0 0 0 10px rgba(59,130,246,0); }
+    }
+    .btn-pulse { animation: subtlePulse 2.5s infinite; }
+
+    /* Step number */
+    .step-num {
+      width: 2.5rem; height: 2.5rem; min-width: 2.5rem;
+      border-radius: 50%;
+      background: #3b82f6;
+      color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.95rem;
+    }
+
+    /* Scroll-reveal */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+
+<body class="bg-[#F6F6F6] text-gray-900">
+
+  <!-- ═══════════════════════════════ NAVBAR ═══════════════════════════════ -->
+  <nav class="sticky top-0 z-50 bg-white/95 backdrop-blur shadow-sm">
+    <div class="container mx-auto px-4 flex items-center justify-between h-16">
+      <a href="index.html" class="flex items-center gap-2">
+        <img src="logo.png" alt="RCSC Logo" class="h-9 w-9 object-contain" />
+        <span class="font-Bebas text-2xl tracking-widest text-blue-600">RCSC</span>
+      </a>
+      <div class="hidden md:flex items-center gap-7">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="about.html" class="nav-link">About</a>
+        <div class="relative group">
+          <a href="activities.html" class="nav-link active flex items-center gap-1">
+            Activities
+            <svg class="w-3.5 h-3.5 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </a>
+          <div class="absolute top-full left-0 mt-1 w-44 bg-white rounded-lg shadow-xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 py-1">
+            <a href="activities.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600">All Activities</a>
+            <a href="chess-hub.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600">Chess Tournament</a>
+            <a href="devsprint.html" class="block px-4 py-2 text-sm text-blue-600 font-medium bg-blue-50">DevSprint</a>
+            <a href="science-fest.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600">Science Fest</a>
+          </div>
+        </div>
+        <a href="executive.html" class="nav-link">Executives</a>
+        <a href="blog.html" class="nav-link">Blog</a>
+        <a href="gallery.html" class="nav-link">Gallery</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+      </div>
+      <!-- Mobile hamburger -->
+      <button onclick="document.getElementById('mobileMenu').classList.toggle('hidden')" class="md:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+    <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-gray-100 px-4 py-3 flex flex-col gap-3">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="about.html" class="nav-link">About</a>
+      <a href="activities.html" class="nav-link active">Activities</a>
+      <a href="executive.html" class="nav-link">Executives</a>
+      <a href="blog.html" class="nav-link">Blog</a>
+      <a href="gallery.html" class="nav-link">Gallery</a>
+      <a href="contact.html" class="nav-link">Contact</a>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════ HERO ═══════════════════════════════ -->
+  <section class="relative min-h-[72vh] flex items-center overflow-hidden">
+    <div class="absolute inset-0 -z-10">
+      <img
+        src="banner-devsprint-hq.jpg"
+        alt="DevSprint Background"
+        class="w-full h-full object-cover object-center" />
+      <div class="hero-overlay absolute inset-0"></div>
+    </div>
+
+    <div class="container mx-auto px-4 py-24 relative z-10">
+      <div class="max-w-3xl">
+        <!-- Breadcrumb -->
+        <div class="flex items-center gap-2 mb-6 text-blue-300 text-sm font-ShareTechMono">
+          <a href="activities.html" class="hover:text-white transition-colors">Activities</a>
+          <span>›</span>
+          <span class="text-white">DevSprint</span>
+        </div>
+
+        <!-- Badge -->
+        <div class="inline-flex items-center gap-2 bg-blue-500/20 border border-blue-400/40 text-blue-200 text-xs font-semibold tracking-widest uppercase px-4 py-2 rounded-full mb-6">
+          <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
+          RCSC Competition — Coming Soon
+        </div>
+
+        <h1 class="font-Bebas text-6xl md:text-8xl text-white tracking-wider leading-none mb-4">
+          Dev<span class="text-blue-400">Sprint</span>
+        </h1>
+        <p class="text-xl text-gray-200 mb-3 font-medium">Build. Ship. Win.</p>
+        <p class="text-gray-300 text-lg max-w-xl leading-relaxed mb-10">
+          A high-octane <span class="text-white font-semibold">2-week app building competition</span> where teams design, develop, and ship a complete mobile or web application from scratch — under real pressure, with real deadlines.
+        </p>
+
+        <!-- Countdown -->
+        <div class="mb-10">
+          <p class="text-blue-300 text-xs font-ShareTechMono uppercase tracking-widest mb-4">Registration Opens Soon</p>
+          <div class="flex gap-4 flex-wrap">
+            <div class="count-ring">
+              <span id="ds-d" class="text-white text-2xl font-bold font-Bebas">--</span>
+              <span class="text-blue-200 text-xs mt-0.5">Days</span>
+            </div>
+            <div class="count-ring">
+              <span id="ds-h" class="text-white text-2xl font-bold font-Bebas">--</span>
+              <span class="text-blue-200 text-xs mt-0.5">Hours</span>
+            </div>
+            <div class="count-ring">
+              <span id="ds-min" class="text-white text-2xl font-bold font-Bebas">--</span>
+              <span class="text-blue-200 text-xs mt-0.5">Minutes</span>
+            </div>
+            <div class="count-ring">
+              <span id="ds-s" class="text-white text-2xl font-bold font-Bebas">--</span>
+              <span class="text-blue-200 text-xs mt-0.5">Seconds</span>
+            </div>
+          </div>
+          <p class="text-gray-400 text-xs mt-3 font-ShareTechMono">* Exact dates will be announced on our official channels</p>
+        </div>
+
+        <div class="flex flex-wrap gap-4">
+          <a href="https://www.facebook.com/rajshahicollegescienceclub" target="_blank"
+            class="btn-pulse inline-flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold px-8 py-3.5 rounded-full transition-colors">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            Follow for Updates
+          </a>
+          <a href="contact.html"
+            class="inline-flex items-center gap-2 border-2 border-white/40 text-white hover:bg-white/10 font-semibold px-8 py-3.5 rounded-full transition-colors">
+            Get Notified
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════ QUICK STATS ═══════════════════════════════ -->
+  <section class="bg-blue-600 py-10">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center text-white">
+        <div>
+          <div class="text-4xl font-Bebas tracking-wide">2 Weeks</div>
+          <div class="text-blue-200 text-sm mt-1">Competition Duration</div>
+        </div>
+        <div>
+          <div class="text-4xl font-Bebas tracking-wide">Teams</div>
+          <div class="text-blue-200 text-sm mt-1">Team-Based Format</div>
+        </div>
+        <div>
+          <div class="text-4xl font-Bebas tracking-wide">Open</div>
+          <div class="text-blue-200 text-sm mt-1">Web &amp; Mobile Apps</div>
+        </div>
+        <div>
+          <div class="text-4xl font-Bebas tracking-wide">TBA</div>
+          <div class="text-blue-200 text-sm mt-1">Prizes &amp; Awards</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════ ABOUT / WHAT IS IT ═══════════════════════════════ -->
+  <section class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+      <div class="max-w-5xl mx-auto">
+        <div class="grid md:grid-cols-2 gap-16 items-center">
+          <div class="reveal">
+            <p class="text-blue-500 text-xs font-ShareTechMono uppercase tracking-widest mb-3">About the Competition</p>
+            <h2 class="text-4xl font-bold text-gray-900 mb-6 leading-tight">What is <span class="text-blue-500">DevSprint</span>?</h2>
+            <p class="text-gray-600 leading-relaxed mb-5">
+              DevSprint is RCSC's flagship app-building competition designed to push developers beyond their comfort zones. Over the course of <strong>two intense weeks</strong>, participating teams will ideate, design, build, and present a fully functional application.
+            </p>
+            <p class="text-gray-600 leading-relaxed mb-5">
+              Whether you're building a web app, mobile app, or cross-platform solution — DevSprint welcomes all stacks and frameworks. The focus is on <strong>execution, creativity, and real-world impact</strong>.
+            </p>
+            <p class="text-gray-600 leading-relaxed">
+              Teams will be evaluated on innovation, technical implementation, UI/UX design, and a final demo presentation to a panel of judges.
+            </p>
+          </div>
+          <div class="reveal">
+            <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-8">
+              <h3 class="font-bold text-gray-800 text-lg mb-6">Why Participate?</h3>
+              <ul class="space-y-4">
+                <li class="flex items-start gap-3">
+                  <div class="mt-0.5 w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                  </div>
+                  <span class="text-gray-700">Build a portfolio-worthy project under real constraints</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <div class="mt-0.5 w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                  </div>
+                  <span class="text-gray-700">Collaborate with talented teammates &amp; grow together</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <div class="mt-0.5 w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                  </div>
+                  <span class="text-gray-700">Get recognition from RCSC and the wider tech community</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <div class="mt-0.5 w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                  </div>
+                  <span class="text-gray-700">Win exciting prizes &amp; certificates of participation</span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <div class="mt-0.5 w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                  </div>
+                  <span class="text-gray-700">Network with like-minded developers across Rajshahi</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════ TIMELINE / PHASES ═══════════════════════════════ -->
+  <section class="py-20 bg-[#F6F6F6]">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto">
+        <div class="text-center mb-14 reveal">
+          <p class="text-blue-500 text-xs font-ShareTechMono uppercase tracking-widest mb-3">Competition Structure</p>
+          <h2 class="text-4xl font-bold text-gray-900">How It Works</h2>
+          <p class="text-gray-500 mt-3 max-w-xl mx-auto">From idea to final demo — here's your DevSprint journey</p>
+        </div>
+
+        <div class="relative">
+          <!-- Vertical line -->
+          <div class="absolute left-5 top-0 bottom-0 w-0.5 bg-blue-200 hidden md:block"></div>
+
+          <div class="space-y-8">
+
+            <!-- Phase 1 -->
+            <div class="relative flex gap-6 reveal">
+              <div class="step-num flex-shrink-0 relative z-10">1</div>
+              <div class="phase-card flex-1">
+                <div class="flex items-start justify-between flex-wrap gap-3">
+                  <div>
+                    <h3 class="font-bold text-gray-900 text-lg mb-1">Registration &amp; Team Formation</h3>
+                    <p class="text-blue-500 text-sm font-ShareTechMono">Phase 1 — TBA</p>
+                  </div>
+                  <span class="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">Upcoming</span>
+                </div>
+                <p class="text-gray-600 mt-3 leading-relaxed">Register individually or as a team (2–4 members). Solo participants will be matched with teammates. All stacks welcome — web, mobile, cross-platform.</p>
+              </div>
+            </div>
+
+            <!-- Phase 2 -->
+            <div class="relative flex gap-6 reveal">
+              <div class="step-num flex-shrink-0 relative z-10">2</div>
+              <div class="phase-card flex-1">
+                <div class="flex items-start justify-between flex-wrap gap-3">
+                  <div>
+                    <h3 class="font-bold text-gray-900 text-lg mb-1">Kickoff &amp; Theme Reveal</h3>
+                    <p class="text-blue-500 text-sm font-ShareTechMono">Phase 2 — Day 1</p>
+                  </div>
+                  <span class="bg-gray-100 text-gray-600 text-xs font-semibold px-3 py-1 rounded-full">Day 1</span>
+                </div>
+                <p class="text-gray-600 mt-3 leading-relaxed">The competition theme/problem statement is revealed at the kickoff event. Teams begin brainstorming, wireframing, and setting up their development environment.</p>
+              </div>
+            </div>
+
+            <!-- Phase 3 -->
+            <div class="relative flex gap-6 reveal">
+              <div class="step-num flex-shrink-0 relative z-10">3</div>
+              <div class="phase-card flex-1">
+                <div class="flex items-start justify-between flex-wrap gap-3">
+                  <div>
+                    <h3 class="font-bold text-gray-900 text-lg mb-1">Build Sprint</h3>
+                    <p class="text-blue-500 text-sm font-ShareTechMono">Phase 3 — Week 1 &amp; 2</p>
+                  </div>
+                  <span class="bg-gray-100 text-gray-600 text-xs font-semibold px-3 py-1 rounded-full">2 Weeks</span>
+                </div>
+                <p class="text-gray-600 mt-3 leading-relaxed">The core build phase. Teams design, develop, and iterate on their application. Regular check-in posts on the official group keep everyone on track. Mentors may be available for guidance.</p>
+              </div>
+            </div>
+
+            <!-- Phase 4 -->
+            <div class="relative flex gap-6 reveal">
+              <div class="step-num flex-shrink-0 relative z-10">4</div>
+              <div class="phase-card flex-1">
+                <div class="flex items-start justify-between flex-wrap gap-3">
+                  <div>
+                    <h3 class="font-bold text-gray-900 text-lg mb-1">Submission Deadline</h3>
+                    <p class="text-blue-500 text-sm font-ShareTechMono">Phase 4 — Day 14</p>
+                  </div>
+                  <span class="bg-orange-100 text-orange-700 text-xs font-semibold px-3 py-1 rounded-full">Deadline</span>
+                </div>
+                <p class="text-gray-600 mt-3 leading-relaxed">Submit your project repository, a short demo video, and a brief project description. No late submissions accepted. Make sure your app is functional and documented.</p>
+              </div>
+            </div>
+
+            <!-- Phase 5 -->
+            <div class="relative flex gap-6 reveal">
+              <div class="step-num flex-shrink-0 relative z-10">5</div>
+              <div class="phase-card flex-1">
+                <div class="flex items-start justify-between flex-wrap gap-3">
+                  <div>
+                    <h3 class="font-bold text-gray-900 text-lg mb-1">Demo Day &amp; Judging</h3>
+                    <p class="text-blue-500 text-sm font-ShareTechMono">Phase 5 — Finals</p>
+                  </div>
+                  <span class="bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full">Grand Finale</span>
+                </div>
+                <p class="text-gray-600 mt-3 leading-relaxed">Top teams present their apps live to a panel of judges. Evaluated on innovation, technical quality, UI/UX, and presentation. Winners announced with prizes and certificates.</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════ TRACKS ═══════════════════════════════ -->
+  <section class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-14 reveal">
+        <p class="text-blue-500 text-xs font-ShareTechMono uppercase tracking-widest mb-3">What You Can Build</p>
+        <h2 class="text-4xl font-bold text-gray-900">Competition Tracks</h2>
+      </div>
+      <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+
+        <!-- Track 1 -->
+        <div class="track-card bg-gradient-to-br from-blue-600 to-blue-800 text-white reveal">
+          <div class="text-5xl mb-4">🌐</div>
+          <h3 class="font-bold text-xl mb-3">Web Application</h3>
+          <p class="text-blue-100 text-sm leading-relaxed">Build a full-stack or front-end web app using any framework — React, Vue, Next.js, Django, Laravel, or anything you love.</p>
+          <div class="mt-5 pt-5 border-t border-blue-500/40">
+            <p class="text-xs text-blue-200 font-ShareTechMono uppercase tracking-wider">Suggested Stacks</p>
+            <p class="text-blue-100 text-sm mt-1">React · Next.js · Vue · Django · Laravel</p>
+          </div>
+        </div>
+
+        <!-- Track 2 -->
+        <div class="track-card bg-gradient-to-br from-indigo-600 to-purple-700 text-white reveal" style="transition-delay:0.1s">
+          <div class="text-5xl mb-4">📱</div>
+          <h3 class="font-bold text-xl mb-3">Mobile Application</h3>
+          <p class="text-indigo-100 text-sm leading-relaxed">Create a native or cross-platform mobile app for Android or iOS. Focus on UX, performance, and real-world usefulness.</p>
+          <div class="mt-5 pt-5 border-t border-indigo-500/40">
+            <p class="text-xs text-indigo-200 font-ShareTechMono uppercase tracking-wider">Suggested Stacks</p>
+            <p class="text-indigo-100 text-sm mt-1">Flutter · React Native · Kotlin · Swift</p>
+          </div>
+        </div>
+
+        <!-- Track 3 -->
+        <div class="track-card bg-gradient-to-br from-cyan-600 to-teal-700 text-white reveal" style="transition-delay:0.2s">
+          <div class="text-5xl mb-4">🤖</div>
+          <h3 class="font-bold text-xl mb-3">AI / Smart App</h3>
+          <p class="text-cyan-100 text-sm leading-relaxed">Integrate AI, ML, or data science into your app. Build something smart — a classifier, a recommender, a chatbot, or more.</p>
+          <div class="mt-5 pt-5 border-t border-cyan-500/40">
+            <p class="text-xs text-cyan-200 font-ShareTechMono uppercase tracking-wider">Suggested Stacks</p>
+            <p class="text-cyan-100 text-sm mt-1">Python · TensorFlow · Gemini API · LangChain</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════ JUDGING CRITERIA ═══════════════════════════════ -->
+  <section class="py-20 bg-[#F6F6F6]">
+    <div class="container mx-auto px-4">
+      <div class="max-w-4xl mx-auto">
+        <div class="text-center mb-14 reveal">
+          <p class="text-blue-500 text-xs font-ShareTechMono uppercase tracking-widest mb-3">Evaluation</p>
+          <h2 class="text-4xl font-bold text-gray-900">Judging Criteria</h2>
+        </div>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="bg-white rounded-2xl p-6 shadow-sm reveal">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center text-2xl">💡</div>
+              <div>
+                <h3 class="font-bold text-gray-900">Innovation</h3>
+                <p class="text-blue-500 text-sm font-ShareTechMono">25 pts</p>
+              </div>
+            </div>
+            <p class="text-gray-600 text-sm leading-relaxed">Originality of the idea, creative use of technology, and how well it addresses a real problem.</p>
+          </div>
+          <div class="bg-white rounded-2xl p-6 shadow-sm reveal" style="transition-delay:0.1s">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center text-2xl">⚙️</div>
+              <div>
+                <h3 class="font-bold text-gray-900">Technical Implementation</h3>
+                <p class="text-green-600 text-sm font-ShareTechMono">25 pts</p>
+              </div>
+            </div>
+            <p class="text-gray-600 text-sm leading-relaxed">Code quality, architecture, use of appropriate tools, and overall technical execution.</p>
+          </div>
+          <div class="bg-white rounded-2xl p-6 shadow-sm reveal" style="transition-delay:0.2s">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center text-2xl">🎨</div>
+              <div>
+                <h3 class="font-bold text-gray-900">UI/UX Design</h3>
+                <p class="text-purple-600 text-sm font-ShareTechMono">25 pts</p>
+              </div>
+            </div>
+            <p class="text-gray-600 text-sm leading-relaxed">Visual design, user experience, intuitiveness, and overall polish of the interface.</p>
+          </div>
+          <div class="bg-white rounded-2xl p-6 shadow-sm reveal" style="transition-delay:0.3s">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center text-2xl">🎤</div>
+              <div>
+                <h3 class="font-bold text-gray-900">Presentation</h3>
+                <p class="text-orange-600 text-sm font-ShareTechMono">25 pts</p>
+              </div>
+            </div>
+            <p class="text-gray-600 text-sm leading-relaxed">Clarity of the demo, how well the team communicates the value and vision of their product.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════ REGISTER CTA ═══════════════════════════════ -->
+  <section class="py-20 bg-gradient-to-br from-blue-700 to-blue-900 text-white">
+    <div class="container mx-auto px-4 text-center">
+      <div class="max-w-2xl mx-auto reveal">
+        <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 text-blue-100 text-xs font-semibold tracking-widest uppercase px-4 py-2 rounded-full mb-8">
+          <span class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span>
+          Registration Opening Soon
+        </div>
+        <h2 class="text-5xl font-Bebas tracking-wide mb-5">Ready to Sprint?</h2>
+        <p class="text-blue-200 text-lg mb-10 leading-relaxed">
+          Dates and registration details will be announced on our official Facebook page. Follow us now so you don't miss out!
+        </p>
+        <div class="flex flex-wrap gap-4 justify-center">
+          <a href="https://www.facebook.com/rajshahicollegescienceclub" target="_blank"
+            class="btn-pulse inline-flex items-center gap-2 bg-white text-blue-700 hover:bg-blue-50 font-bold px-10 py-4 rounded-full text-lg transition-colors">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            Follow RCSC on Facebook
+          </a>
+          <a href="https://www.instagram.com/rajshahi_college_science_club/" target="_blank"
+            class="inline-flex items-center gap-2 border-2 border-white/40 text-white hover:bg-white/10 font-semibold px-8 py-4 rounded-full transition-colors">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            Follow on Instagram
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════ FOOTER ═══════════════════════════════ -->
+  <footer class="bg-[#1F1F1F] text-gray-400 py-12">
+    <div class="container mx-auto px-4">
+      <div class="grid md:grid-cols-4 gap-8 mb-10">
+        <div class="md:col-span-2">
+          <div class="flex items-center gap-3 mb-4">
+            <img src="logo.png" alt="RCSC" class="h-10 w-10 object-contain" />
+            <span class="font-Bebas text-2xl tracking-widest text-white">RCSC</span>
+          </div>
+          <p class="text-sm leading-relaxed mb-4">Rajshahi College Science Club — Igniting Scientific Curiosity since establishment. Fostering innovation, collaboration, and excellence among the students of Rajshahi College.</p>
+          <div class="flex gap-4">
+            <a href="https://www.facebook.com/rajshahicollegescienceclub" target="_blank" class="hover:text-blue-400 transition-colors">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+            <a href="https://www.instagram.com/rajshahi_college_science_club/" target="_blank" class="hover:text-pink-400 transition-colors">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            </a>
+          </div>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold mb-4">Quick Links</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="index.html" class="hover:text-white transition-colors">Home</a></li>
+            <li><a href="about.html" class="hover:text-white transition-colors">About RCSC</a></li>
+            <li><a href="activities.html" class="hover:text-white transition-colors">Activities</a></li>
+            <li><a href="gallery.html" class="hover:text-white transition-colors">Gallery</a></li>
+            <li><a href="contact.html" class="hover:text-white transition-colors">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold mb-4">Events</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="chess-hub.html" class="hover:text-white transition-colors">Chess Tournament</a></li>
+            <li><a href="devsprint.html" class="hover:text-white transition-colors text-blue-400">DevSprint</a></li>
+            <li><a href="science-fest.html" class="hover:text-white transition-colors">National Science Fest</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-gray-800 pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs">
+        <span>&copy; 2026 Rajshahi College Science Club. All rights reserved. <a href="dashboard.html" class="ml-2 opacity-40 hover:opacity-100 hover:text-blue-400 transition-opacity">Admin</a></span>
+        <span>Rajshahi College Rd, Rajshahi 6000 &bull; <a href="mailto:rcsc.official@gmail.com" class="hover:text-white">rcsc.official@gmail.com</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Scroll reveal
+    const revealEls = document.querySelectorAll('.reveal');
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+    }, { threshold: 0.12 });
+    revealEls.forEach(el => revealObserver.observe(el));
+
+    // Countdown — TBA date placeholder (Jan 15 2027)
+    const target = new Date('2027-01-15T09:00:00+06:00');
+    function tick() {
+      const now = new Date();
+      const diff = target - now;
+      if (diff <= 0) {
+        ['ds-d','ds-h','ds-min','ds-s'].forEach(id => document.getElementById(id).textContent = '0');
+        return;
+      }
+      const s = Math.floor(diff / 1000);
+      document.getElementById('ds-d').textContent   = Math.floor(s / 86400);
+      document.getElementById('ds-h').textContent   = Math.floor((s % 86400) / 3600);
+      document.getElementById('ds-min').textContent = Math.floor((s % 3600) / 60);
+      document.getElementById('ds-s').textContent   = s % 60;
+    }
+    tick();
+    setInterval(tick, 1000);
+  </script>
+
+</body>
+</html>

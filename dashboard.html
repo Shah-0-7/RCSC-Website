@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RCSC Admin Dashboard</title>
+  <link rel="icon" href="logo.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .sidebar-link { display:flex; align-items:center; gap:0.75rem; padding:0.75rem 1rem; border-radius:0.75rem; color:#94a3b8; transition:all 0.2s; cursor:pointer; font-size:0.9rem; font-weight:500; }
+    .sidebar-link:hover { background:rgba(255,255,255,0.08); color:white; }
+    .sidebar-link.active { background:rgba(59,130,246,0.2); color:#60a5fa; }
+    .section { display:none; }
+    .section.active { display:block; }
+    .btn-primary { background:#3b82f6; color:white; padding:0.5rem 1.25rem; border-radius:0.5rem; font-weight:600; font-size:0.85rem; border:none; cursor:pointer; transition:background 0.2s; display:inline-flex; align-items:center; gap:0.4rem; }
+    .btn-primary:hover { background:#2563eb; }
+    .btn-danger { background:#ef4444; color:white; padding:0.4rem 0.9rem; border-radius:0.5rem; font-size:0.8rem; font-weight:600; border:none; cursor:pointer; transition:background 0.2s; }
+    .btn-danger:hover { background:#dc2626; }
+    .btn-secondary { background:white; color:#374151; padding:0.4rem 0.9rem; border-radius:0.5rem; font-size:0.8rem; font-weight:600; border:1px solid #e5e7eb; cursor:pointer; transition:all 0.2s; }
+    .btn-secondary:hover { background:#f9fafb; border-color:#3b82f6; color:#3b82f6; }
+    .form-input { width:100%; border:1px solid #e5e7eb; border-radius:0.5rem; padding:0.6rem 0.9rem; font-size:0.9rem; outline:none; transition:border 0.2s; font-family:inherit; }
+    .form-input:focus { border-color:#3b82f6; box-shadow:0 0 0 3px rgba(59,130,246,0.1); }
+    .form-label { display:block; font-size:0.8rem; font-weight:600; color:#374151; margin-bottom:0.4rem; }
+    .card { background:white; border-radius:1rem; padding:1.5rem; box-shadow:0 1px 8px rgba(0,0,0,0.07); }
+    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:100; display:flex; align-items:center; justify-content:center; padding:1rem; }
+    .modal-box { background:white; border-radius:1.25rem; max-width:680px; width:100%; max-height:90vh; overflow-y:auto; box-shadow:0 24px 64px rgba(0,0,0,0.3); }
+    .table-row { display:grid; align-items:center; gap:0.75rem; padding:0.85rem 1rem; border-bottom:1px solid #f1f5f9; }
+    .table-row:last-child { border-bottom:none; }
+    .table-row:hover { background:#f8fafc; }
+    .badge { display:inline-flex; align-items:center; padding:0.2rem 0.6rem; border-radius:9999px; font-size:0.72rem; font-weight:600; }
+    .badge-green { background:#dcfce7; color:#15803d; }
+    .badge-blue { background:#dbeafe; color:#1d4ed8; }
+    .badge-orange { background:#ffedd5; color:#c2410c; }
+    .avatar-sm { width:38px; height:38px; border-radius:50%; object-fit:cover; background:#e5e7eb; display:flex; align-items:center; justify-content:center; flex-shrink:0; overflow:hidden; }
+    .upload-zone { border:2px dashed #d1d5db; border-radius:0.75rem; padding:2rem; text-align:center; cursor:pointer; transition:all 0.2s; }
+    .upload-zone:hover { border-color:#3b82f6; background:#f0f9ff; }
+    .photo-thumb { position:relative; border-radius:0.5rem; overflow:hidden; aspect-ratio:1; }
+    .photo-thumb img { width:100%; height:100%; object-fit:cover; }
+    .photo-thumb .del-btn { position:absolute; top:4px; right:4px; background:rgba(239,68,68,0.9); color:white; border:none; border-radius:50%; width:22px; height:22px; font-size:12px; cursor:pointer; display:none; align-items:center; justify-content:center; }
+    .photo-thumb:hover .del-btn { display:flex; }
+    #toast { position:fixed; bottom:1.5rem; right:1.5rem; z-index:200; padding:0.85rem 1.5rem; border-radius:0.75rem; color:white; font-weight:600; font-size:0.9rem; opacity:0; transform:translateY(20px); transition:all 0.3s; pointer-events:none; }
+    #toast.show { opacity:1; transform:translateY(0); }
+    #toast.success { background:#22c55e; }
+    #toast.error { background:#ef4444; }
+    textarea.form-input { resize:vertical; min-height:120px; }
+    .exec-row { display:grid; grid-template-columns:40px 1fr 1fr 1fr auto; align-items:center; gap:0.75rem; padding:0.75rem 1rem; border-bottom:1px solid #f1f5f9; }
+    .exec-row:hover { background:#f8fafc; }
+    @media(max-width:768px) {
+      #sidebar { width:64px; }
+      .sidebar-label { display:none; }
+      .sidebar-link { justify-content:center; padding:0.75rem; }
+      #mainArea { margin-left:64px; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 min-h-screen">
+
+<!-- ═══════════════════ LOGIN SCREEN ═══════════════════ -->
+<div id="loginScreen" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 p-4">
+  <div class="w-full max-w-sm">
+    <div class="text-center mb-8">
+      <img src="logo.png" alt="RCSC" class="h-20 w-20 mx-auto mb-4 object-contain" style="filter:drop-shadow(0 0 20px rgba(59,130,246,0.4))"/>
+      <h1 style="font-family:'Bebas Neue',sans-serif;font-size:2.5rem;letter-spacing:0.15em;color:white">RCSC</h1>
+      <p class="text-slate-400 text-sm mt-1">Admin Dashboard</p>
+    </div>
+    <div class="bg-white/10 backdrop-blur border border-white/10 rounded-2xl p-8">
+      <div class="mb-5">
+        <label class="block text-slate-300 text-sm font-semibold mb-2">Password</label>
+        <input id="pwdInput" type="password" placeholder="Enter admin password" class="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-slate-500 outline-none focus:border-blue-400 transition" onkeydown="if(event.key==='Enter')doLogin()" />
+      </div>
+      <button onclick="doLogin()" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 rounded-xl transition text-base">Sign In</button>
+      <p id="loginErr" class="text-red-400 text-sm text-center mt-3 hidden">Incorrect password. Try again.</p>
+    </div>
+    <p class="text-center text-slate-600 text-xs mt-6">Default password: <span class="text-slate-400 font-mono">rcsc@2026</span></p>
+  </div>
+</div>
+
+<!-- ═══════════════════ DASHBOARD ═══════════════════ -->
+<div id="dashboard" class="hidden min-h-screen flex">
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar" class="fixed left-0 top-0 h-full w-56 bg-slate-900 flex flex-col z-30 transition-all">
+    <!-- Logo -->
+    <div class="flex items-center gap-3 px-5 py-5 border-b border-white/10">
+      <img src="logo.png" alt="RCSC" class="h-8 w-8 object-contain flex-shrink-0" />
+      <span class="sidebar-label text-white font-bold text-lg" style="font-family:'Bebas Neue',sans-serif;letter-spacing:0.1em">RCSC</span>
+    </div>
+
+    <!-- Nav -->
+    <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+      <div class="sidebar-label text-xs text-slate-600 uppercase tracking-widest px-3 pb-2 font-semibold">Content</div>
+      <div class="sidebar-link active" onclick="navigate('events')" id="nav-events">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        <span class="sidebar-label">Events</span>
+      </div>
+      <div class="sidebar-link" onclick="navigate('gallery')" id="nav-gallery">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        <span class="sidebar-label">Gallery</span>
+      </div>
+      <div class="sidebar-link" onclick="navigate('executives')" id="nav-executives">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        <span class="sidebar-label">Executives</span>
+      </div>
+      <div class="sidebar-link" onclick="navigate('blog')" id="nav-blog">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+        <span class="sidebar-label">Blog</span>
+      </div>
+      <div class="mt-4 pt-4 border-t border-white/10 sidebar-label"></div>
+      <div class="sidebar-link" onclick="navigate('settings')" id="nav-settings">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
+        <span class="sidebar-label">Settings</span>
+      </div>
+    </nav>
+
+    <!-- Bottom: logout + site link -->
+    <div class="px-3 py-4 border-t border-white/10 space-y-1">
+      <a href="index.html" target="_blank" class="sidebar-link text-sm">
+        <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+        <span class="sidebar-label">View Site</span>
+      </a>
+      <div class="sidebar-link text-sm" onclick="doLogout()">
+        <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        <span class="sidebar-label">Logout</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN AREA -->
+  <div id="mainArea" class="flex-1 ml-56 flex flex-col min-h-screen">
+
+    <!-- Top bar -->
+    <header class="bg-white border-b border-gray-100 px-8 py-4 flex items-center justify-between sticky top-0 z-20">
+      <div>
+        <h1 id="pageTitle" class="font-bold text-gray-900 text-xl">Events</h1>
+        <p id="pageSubtitle" class="text-gray-400 text-xs mt-0.5">Manage club events and competitions</p>
+      </div>
+      <button id="topAddBtn" onclick="openAddModal()" class="btn-primary">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+        <span id="topAddLabel">Add Event</span>
+      </button>
+    </header>
+
+    <!-- Content -->
+    <div class="flex-1 p-8">
+
+      <!-- ───── EVENTS ───── -->
+      <div id="sec-events" class="section active">
+        <div id="eventsList"></div>
+      </div>
+
+      <!-- ───── GALLERY ───── -->
+      <div id="sec-gallery" class="section">
+        <div id="albumGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 mb-8"></div>
+        <div id="albumView" class="hidden">
+          <div class="flex items-center gap-3 mb-6">
+            <button onclick="backToAlbums()" class="btn-secondary">← Back</button>
+            <h2 id="albumViewTitle" class="font-bold text-xl text-gray-900"></h2>
+          </div>
+          <div id="photoGrid" class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3 mb-6"></div>
+          <label class="upload-zone block cursor-pointer" for="photoUpload">
+            <svg class="w-10 h-10 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            <p class="text-gray-500 text-sm font-semibold">Click to add photos</p>
+            <p class="text-gray-400 text-xs mt-1">JPG, PNG, WEBP supported</p>
+            <input type="file" id="photoUpload" accept="image/*" multiple class="hidden" onchange="addPhotosToAlbum(this.files)" />
+          </label>
+        </div>
+      </div>
+
+      <!-- ───── EXECUTIVES ───── -->
+      <div id="sec-executives" class="section">
+        <div class="card mb-6">
+          <div class="flex flex-wrap gap-4 items-end">
+            <div class="flex-1 min-w-48">
+              <label class="form-label">Session Year</label>
+              <input id="execYear" class="form-input" placeholder="e.g. 2025–2026" />
+            </div>
+            <div class="flex-1 min-w-48">
+              <label class="form-label">Principal Name</label>
+              <input id="principalName" class="form-input" placeholder="Principal's full name" />
+            </div>
+            <div class="flex-1 min-w-48">
+              <label class="form-label">Moderator Name</label>
+              <input id="moderatorName" class="form-input" placeholder="Club moderator's name" />
+            </div>
+            <button onclick="saveExecHeader()" class="btn-primary">Save Header</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-bold text-gray-900">Executive Members</h3>
+            <button onclick="openExecModal()" class="btn-primary">+ Add Member</button>
+          </div>
+          <!-- Table header -->
+          <div class="exec-row bg-gray-50 rounded-t-lg" style="font-size:0.75rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;">
+            <span>Photo</span><span>Name</span><span>Position</span><span>Department</span><span>Actions</span>
+          </div>
+          <div id="execList"></div>
+        </div>
+      </div>
+
+      <!-- ───── BLOG ───── -->
+      <div id="sec-blog" class="section">
+        <div id="blogList"></div>
+      </div>
+
+      <!-- ───── SETTINGS ───── -->
+      <div id="sec-settings" class="section">
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="card">
+            <h3 class="font-bold text-gray-900 mb-4">Change Password</h3>
+            <div class="space-y-3">
+              <div><label class="form-label">Current Password</label><input id="curPwd" type="password" class="form-input" /></div>
+              <div><label class="form-label">New Password</label><input id="newPwd" type="password" class="form-input" /></div>
+              <div><label class="form-label">Confirm New Password</label><input id="confirmPwd" type="password" class="form-input" /></div>
+              <button onclick="changePassword()" class="btn-primary w-full justify-center">Update Password</button>
+            </div>
+          </div>
+          <div class="card">
+            <h3 class="font-bold text-gray-900 mb-4">Club Information</h3>
+            <div class="space-y-3">
+              <div><label class="form-label">Club Name</label><input id="settingName" class="form-input" value="Rajshahi College Science Club" /></div>
+              <div><label class="form-label">Email</label><input id="settingEmail" class="form-input" value="rcsc.official@gmail.com" /></div>
+              <div><label class="form-label">Address</label><input id="settingAddress" class="form-input" value="Rajshahi College Rd, Rajshahi 6000" /></div>
+              <div><label class="form-label">Facebook URL</label><input id="settingFB" class="form-input" value="https://www.facebook.com/rajshahicollegescienceclub" /></div>
+              <div><label class="form-label">Instagram URL</label><input id="settingIG" class="form-input" value="https://www.instagram.com/rajshahi_college_science_club/" /></div>
+              <button onclick="saveSettings()" class="btn-primary w-full justify-center">Save Settings</button>
+            </div>
+          </div>
+        </div>
+        <div class="card mt-6">
+          <h3 class="font-bold text-gray-900 mb-2">Data Management</h3>
+          <p class="text-gray-500 text-sm mb-4">Export all dashboard data as a JSON backup, or reset everything to defaults.</p>
+          <div class="flex gap-3 flex-wrap">
+            <button onclick="exportData()" class="btn-secondary">⬇ Export Backup</button>
+            <button onclick="importDataPrompt()" class="btn-secondary">⬆ Import Backup</button>
+            <button onclick="resetAll()" class="btn-danger">🗑 Reset All Data</button>
+          </div>
+          <input type="file" id="importFile" accept=".json" class="hidden" onchange="importData(this)" />
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /mainArea -->
+</div><!-- /dashboard -->
+
+<!-- ═══════════════════ MODAL ═══════════════════ -->
+<div id="modalOverlay" class="modal-overlay hidden" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+      <h2 id="modalTitle" class="font-bold text-gray-900 text-lg"></h2>
+      <button onclick="closeModal()" class="text-gray-400 hover:text-gray-700 text-2xl leading-none">&times;</button>
+    </div>
+    <div id="modalBody" class="px-6 py-5"></div>
+    <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-100">
+      <button onclick="closeModal()" class="btn-secondary">Cancel</button>
+      <button id="modalSaveBtn" class="btn-primary">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════════
+function getPassword() { return localStorage.getItem('rcsc_password') || 'rcsc@2026'; }
+
+function doLogin() {
+  const pwd = document.getElementById('pwdInput').value;
+  if (pwd === getPassword()) {
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('dashboard').classList.remove('hidden');
+    initDashboard();
+  } else {
+    document.getElementById('loginErr').classList.remove('hidden');
+    document.getElementById('pwdInput').value = '';
+  }
+}
+
+function doLogout() {
+  document.getElementById('dashboard').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('pwdInput').value = '';
+  document.getElementById('loginErr').classList.add('hidden');
+}
+
+function changePassword() {
+  const cur = document.getElementById('curPwd').value;
+  const nw  = document.getElementById('newPwd').value;
+  const cf  = document.getElementById('confirmPwd').value;
+  if (cur !== getPassword()) { showToast('Current password is incorrect.', 'error'); return; }
+  if (!nw || nw.length < 4)  { showToast('New password must be at least 4 characters.', 'error'); return; }
+  if (nw !== cf)              { showToast('Passwords do not match.', 'error'); return; }
+  localStorage.setItem('rcsc_password', nw);
+  document.getElementById('curPwd').value = '';
+  document.getElementById('newPwd').value = '';
+  document.getElementById('confirmPwd').value = '';
+  showToast('Password updated!', 'success');
+}
+
+// ══════════════════════════════════════════════
+// DATA HELPERS
+// ══════════════════════════════════════════════
+const KEYS = { events:'rcsc_events', gallery:'rcsc_gallery', exec:'rcsc_exec', blog:'rcsc_blog', settings:'rcsc_settings' };
+
+const SEED_EVENTS = [
+  { id:'chess-hub-2026', title:'RCSC Chess Hub', subtitle:'1st Intra-City Online Chess Tournament', description:'Swiss system blitz chess (5+3). Qualifier on 20 Nov, Finals on 21 Nov — both at 9:00 PM on lichess.org. Top 5 leaderboard published on Facebook.', date:'2026-11-20', deadline:'2026-11-19', regLink:'https://forms.gle/KhpkwTJvrFMR8eQY8', detailPage:'chess-hub.html', banner:'banner-chess-hq.jpg', tags:'Chess, Free Entry, 20–21 Nov', status:'upcoming' },
+  { id:'devsprint-2026',  title:'RCSC DevSprint', subtitle:'2-Week App Building Competition', description:'A 2-week app-building competition where teams design, develop, and ship a complete mobile or web application from scratch.', date:'TBA', deadline:'TBA', regLink:'', detailPage:'devsprint.html', banner:'banner-devsprint-hq.jpg', tags:'Competition, App Building, 2 Weeks', status:'upcoming' },
+  { id:'science-fest-10', title:'10th National Science Fest', subtitle:'Rajshahi College National Science Fest', description:'The grandest science festival in Rajshahi returns for its 10th consecutive year — with olympiads, project exhibitions, and more.', date:'TBA', deadline:'TBA', regLink:'', detailPage:'science-fest.html', banner:'', tags:'Flagship Event, National, Multi-Science', status:'upcoming' }
+];
+
+const SEED_EXEC = {
+  year:'2025–2026', principal:'Principal Name', moderator:'Moderator Name',
+  members: [
+    { id:'e1', name:'Member Name', position:'President', dept:'Administration', photo:'' },
+    { id:'e2', name:'Member Name', position:'Vice President', dept:'Administration', photo:'' },
+    { id:'e3', name:'Member Name', position:'General Secretary', dept:'Administration', photo:'' },
+    { id:'e4', name:'Member Name', position:'Treasurer', dept:'Finance', photo:'' },
+    { id:'e5', name:'Member Name', position:'Joint Secretary', dept:'Administration', photo:'' },
+    { id:'e6', name:'Member Name', position:'Head of Department', dept:'Science & Technology', photo:'' },
+    { id:'e7', name:'Member Name', position:'Head of Department', dept:'Research & Publication', photo:'' },
+    { id:'e8', name:'Member Name', position:'Head of Department', dept:'Events & Logistics', photo:'' },
+    { id:'e9', name:'Member Name', position:'Head of Department', dept:'Media & Communications', photo:'' },
+    { id:'e10', name:'Member Name', position:'Head of Department', dept:'Outreach', photo:'' },
+    { id:'e11', name:'Member Name', position:'Executive Member', dept:'Science & Technology', photo:'' },
+    { id:'e12', name:'Member Name', position:'Executive Member', dept:'Events & Logistics', photo:'' }
+  ]
+};
+
+const SEED_BLOG = [
+  { id:'b1', title:'Why C++ Outpaces Python In Speed', excerpt:'Compiled vs interpreted, memory management, and hardware proximity — a deep dive into why C++ consistently runs circles around Python.', content:'Compiled vs interpreted, memory management, and hardware proximity — a deep dive into why C++ consistently runs circles around Python in raw computational performance.', author:'RCSC Admin', date:'2026-10-04', thumbnail:'https://res.cloudinary.com/dqnhzfqbu/image/upload/v1791125317/content/02d5baf3-dbc0-4a97-a975-3c79d19aefd9.jpg', tags:'Programming, Computer Science' },
+  { id:'b2', title:'The Fragile Art of Attention in the Digital Age', excerpt:'In a world of infinite scroll and push notifications, our capacity for deep focus is eroding.', content:'In a world of infinite scroll and push notifications, our capacity for deep focus is eroding. What does neuroscience tell us — and how do we fight back?', author:'RCSC Admin', date:'2026-09-26', thumbnail:'https://res.cloudinary.com/dqnhzfqbu/image/upload/v1790947795/content/ed73d0aa-8ed5-4bfc-b06d-acf11efca7dd.jpg', tags:'Neuroscience, Psychology' },
+  { id:'b3', title:'Introducing Our Very Own Blog Site', excerpt:'After months of development, the RCSC blog is officially live.', content:'After months of development, the RCSC blog is officially live. This platform will serve as a space for student voices, science articles, and club announcements.', author:'RCSC Team', date:'2026-09-19', thumbnail:'logo.png', tags:'Announcement, RCSC' },
+  { id:'b4', title:'DNA Hard Drives', excerpt:'Scientists can now encode entire libraries of data into strands of DNA.', content:'Scientists can now encode entire libraries of data into strands of DNA. Could biology be the future of information storage?', author:'RCSC Admin', date:'2026-09-15', thumbnail:'https://res.cloudinary.com/dqnhzfqbu/image/upload/v1790440561/content/4eadcaf4-7843-4bdd-a0e7-18de4c4c0e3c.jpg', tags:'Biotechnology, Data Storage' },
+  { id:'b5', title:'The False Alarm That Could Have Started WWIII', excerpt:'In 1983, one Soviet officer chose not to report what looked like a nuclear attack.', content:'In 1983, one Soviet officer chose not to report what looked like a nuclear attack. His decision may have saved the world.', author:'RCSC Admin', date:'2026-09-10', thumbnail:'https://res.cloudinary.com/dqnhzfqbu/image/upload/v1790440774/content/f2aacf9a-d6c9-456e-96e6-5ff93a3e62f1.jpg', tags:'History, Cold War' }
+];
+
+function getD(key, seed) {
+  const s = localStorage.getItem(key);
+  if (!s) return JSON.parse(JSON.stringify(seed));
+  try { return JSON.parse(s); } catch(e) { return JSON.parse(JSON.stringify(seed)); }
+}
+function setD(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+
+// ══════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════
+const NAV_CONFIG = {
+  events:     { title:'Events', subtitle:'Manage club events and competitions', addLabel:'Add Event' },
+  gallery:    { title:'Gallery', subtitle:'Manage photo albums by event', addLabel:'Add Album' },
+  executives: { title:'Executives', subtitle:'Update the executive committee', addLabel:'Add Member' },
+  blog:       { title:'Blog', subtitle:'Write and manage blog posts', addLabel:'New Post' },
+  settings:   { title:'Settings', subtitle:'Passwords, club info, data management', addLabel:null }
+};
+
+let currentSection = 'events';
+
+function navigate(sec) {
+  currentSection = sec;
+  document.querySelectorAll('.sidebar-link').forEach(el => el.classList.remove('active'));
+  document.getElementById('nav-' + sec).classList.add('active');
+  document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+  document.getElementById('sec-' + sec).classList.add('active');
+  const cfg = NAV_CONFIG[sec];
+  document.getElementById('pageTitle').textContent = cfg.title;
+  document.getElementById('pageSubtitle').textContent = cfg.subtitle;
+  const addBtn = document.getElementById('topAddBtn');
+  if (cfg.addLabel) {
+    addBtn.classList.remove('hidden');
+    document.getElementById('topAddLabel').textContent = cfg.addLabel;
+  } else {
+    addBtn.classList.add('hidden');
+  }
+  renderSection(sec);
+}
+
+function renderSection(sec) {
+  if (sec === 'events')     renderEvents();
+  if (sec === 'gallery')    renderAlbums();
+  if (sec === 'executives') renderExec();
+  if (sec === 'blog')       renderBlog();
+  if (sec === 'settings')   loadSettings();
+}
+
+function openAddModal() {
+  if (currentSection === 'events')     openEventModal();
+  if (currentSection === 'gallery')    openAlbumModal();
+  if (currentSection === 'executives') openExecModal();
+  if (currentSection === 'blog')       openBlogModal();
+}
+
+// ══════════════════════════════════════════════
+// EVENTS
+// ══════════════════════════════════════════════
+function renderEvents() {
+  const events = getD(KEYS.events, SEED_EVENTS);
+  const container = document.getElementById('eventsList');
+  if (!events.length) { container.innerHTML = '<div class="card text-center text-gray-400 py-12">No events yet. Click "Add Event" to create one.</div>'; return; }
+  container.innerHTML = events.map(ev => `
+    <div class="card mb-4 flex gap-4 items-start">
+      <div class="flex-shrink-0 w-24 h-16 rounded-lg overflow-hidden bg-gray-100">
+        ${ev.banner ? `<img src="${ev.banner}" class="w-full h-full object-cover" onerror="this.style.display='none'" />` : '<div class="w-full h-full flex items-center justify-center text-2xl">📅</div>'}
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex flex-wrap items-start justify-between gap-2">
+          <div>
+            <h3 class="font-bold text-gray-900">${esc(ev.title)}</h3>
+            <p class="text-gray-500 text-sm">${esc(ev.subtitle)}</p>
+          </div>
+          <div class="flex gap-2 flex-wrap items-center">
+            <span class="badge ${ev.status==='upcoming'?'badge-green':'badge-blue'}">${ev.status}</span>
+            ${ev.date && ev.date!=='TBA' ? `<span class="badge badge-blue">📅 ${ev.date}</span>` : ''}
+            ${ev.deadline && ev.deadline!=='TBA' ? `<span class="badge badge-orange">⏰ Deadline: ${ev.deadline}</span>` : ''}
+          </div>
+        </div>
+        <p class="text-gray-500 text-xs mt-1 line-clamp-2">${esc(ev.description)}</p>
+        ${ev.regLink ? `<a href="${ev.regLink}" target="_blank" class="text-blue-500 text-xs mt-1 inline-block hover:underline">🔗 Registration Link</a>` : ''}
+      </div>
+      <div class="flex gap-2 flex-shrink-0">
+        <button onclick="openEventModal('${ev.id}')" class="btn-secondary">Edit</button>
+        <button onclick="deleteEvent('${ev.id}')" class="btn-danger">Del</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openEventModal(id) {
+  const events = getD(KEYS.events, SEED_EVENTS);
+  const ev = id ? events.find(e => e.id === id) : null;
+  document.getElementById('modalTitle').textContent = ev ? 'Edit Event' : 'Add New Event';
+  document.getElementById('modalBody').innerHTML = `
+    <div class="space-y-4">
+      <div class="grid grid-cols-2 gap-4">
+        <div><label class="form-label">Event Title *</label><input id="ev_title" class="form-input" value="${esc(ev?.title||'')}" placeholder="e.g. RCSC Chess Hub" /></div>
+        <div><label class="form-label">Subtitle</label><input id="ev_subtitle" class="form-input" value="${esc(ev?.subtitle||'')}" placeholder="Short subtitle" /></div>
+      </div>
+      <div><label class="form-label">Description *</label><textarea id="ev_desc" class="form-input">${esc(ev?.description||'')}</textarea></div>
+      <div class="grid grid-cols-2 gap-4">
+        <div><label class="form-label">Event Date</label><input id="ev_date" class="form-input" value="${esc(ev?.date||'')}" placeholder="YYYY-MM-DD or TBA" /></div>
+        <div><label class="form-label">Registration Deadline</label><input id="ev_deadline" class="form-input" value="${esc(ev?.deadline||'')}" placeholder="YYYY-MM-DD or TBA" /></div>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div><label class="form-label">Registration Link</label><input id="ev_reglink" class="form-input" value="${esc(ev?.regLink||'')}" placeholder="https://forms.gle/..." /></div>
+        <div><label class="form-label">Detail Page (HTML file)</label><input id="ev_page" class="form-input" value="${esc(ev?.detailPage||'')}" placeholder="chess-hub.html" /></div>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div><label class="form-label">Banner Image (filename or URL)</label><input id="ev_banner" class="form-input" value="${esc(ev?.banner||'')}" placeholder="banner-chess.jpg" /></div>
+        <div><label class="form-label">Tags (comma-separated)</label><input id="ev_tags" class="form-input" value="${esc(ev?.tags||'')}" placeholder="Chess, Free Entry" /></div>
+      </div>
+      <div><label class="form-label">Status</label>
+        <select id="ev_status" class="form-input">
+          <option value="upcoming" ${ev?.status==='upcoming'?'selected':''}>Upcoming</option>
+          <option value="past" ${ev?.status==='past'?'selected':''}>Past Event</option>
+        </select>
+      </div>
+    </div>`;
+  document.getElementById('modalSaveBtn').onclick = () => saveEvent(id);
+  document.getElementById('modalOverlay').classList.remove('hidden');
+}
+
+function saveEvent(id) {
+  const title = document.getElementById('ev_title').value.trim();
+  if (!title) { showToast('Event title is required.', 'error'); return; }
+  const events = getD(KEYS.events, SEED_EVENTS);
+  const data = {
+    id: id || uid(), title,
+    subtitle:    document.getElementById('ev_subtitle').value.trim(),
+    description: document.getElementById('ev_desc').value.trim(),
+    date:        document.getElementById('ev_date').value.trim() || 'TBA',
+    deadline:    document.getElementById('ev_deadline').value.trim() || 'TBA',
+    regLink:     document.getElementById('ev_reglink').value.trim(),
+    detailPage:  document.getElementById('ev_page').value.trim(),
+    banner:      document.getElementById('ev_banner').value.trim(),
+    tags:        document.getElementById('ev_tags').value.trim(),
+    status:      document.getElementById('ev_status').value
+  };
+  if (id) { const idx = events.findIndex(e => e.id === id); if (idx !== -1) events[idx] = data; }
+  else events.unshift(data);
+  setD(KEYS.events, events);
+  closeModal(); renderEvents();
+  showToast(id ? 'Event updated!' : 'Event added!', 'success');
+}
+
+function deleteEvent(id) {
+  if (!confirm('Delete this event?')) return;
+  const events = getD(KEYS.events, SEED_EVENTS).filter(e => e.id !== id);
+  setD(KEYS.events, events); renderEvents();
+  showToast('Event deleted.', 'success');
+}
+
+// ══════════════════════════════════════════════
+// GALLERY
+// ══════════════════════════════════════════════
+let currentAlbumId = null;
+
+function renderAlbums() {
+  const gallery = getD(KEYS.gallery, []);
+  document.getElementById('albumGrid').classList.remove('hidden');
+  document.getElementById('albumView').classList.add('hidden');
+  const grid = document.getElementById('albumGrid');
+  if (!gallery.length) { grid.innerHTML = '<div class="col-span-full card text-center text-gray-400 py-12">No albums yet. Click "Add Album" to create one.</div>'; return; }
+  grid.innerHTML = gallery.map(album => {
+    const thumb = album.photos && album.photos.length ? album.photos[0] : null;
+    return `<div class="card cursor-pointer hover:shadow-md transition group" onclick="openAlbum('${album.id}')">
+      <div class="aspect-square rounded-lg overflow-hidden bg-gray-100 mb-3">
+        ${thumb ? `<img src="${thumb}" class="w-full h-full object-cover group-hover:scale-105 transition" />` : '<div class="w-full h-full flex items-center justify-center text-4xl">🖼</div>'}
+      </div>
+      <div class="flex items-start justify-between">
+        <div>
+          <div class="font-bold text-gray-900 text-sm">${esc(album.name)}</div>
+          <div class="text-gray-400 text-xs mt-0.5">${album.photos?.length||0} photos</div>
+        </div>
+        <button onclick="event.stopPropagation();deleteAlbum('${album.id}')" class="btn-danger text-xs px-2 py-1 opacity-0 group-hover:opacity-100 transition">Del</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openAlbum(id) {
+  currentAlbumId = id;
+  const gallery = getD(KEYS.gallery, []);
+  const album = gallery.find(a => a.id === id);
+  if (!album) return;
+  document.getElementById('albumGrid').classList.add('hidden');
+  document.getElementById('albumView').classList.remove('hidden');
+  document.getElementById('albumViewTitle').textContent = album.name;
+  renderPhotos(album);
+}
+
+function renderPhotos(album) {
+  const grid = document.getElementById('photoGrid');
+  if (!album.photos?.length) { grid.innerHTML = ''; return; }
+  grid.innerHTML = album.photos.map((src, i) => `
+    <div class="photo-thumb">
+      <img src="${src}" loading="lazy" />
+      <button class="del-btn" onclick="deletePhoto(${i})">✕</button>
+    </div>`).join('');
+}
+
+function backToAlbums() { currentAlbumId = null; renderAlbums(); }
+
+function openAlbumModal() {
+  document.getElementById('modalTitle').textContent = 'New Photo Album';
+  document.getElementById('modalBody').innerHTML = `<div class="space-y-3">
+    <div><label class="form-label">Album Name *</label><input id="albumName" class="form-input" placeholder="e.g. Chess Tournament 2026" /></div>
+    <div><label class="form-label">Event / Category</label><input id="albumEvent" class="form-input" placeholder="e.g. RCSC Chess Hub" /></div>
+  </div>`;
+  document.getElementById('modalSaveBtn').onclick = () => {
+    const name = document.getElementById('albumName').value.trim();
+    if (!name) { showToast('Album name required.', 'error'); return; }
+    const gallery = getD(KEYS.gallery, []);
+    gallery.push({ id: uid(), name, event: document.getElementById('albumEvent').value.trim(), photos: [] });
+    setD(KEYS.gallery, gallery); closeModal(); renderAlbums();
+    showToast('Album created!', 'success');
+  };
+  document.getElementById('modalOverlay').classList.remove('hidden');
+}
+
+function deleteAlbum(id) {
+  if (!confirm('Delete this album and all its photos?')) return;
+  const gallery = getD(KEYS.gallery, []).filter(a => a.id !== id);
+  setD(KEYS.gallery, gallery); renderAlbums();
+  showToast('Album deleted.', 'success');
+}
+
+async function addPhotosToAlbum(files) {
+  if (!currentAlbumId || !files.length) return;
+  const gallery = getD(KEYS.gallery, []);
+  const album = gallery.find(a => a.id === currentAlbumId);
+  if (!album) return;
+  showToast('Uploading photos...', 'success');
+  for (const file of files) {
+    try {
+      const dataURL = await compressImage(file, 1200);
+      album.photos.push(dataURL);
+    } catch(e) {}
+  }
+  setD(KEYS.gallery, gallery);
+  renderPhotos(album);
+  document.getElementById('photoUpload').value = '';
+  showToast(`${files.length} photo(s) added!`, 'success');
+}
+
+function deletePhoto(idx) {
+  if (!confirm('Delete this photo?')) return;
+  const gallery = getD(KEYS.gallery, []);
+  const album = gallery.find(a => a.id === currentAlbumId);
+  if (!album) return;
+  album.photos.splice(idx, 1);
+  setD(KEYS.gallery, gallery); renderPhotos(album);
+  showToast('Photo deleted.', 'success');
+}
+
+// ══════════════════════════════════════════════
+// EXECUTIVES
+// ══════════════════════════════════════════════
+function renderExec() {
+  const data = getD(KEYS.exec, SEED_EXEC);
+  document.getElementById('execYear').value = data.year || '';
+  document.getElementById('principalName').value = data.principal || '';
+  document.getElementById('moderatorName').value = data.moderator || '';
+  const list = document.getElementById('execList');
+  list.innerHTML = (data.members||[]).map((m,i) => `
+    <div class="exec-row">
+      <div class="avatar-sm">${m.photo ? `<img src="${m.photo}" class="w-full h-full object-cover" />` : `<svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>`}</div>
+      <span class="font-semibold text-gray-900 text-sm">${esc(m.name)}</span>
+      <span class="text-blue-600 text-sm">${esc(m.position)}</span>
+      <span class="text-gray-400 text-xs">${esc(m.dept)}</span>
+      <div class="flex gap-2">
+        <button onclick="openExecModal('${m.id}')" class="btn-secondary">Edit</button>
+        <button onclick="deleteExecMember('${m.id}')" class="btn-danger">Del</button>
+      </div>
+    </div>`).join('');
+}
+
+function saveExecHeader() {
+  const data = getD(KEYS.exec, SEED_EXEC);
+  data.year      = document.getElementById('execYear').value.trim();
+  data.principal = document.getElementById('principalName').value.trim();
+  data.moderator = document.getElementById('moderatorName').value.trim();
+  setD(KEYS.exec, data); showToast('Header saved!', 'success');
+}
+
+function openExecModal(id) {
+  const data    = getD(KEYS.exec, SEED_EXEC);
+  const member  = id ? data.members.find(m => m.id === id) : null;
+  document.getElementById('modalTitle').textContent = member ? 'Edit Executive Member' : 'Add Executive Member';
+  document.getElementById('modalBody').innerHTML = `<div class="space-y-4">
+    <div class="grid grid-cols-2 gap-4">
+      <div><label class="form-label">Full Name *</label><input id="ex_name" class="form-input" value="${esc(member?.name||'')}" placeholder="Member's name" /></div>
+      <div><label class="form-label">Position *</label><input id="ex_pos" class="form-input" value="${esc(member?.position||'')}" placeholder="e.g. President" /></div>
+    </div>
+    <div><label class="form-label">Department</label><input id="ex_dept" class="form-input" value="${esc(member?.dept||'')}" placeholder="e.g. Administration" /></div>
+    <div>
+      <label class="form-label">Photo</label>
+      <div class="flex items-center gap-4">
+        <div id="photoPreview" class="w-16 h-16 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
+          ${member?.photo ? `<img src="${member.photo}" class="w-full h-full object-cover" />` : '<span class="text-2xl">👤</span>'}
+        </div>
+        <label class="btn-secondary cursor-pointer">Upload Photo <input type="file" accept="image/*" class="hidden" onchange="previewExecPhoto(this)" /></label>
+      </div>
+      <input type="hidden" id="ex_photo" value="${member?.photo||''}" />
+    </div>
+  </div>`;
+  document.getElementById('modalSaveBtn').onclick = () => saveExecMember(id);
+  document.getElementById('modalOverlay').classList.remove('hidden');
+}
+
+async function previewExecPhoto(input) {
+  if (!input.files[0]) return;
+  const dataURL = await compressImage(input.files[0], 400);
+  document.getElementById('ex_photo').value = dataURL;
+  document.getElementById('photoPreview').innerHTML = `<img src="${dataURL}" class="w-full h-full object-cover" />`;
+}
+
+function saveExecMember(id) {
+  const name = document.getElementById('ex_name').value.trim();
+  if (!name) { showToast('Name is required.', 'error'); return; }
+  const data = getD(KEYS.exec, SEED_EXEC);
+  const memberData = { id: id || uid(), name, position: document.getElementById('ex_pos').value.trim(), dept: document.getElementById('ex_dept').value.trim(), photo: document.getElementById('ex_photo').value };
+  if (id) { const idx = data.members.findIndex(m => m.id === id); if (idx !== -1) data.members[idx] = memberData; }
+  else data.members.push(memberData);
+  setD(KEYS.exec, data); closeModal(); renderExec();
+  showToast(id ? 'Member updated!' : 'Member added!', 'success');
+}
+
+function deleteExecMember(id) {
+  if (!confirm('Remove this executive member?')) return;
+  const data = getD(KEYS.exec, SEED_EXEC);
+  data.members = data.members.filter(m => m.id !== id);
+  setD(KEYS.exec, data); renderExec();
+  showToast('Member removed.', 'success');
+}
+
+// ══════════════════════════════════════════════
+// BLOG
+// ══════════════════════════════════════════════
+function renderBlog() {
+  const posts = getD(KEYS.blog, SEED_BLOG);
+  const container = document.getElementById('blogList');
+  if (!posts.length) { container.innerHTML = '<div class="card text-center text-gray-400 py-12">No posts yet. Click "New Post" to write one.</div>'; return; }
+  container.innerHTML = posts.map(p => `
+    <div class="card mb-4 flex gap-4 items-start">
+      <div class="flex-shrink-0 w-20 h-16 rounded-lg overflow-hidden bg-gray-100">
+        ${p.thumbnail ? `<img src="${p.thumbnail}" class="w-full h-full object-cover" onerror="this.style.opacity=0" />` : ''}
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex flex-wrap gap-2 mb-1">
+          ${(p.tags||'').split(',').map(t => `<span class="badge badge-blue">${esc(t.trim())}</span>`).join('')}
+        </div>
+        <h3 class="font-bold text-gray-900">${esc(p.title)}</h3>
+        <p class="text-gray-500 text-xs mt-0.5 line-clamp-2">${esc(p.excerpt)}</p>
+        <p class="text-gray-400 text-xs mt-1">By ${esc(p.author)} &bull; ${esc(p.date)}</p>
+      </div>
+      <div class="flex gap-2 flex-shrink-0">
+        <button onclick="openBlogModal('${p.id}')" class="btn-secondary">Edit</button>
+        <button onclick="deletePost('${p.id}')" class="btn-danger">Del</button>
+      </div>
+    </div>`).join('');
+}
+
+function openBlogModal(id) {
+  const posts = getD(KEYS.blog, SEED_BLOG);
+  const post  = id ? posts.find(p => p.id === id) : null;
+  document.getElementById('modalTitle').textContent = post ? 'Edit Blog Post' : 'New Blog Post';
+  document.getElementById('modalBody').innerHTML = `<div class="space-y-4">
+    <div><label class="form-label">Title *</label><input id="bl_title" class="form-input" value="${esc(post?.title||'')}" placeholder="Post title" /></div>
+    <div><label class="form-label">Excerpt (shown on listing)</label><textarea id="bl_excerpt" class="form-input" style="min-height:70px">${esc(post?.excerpt||'')}</textarea></div>
+    <div><label class="form-label">Full Content</label><textarea id="bl_content" class="form-input" style="min-height:200px">${esc(post?.content||'')}</textarea></div>
+    <div class="grid grid-cols-2 gap-4">
+      <div><label class="form-label">Author</label><input id="bl_author" class="form-input" value="${esc(post?.author||'RCSC Team')}" /></div>
+      <div><label class="form-label">Date</label><input id="bl_date" type="date" class="form-input" value="${post?.date||new Date().toISOString().slice(0,10)}" /></div>
+    </div>
+    <div><label class="form-label">Tags (comma-separated)</label><input id="bl_tags" class="form-input" value="${esc(post?.tags||'')}" placeholder="Science, Technology" /></div>
+    <div>
+      <label class="form-label">Thumbnail</label>
+      <div class="flex items-center gap-4 mt-1">
+        <div id="blogThumbPreview" class="w-20 h-16 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center text-xs text-gray-400">
+          ${post?.thumbnail ? `<img src="${post.thumbnail}" class="w-full h-full object-cover" />` : 'No image'}
+        </div>
+        <div class="flex gap-2 flex-col">
+          <label class="btn-secondary cursor-pointer text-xs">Upload Image <input type="file" accept="image/*" class="hidden" onchange="previewBlogThumb(this)" /></label>
+          <input id="bl_thumbUrl" class="form-input text-xs" value="${esc(post?.thumbnail&&!post.thumbnail.startsWith('data:')?post.thumbnail:'')}" placeholder="Or paste image URL" oninput="updateBlogThumbFromUrl(this.value)" />
+        </div>
+      </div>
+      <input type="hidden" id="bl_thumb" value="${esc(post?.thumbnail||'')}" />
+    </div>
+  </div>`;
+  document.getElementById('modalSaveBtn').onclick = () => saveBlogPost(id);
+  document.getElementById('modalOverlay').classList.remove('hidden');
+}
+
+async function previewBlogThumb(input) {
+  if (!input.files[0]) return;
+  const dataURL = await compressImage(input.files[0], 800);
+  document.getElementById('bl_thumb').value = dataURL;
+  document.getElementById('bl_thumbUrl').value = '';
+  document.getElementById('blogThumbPreview').innerHTML = `<img src="${dataURL}" class="w-full h-full object-cover" />`;
+}
+
+function updateBlogThumbFromUrl(url) {
+  document.getElementById('bl_thumb').value = url;
+  document.getElementById('blogThumbPreview').innerHTML = url ? `<img src="${url}" class="w-full h-full object-cover" onerror="this.style.opacity=0" />` : 'No image';
+}
+
+function saveBlogPost(id) {
+  const title = document.getElementById('bl_title').value.trim();
+  if (!title) { showToast('Title is required.', 'error'); return; }
+  const posts = getD(KEYS.blog, SEED_BLOG);
+  const data = {
+    id: id || uid(), title,
+    excerpt:   document.getElementById('bl_excerpt').value.trim(),
+    content:   document.getElementById('bl_content').value.trim(),
+    author:    document.getElementById('bl_author').value.trim() || 'RCSC Team',
+    date:      document.getElementById('bl_date').value,
+    tags:      document.getElementById('bl_tags').value.trim(),
+    thumbnail: document.getElementById('bl_thumb').value || document.getElementById('bl_thumbUrl').value
+  };
+  if (id) { const idx = posts.findIndex(p => p.id === id); if (idx !== -1) posts[idx] = data; }
+  else posts.unshift(data);
+  setD(KEYS.blog, posts); closeModal(); renderBlog();
+  showToast(id ? 'Post updated!' : 'Post published!', 'success');
+}
+
+function deletePost(id) {
+  if (!confirm('Delete this post?')) return;
+  const posts = getD(KEYS.blog, SEED_BLOG).filter(p => p.id !== id);
+  setD(KEYS.blog, posts); renderBlog();
+  showToast('Post deleted.', 'success');
+}
+
+// ══════════════════════════════════════════════
+// SETTINGS
+// ══════════════════════════════════════════════
+function loadSettings() {
+  const s = getD(KEYS.settings, {});
+  if (s.name)    document.getElementById('settingName').value    = s.name;
+  if (s.email)   document.getElementById('settingEmail').value   = s.email;
+  if (s.address) document.getElementById('settingAddress').value = s.address;
+  if (s.fb)      document.getElementById('settingFB').value      = s.fb;
+  if (s.ig)      document.getElementById('settingIG').value      = s.ig;
+}
+
+function saveSettings() {
+  setD(KEYS.settings, {
+    name:    document.getElementById('settingName').value.trim(),
+    email:   document.getElementById('settingEmail').value.trim(),
+    address: document.getElementById('settingAddress').value.trim(),
+    fb:      document.getElementById('settingFB').value.trim(),
+    ig:      document.getElementById('settingIG').value.trim()
+  });
+  showToast('Settings saved!', 'success');
+}
+
+function exportData() {
+  const backup = {};
+  Object.values(KEYS).forEach(k => { const v = localStorage.getItem(k); if (v) backup[k] = JSON.parse(v); });
+  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'rcsc-backup-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click(); showToast('Backup exported!', 'success');
+}
+
+function importDataPrompt() { document.getElementById('importFile').click(); }
+
+function importData(input) {
+  const file = input.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      Object.entries(data).forEach(([k,v]) => localStorage.setItem(k, JSON.stringify(v)));
+      showToast('Backup imported! Refreshing...', 'success');
+      setTimeout(() => location.reload(), 1200);
+    } catch(err) { showToast('Invalid backup file.', 'error'); }
+  };
+  reader.readAsText(file);
+}
+
+function resetAll() {
+  if (!confirm('This will DELETE all dashboard data and restore defaults. Are you sure?')) return;
+  if (!confirm('Last chance — this cannot be undone. Continue?')) return;
+  Object.values(KEYS).forEach(k => localStorage.removeItem(k));
+  showToast('Reset complete. Refreshing...', 'success');
+  setTimeout(() => location.reload(), 1200);
+}
+
+// ══════════════════════════════════════════════
+// MODAL HELPERS
+// ══════════════════════════════════════════════
+function closeModal() { document.getElementById('modalOverlay').classList.add('hidden'); }
+
+// ══════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════
+let toastTimeout;
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `show ${type}`;
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => { t.className = ''; }, 3000);
+}
+
+// ══════════════════════════════════════════════
+// IMAGE COMPRESSION
+// ══════════════════════════════════════════════
+function compressImage(file, maxW=1200) {
+  return new Promise(resolve => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    img.onload = () => {
+      const ratio = Math.min(maxW / img.width, 1);
+      canvas.width  = img.width  * ratio;
+      canvas.height = img.height * ratio;
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      resolve(canvas.toDataURL('image/jpeg', 0.78));
+    };
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+// ══════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════
+function esc(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+function initDashboard() {
+  navigate('events');
+}
+</script>
+</body>
+</html>
