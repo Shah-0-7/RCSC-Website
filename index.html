@@ -713,11 +713,9 @@
                 <span
                   class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-2.5 py-1 rounded-full border border-blue-500/40">Featured</span>
               </div>
-              <span class="font-bold text-xl leading-tight text-white">Why C++ Outpaces Python In Speed</span>
-              <p class="break-words text-xs leading-tight text-gray-300 sm:text-sm">Exploring the fundamental
-                differences in execution model, memory management, and compilation that make C++ dramatically faster
-                than Python for compute-heavy tasks.</p>
-              <div class="text-xs text-gray-400 mt-1">By Aryan Faruqui &bull; November 10, 2026</div>
+              <span id="latest-banner-title" class="font-bold text-xl leading-tight text-white">Introducing Our Very Own Blog Site</span>
+              <p id="latest-banner-excerpt" class="break-words text-xs leading-tight text-gray-300 sm:text-sm">After months of development, the RCSC blog is officially live. This platform will serve as a space for student voices, science articles, and club announcements.</p>
+              <div id="latest-banner-meta" class="text-xs text-gray-400 mt-1">By RCSC Team &bull; September 19, 2026</div>
             </div>
             <a target="_blank" href="blog.html"
               class="flex h-fit w-full items-center justify-center rounded-lg border border-blue-500/40 bg-blue-500/20 px-5 py-2.5 font-bold text-base text-white shadow-2xl transition-all hover:bg-blue-500 sm:w-36 sm:px-7 sm:text-lg self-center">
@@ -930,61 +928,12 @@
         <h1 class="text-[2.5rem] leading-none md:text-5xl">LATEST</h1>
         <h1 class="text-[2.5rem] leading-none text-blue-500 md:text-5xl">BLOGS</h1>
       </div>
-      <div class="mt-10 grid w-full grid-cols-1 gap-7 md:grid-cols-3">
-        <a class="group flex flex-col rounded-2xl bg-white p-5 shadow-md transition-all hover:-translate-y-0.5 hover:shadow-lg"
-          href="#">
-          <img
-            src="https://res.cloudinary.com/db0w7ngxm/image/upload/v1791125317/content/02d5baf3ad3d4e8f9ffd139f7193f3e5.jpg"
-            alt="C++ vs Python" class="mb-4 h-40 w-full rounded-xl object-cover" />
-          <div class="flex flex-wrap items-center gap-2">
-            <span class="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-600">technology</span>
-          </div>
-          <h2
-            class="mt-2 font-sans text-xl font-bold leading-snug text-gray-900 transition-colors group-hover:text-blue-600">
-            Why C++ Outpaces Python In Speed</h2>
-          <p class="mt-1 line-clamp-3 text-sm text-gray-600">Most of us choose Python as our first programming language.
-            But in the case of competitive programming where execution speed matters, Python really lags behind.</p>
-          <div class="mt-auto flex items-center gap-2 pt-3 text-xs text-gray-400">
-            <span>By RCSC Admin</span><span>&bull;</span><time>October 4, 2026</time>
-          </div>
-        </a>
-        <a class="group flex flex-col rounded-2xl bg-white p-5 shadow-md transition-all hover:-translate-y-0.5 hover:shadow-lg"
-          href="#">
-          <img
-            src="https://res.cloudinary.com/db0w7ngxm/image/upload/v1790947795/content/ed73d0aa35cb48c28eefc1d89c6b7201.jpg"
-            alt="Digital Attention" class="mb-4 h-40 w-full rounded-xl object-cover" />
-          <div class="flex flex-wrap items-center gap-2">
-            <span class="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-600">technology</span>
-          </div>
-          <h2
-            class="mt-2 font-sans text-xl font-bold leading-snug text-gray-900 transition-colors group-hover:text-blue-600">
-            The Fragile Art of Attention in the Digital Age</h2>
-          <p class="mt-1 line-clamp-3 text-sm text-gray-600">At 11:47 p.m., a student opens a textbook. The room is
-            quiet, the desk lamp is on, and the first page is waiting...</p>
-          <div class="mt-auto flex items-center gap-2 pt-3 text-xs text-gray-400">
-            <span>By RCSC Admin</span><span>&bull;</span><time>September 26, 2026</time>
-          </div>
-        </a>
-        <a class="group flex flex-col rounded-2xl bg-white p-5 shadow-md transition-all hover:-translate-y-0.5 hover:shadow-lg"
-          href="#">
-          <img src="logo.png" alt="Blog Launch" class="mb-4 h-40 w-full rounded-xl object-contain bg-gray-100" />
-          <div class="flex flex-wrap items-center gap-2">
-            <span class="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-600">news</span>
-            <span class="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-600">club</span>
-          </div>
-          <h2
-            class="mt-2 font-sans text-xl font-bold leading-snug text-gray-900 transition-colors group-hover:text-blue-600">
-            Introducing our very own blog site</h2>
-          <p class="mt-1 line-clamp-3 text-sm text-gray-600">The Rajshahi College Science Club (RCSC) has launched its
-            official blog dedicated to showcasing insightful articles and fresh perspectives on emerging technology.</p>
-          <div class="mt-auto flex items-center gap-2 pt-3 text-xs text-gray-400">
-            <span>By RCSC Team</span><span>&bull;</span><time>September 19, 2026</time>
-          </div>
-        </a>
+      <div id="latest-blogs-container" class="mt-10 grid w-full grid-cols-1 gap-7 md:grid-cols-3">
+        <!-- Rendered dynamically from Firestore / localStorage -->
       </div>
       <div class="mt-8 flex w-full justify-center">
-        <a class="rounded-xl bg-blue-500 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-100 hover:text-blue-500"
-          href="#">View all blogs</a>
+        <a class="rounded-xl bg-blue-500 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-600"
+          href="blog.html">View all blogs</a>
       </div>
     </section>
 
@@ -1219,6 +1168,69 @@
       </filter>
     </defs>
   </svg>
+  <!-- Firebase SDK Compat -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+
+  <script>
+    function renderLatestBlogs(posts) {
+      if (!posts || !posts.length) return;
+      // Sort latest first
+      const sorted = [...posts].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+
+      // 1. Update Latest Post Banner
+      const top1 = sorted[0];
+      const bannerTitle = document.getElementById('latest-banner-title');
+      const bannerExcerpt = document.getElementById('latest-banner-excerpt');
+      const bannerMeta = document.getElementById('latest-banner-meta');
+      if (bannerTitle) bannerTitle.textContent = top1.title || '';
+      if (bannerExcerpt) bannerExcerpt.textContent = top1.excerpt || top1.content || '';
+      if (bannerMeta) bannerMeta.innerHTML = `By ${top1.author || 'RCSC Team'} &bull; ${top1.date || ''}`;
+
+      // 2. Render up to 3 latest blogs in the LATEST BLOGS section
+      const top3 = sorted.slice(0, 3);
+      const grid = document.getElementById('latest-blogs-container');
+      if (grid) {
+        grid.innerHTML = top3.map(p => `
+          <a class="group flex flex-col rounded-2xl bg-white p-5 shadow-md transition-all hover:-translate-y-0.5 hover:shadow-lg" href="blog.html">
+            <img src="${p.thumbnail || 'logo.png'}" alt="${p.title}" class="mb-4 h-40 w-full rounded-xl object-cover" onerror="this.src='logo.png'" />
+            <div class="flex flex-wrap items-center gap-2">
+              ${(p.tags || 'Club').split(',').filter(Boolean).map(t => `<span class="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-600">${t.trim()}</span>`).join('')}
+            </div>
+            <h2 class="mt-2 font-sans text-xl font-bold leading-snug text-gray-900 transition-colors group-hover:text-blue-600">
+              ${p.title}
+            </h2>
+            <p class="mt-1 line-clamp-3 text-sm text-gray-600">
+              ${p.excerpt || p.content || ''}
+            </p>
+            <div class="mt-auto flex items-center gap-2 pt-3 text-xs text-gray-400">
+              <span>By ${p.author || 'RCSC Team'}</span><span>&bull;</span><time>${p.date || ''}</time>
+            </div>
+          </a>
+        `).join('');
+      }
+    }
+
+    (function(){
+      // 1. Instant local render
+      try {
+        const raw = localStorage.getItem('rcsc_blog');
+        if (raw) renderLatestBlogs(JSON.parse(raw));
+      } catch(e) {}
+
+      // 2. Live fetch from Firestore
+      if (typeof db !== 'undefined' && db) {
+        db.collection('blogs').get().then(snap => {
+          if (!snap.empty) {
+            const posts = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            localStorage.setItem('rcsc_blog', JSON.stringify(posts));
+            renderLatestBlogs(posts);
+          }
+        }).catch(err => console.warn('Firestore blog note:', err));
+      }
+    })();
+  </script>
 </body>
 
 </html>

@@ -132,110 +132,31 @@
 
   <!-- BLOG POSTS -->
   <main class="container mx-auto px-4 py-12">
-    <div class="flex flex-col gap-8 max-w-4xl mx-auto">
+    <div id="blog-container" class="flex flex-col gap-8 max-w-4xl mx-auto"></div>
 
-      <!-- Post 1 -->
-      <article class="blog-card">
-        <div class="blog-img">
-          <img src="https://res.cloudinary.com/dqnhzfqbu/image/upload/v1791125317/content/02d5baf3-dbc0-4a97-a975-3c79d19aefd9.jpg" alt="Why C++ Outpaces Python In Speed" />
-        </div>
-        <div class="p-6 flex flex-col justify-center gap-3">
-          <div class="flex gap-2 flex-wrap">
-            <span class="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">Programming</span>
-            <span class="bg-gray-100 text-gray-600 text-xs font-semibold px-3 py-1 rounded-full">Computer Science</span>
-          </div>
-          <h2 class="font-bold text-xl text-gray-900 leading-snug hover:text-blue-500 cursor-pointer">
-            Why C++ Outpaces Python In Speed
-          </h2>
-          <p class="text-gray-500 text-sm leading-relaxed line-clamp-2">
-            Compiled vs interpreted, memory management, and hardware proximity — a deep dive into why C++ consistently runs circles around Python in raw computational performance.
-          </p>
-          <div class="text-xs text-gray-400 font-ShareTechTown mt-auto">By RCSC Admin &bull; Oct 4, 2026</div>
-        </div>
-      </article>
-
-      <!-- Post 2 -->
-      <article class="blog-card">
-        <div class="blog-img">
-          <img src="https://res.cloudinary.com/dqnhzfqbu/image/upload/v1790947795/content/ed73d0aa-8ed5-4bfc-b06d-acf11efca7dd.jpg" alt="The Fragile Art of Attention" />
-        </div>
-        <div class="p-6 flex flex-col justify-center gap-3">
-          <div class="flex gap-2 flex-wrap">
-            <span class="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">Neuroscience</span>
-            <span class="bg-gray-100 text-gray-600 text-xs font-semibold px-3 py-1 rounded-full">Psychology</span>
-          </div>
-          <h2 class="font-bold text-xl text-gray-900 leading-snug hover:text-blue-500 cursor-pointer">
-            The Fragile Art of Attention in the Digital Age
-          </h2>
-          <p class="text-gray-500 text-sm leading-relaxed line-clamp-2">
-            In a world of infinite scroll and push notifications, our capacity for deep focus is eroding. What does neuroscience tell us — and how do we fight back?
-          </p>
-          <div class="text-xs text-gray-400 font-ShareTechTown mt-auto">By RCSC Admin &bull; Sep 26, 2026</div>
-        </div>
-      </article>
-
-      <!-- Post 3 -->
-      <article class="blog-card">
-        <div class="blog-img">
-          <img src="logo.png" alt="Introducing our blog" style="object-fit: contain; padding: 2rem; background:#f1f5f9;" />
-        </div>
-        <div class="p-6 flex flex-col justify-center gap-3">
-          <div class="flex gap-2 flex-wrap">
-            <span class="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">Announcement</span>
-            <span class="bg-gray-100 text-gray-600 text-xs font-semibold px-3 py-1 rounded-full">RCSC</span>
-          </div>
-          <h2 class="font-bold text-xl text-gray-900 leading-snug hover:text-blue-500 cursor-pointer">
-            Introducing Our Very Own Blog Site
-          </h2>
-          <p class="text-gray-500 text-sm leading-relaxed line-clamp-2">
-            After months of development, the RCSC blog is officially live. This platform will serve as a space for student voices, science articles, and club announcements.
-          </p>
-          <div class="text-xs text-gray-400 font-ShareTechTown mt-auto">By RCSC Team &bull; Sep 19, 2026</div>
-        </div>
-      </article>
-
-      <!-- Post 4 -->
-      <article class="blog-card">
-        <div class="blog-img">
-          <img src="https://res.cloudinary.com/dqnhzfqbu/image/upload/v1790440561/content/4eadcaf4-7843-4bdd-a0e7-18de4c4c0e3c.jpg" alt="DNA Hard Drives" />
-        </div>
-        <div class="p-6 flex flex-col justify-center gap-3">
-          <div class="flex gap-2 flex-wrap">
-            <span class="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">Biotechnology</span>
-            <span class="bg-gray-100 text-gray-600 text-xs font-semibold px-3 py-1 rounded-full">Data Storage</span>
-          </div>
-          <h2 class="font-bold text-xl text-gray-900 leading-snug hover:text-blue-500 cursor-pointer">
-            DNA Hard Drives
-          </h2>
-          <p class="text-gray-500 text-sm leading-relaxed line-clamp-2">
-            Scientists can now encode entire libraries of data into strands of DNA. Could biology be the future of information storage? We explore the science and the possibilities.
-          </p>
-          <div class="text-xs text-gray-400 font-ShareTechTown mt-auto">By RCSC Admin &bull; Sep 15, 2026</div>
-        </div>
-      </article>
-
-      <!-- Post 5 -->
-      <article class="blog-card">
-        <div class="blog-img">
-          <img src="https://res.cloudinary.com/dqnhzfqbu/image/upload/v1790440774/content/f2aacf9a-d6c9-456e-96e6-5ff93a3e62f1.jpg" alt="False Alarm" />
-        </div>
-        <div class="p-6 flex flex-col justify-center gap-3">
-          <div class="flex gap-2 flex-wrap">
-            <span class="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">History</span>
-            <span class="bg-gray-100 text-gray-600 text-xs font-semibold px-3 py-1 rounded-full">Cold War</span>
-          </div>
-          <h2 class="font-bold text-xl text-gray-900 leading-snug hover:text-blue-500 cursor-pointer">
-            The False Alarm That Could Have Started World War III
-          </h2>
-          <p class="text-gray-500 text-sm leading-relaxed line-clamp-2">
-            In 1983, a Soviet early-warning system detected five incoming US missiles. One officer's decision not to report it may have saved the world. The story of Stanislav Petrov.
-          </p>
-          <div class="text-xs text-gray-400 font-ShareTechTown mt-auto">By RCSC Admin &bull; Sep 10, 2026</div>
-        </div>
-      </article>
-
+    <!-- Empty State -->
+    <div id="blog-empty" class="hidden text-center py-20 max-w-md mx-auto">
+      <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+      </div>
+      <h3 class="text-xl font-bold text-gray-900 mb-2">No Blog Posts Yet</h3>
+      <p class="text-gray-500 text-sm">New articles and science insights will appear here once published from the <a href="dashboard.html" class="text-blue-500 underline">Admin Dashboard</a>.</p>
     </div>
   </main>
+
+  <!-- BLOG READING MODAL -->
+  <div id="blog-modal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onclick="closeBlogModal()">
+    <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 shadow-2xl relative" onclick="event.stopPropagation()">
+      <button onclick="closeBlogModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 font-bold transition">✕</button>
+      <div id="modal-tags" class="flex gap-2 flex-wrap mb-3"></div>
+      <h2 id="modal-title" class="font-bold text-2xl md:text-3xl text-gray-900 leading-snug mb-3"></h2>
+      <div id="modal-meta" class="text-xs text-gray-400 font-ShareTechTown mb-5"></div>
+      <div id="modal-img-wrap" class="mb-5 rounded-xl overflow-hidden max-h-72 hidden">
+        <img id="modal-img" src="" alt="" class="w-full h-full object-cover" />
+      </div>
+      <div id="modal-content" class="text-gray-700 leading-relaxed text-base whitespace-pre-line space-y-4"></div>
+    </div>
+  </div>
 
   <!-- FOOTER -->
   <footer class="relative bg-[#1F1F1F] text-base mt-10">
@@ -294,41 +215,75 @@
   <script src="firebase-config.js"></script>
 
   <script>
+  let currentBlogs = [];
+
+  function openBlogModal(idx) {
+    const p = currentBlogs[idx];
+    if (!p) return;
+    document.getElementById('modal-title').textContent = p.title || '';
+    document.getElementById('modal-meta').innerHTML = `By ${p.author || 'RCSC Team'} &bull; ${p.date || ''}`;
+    const tagsContainer = document.getElementById('modal-tags');
+    tagsContainer.innerHTML = (p.tags || '').split(',').filter(Boolean).map(t =>
+      `<span class="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">${t.trim()}</span>`
+    ).join('');
+    const imgWrap = document.getElementById('modal-img-wrap');
+    const modalImg = document.getElementById('modal-img');
+    if (p.thumbnail && p.thumbnail !== 'logo.png') {
+      modalImg.src = p.thumbnail;
+      modalImg.alt = p.title || '';
+      imgWrap.classList.remove('hidden');
+    } else {
+      imgWrap.classList.add('hidden');
+    }
+    document.getElementById('modal-content').textContent = p.content || p.excerpt || '';
+    document.getElementById('blog-modal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeBlogModal() {
+    document.getElementById('blog-modal').classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeBlogModal();
+  });
+
   (function(){
-    const container = document.querySelector('main .flex.flex-col.gap-8');
+    const container = document.getElementById('blog-container');
+    const emptyState = document.getElementById('blog-empty');
     if (!container) return;
 
-    const staticTitles = [
-      'Why C++ Outpaces Python In Speed',
-      'The Fragile Art of Attention in the Digital Age',
-      'Introducing Our Very Own Blog Site',
-      'DNA Hard Drives',
-      'The False Alarm That Could Have Started World War III'
-    ];
-
     function renderBlog(posts) {
-      if (!posts || !posts.length) return;
-      const newPosts = posts.filter(p => !staticTitles.includes(p.title));
-      if (!newPosts.length) return;
+      currentBlogs = posts || [];
+      if (!posts || !posts.length) {
+        container.innerHTML = '';
+        if (emptyState) emptyState.classList.remove('hidden');
+        return;
+      }
+      if (emptyState) emptyState.classList.add('hidden');
 
-      // Remove any previously rendered dynamic posts to avoid duplication
-      document.querySelectorAll('.dynamic-blog-card').forEach(el => el.remove());
-
-      const html = newPosts.map(p => `
-        <article class="blog-card dynamic-blog-card">
+      container.innerHTML = posts.map((p, idx) => `
+        <article class="blog-card cursor-pointer hover:shadow-lg transition-shadow" onclick="openBlogModal(${idx})">
           <div class="blog-img">
             <img src="${p.thumbnail || 'logo.png'}" alt="${p.title}" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='logo.png'" />
           </div>
           <div class="p-6 flex flex-col justify-center gap-3">
             <div class="flex gap-2 flex-wrap">
-              ${(p.tags || '').split(',').map(t => `<span class="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">${t.trim()}</span>`).join('')}
+              ${(p.tags || '').split(',').filter(Boolean).map(t => `<span class="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">${t.trim()}</span>`).join('')}
             </div>
-            <h2 class="font-bold text-xl text-gray-900 leading-snug hover:text-blue-500 cursor-pointer">${p.title}</h2>
-            <p class="text-gray-500 text-sm leading-relaxed">${p.excerpt || p.content || ''}</p>
-            <div class="text-xs text-gray-400 font-ShareTechTown mt-auto">By ${p.author || 'RCSC Team'} &bull; ${p.date || ''}</div>
+            <h2 class="font-bold text-xl text-gray-900 leading-snug hover:text-blue-500 transition">
+              ${p.title}
+            </h2>
+            <p class="text-gray-500 text-sm leading-relaxed line-clamp-2">
+              ${p.excerpt || p.content || ''}
+            </p>
+            <div class="text-xs text-gray-400 font-ShareTechTown mt-auto flex items-center justify-between">
+              <span>By ${p.author || 'RCSC Team'} &bull; ${p.date || ''}</span>
+              <span class="text-blue-500 font-semibold hover:underline">Read full &rarr;</span>
+            </div>
           </div>
         </article>`).join('');
-      container.insertAdjacentHTML('afterbegin', html);
     }
 
     // 1. Instant local render
@@ -338,12 +293,16 @@
     } catch(e) {}
 
     // 2. Live fetch from Firestore
-    if (db) {
+    if (typeof db !== 'undefined' && db) {
       db.collection('blogs').get().then(snap => {
         if (!snap.empty) {
           const posts = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          posts.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
           localStorage.setItem('rcsc_blog', JSON.stringify(posts));
           renderBlog(posts);
+        } else {
+          localStorage.setItem('rcsc_blog', JSON.stringify([]));
+          renderBlog([]);
         }
       }).catch(err => console.warn('Firestore blog error:', err));
     }
