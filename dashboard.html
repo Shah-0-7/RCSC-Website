@@ -60,6 +60,7 @@
     .crop-circle .cropper-face { border-radius: 50% !important; }
     .crop-circle .cropper-view-box { box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.65) !important; }
     .crop-rect .cropper-view-box { border-radius: 12px !important; box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.65) !important; }
+    .crop-free .cropper-view-box { border-radius: 8px !important; box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.65) !important; }
     .exec-row { display:grid; grid-template-columns:40px 1fr 1fr 1fr auto; align-items:center; gap:0.75rem; padding:0.75rem 1rem; border-bottom:1px solid #f1f5f9; }
     .exec-row:hover { background:#f8fafc; }
     @media(max-width:768px) {
@@ -1256,23 +1257,28 @@ function openCropperFromInput(input, type) {
   const wrapper = document.getElementById('cropperWrapper');
   const guideHint = document.getElementById('cropperGuideHint');
 
-  wrapper.classList.remove('crop-circle', 'crop-rect');
+  wrapper.classList.remove('crop-circle', 'crop-rect', 'crop-free');
+
+  let cropAspectRatio = NaN;
 
   if (type === 'exec') {
     titleEl.textContent = 'Crop Executive Portrait (1:1 Circle)';
     subEl.textContent = 'Reposition and scale inside the circle outline — exactly how it appears on the Executives page.';
     wrapper.classList.add('crop-circle');
     guideHint.textContent = 'Circular Crop: Drag to align face • Scroll to zoom';
+    cropAspectRatio = 1;
   } else if (type === 'event') {
     titleEl.textContent = 'Crop Event Cover Banner (16:9)';
     subEl.textContent = 'Reposition and scale inside the 16:9 outline — exactly how it appears on the Activities page.';
     wrapper.classList.add('crop-rect');
     guideHint.textContent = '16:9 Banner Crop: Drag to align • Scroll to zoom';
+    cropAspectRatio = 16 / 9;
   } else if (type === 'blog') {
-    titleEl.textContent = 'Crop Blog Thumbnail (16:9)';
-    subEl.textContent = 'Reposition and scale inside the 16:9 outline — exactly how it appears on Blog and Home cards.';
-    wrapper.classList.add('crop-rect');
-    guideHint.textContent = '16:9 Thumbnail Crop: Drag to align • Scroll to zoom';
+    titleEl.textContent = 'Crop Blog Post Image (Free Crop)';
+    subEl.textContent = 'Freely adjust the corners and edges to crop to any aspect ratio you like.';
+    wrapper.classList.add('crop-free');
+    guideHint.textContent = 'Free Crop: Drag corners & edges to adjust shape freely';
+    cropAspectRatio = NaN; // Free crop! No ratio lock
   }
 
   const reader = new FileReader();
@@ -1287,7 +1293,7 @@ function openCropperFromInput(input, type) {
 
     setTimeout(() => {
       activeCropper = new Cropper(img, {
-        aspectRatio: (type === 'exec') ? 1 : (16 / 9),
+        aspectRatio: cropAspectRatio,
         viewMode: 1,
         dragMode: 'move',
         autoCropArea: 0.9,
@@ -1347,9 +1353,13 @@ async function applyAndUploadCrop() {
     if (currentCropType === 'exec') {
       canvasOpts.width = 600;
       canvasOpts.height = 600;
-    } else {
+    } else if (currentCropType === 'event') {
       canvasOpts.width = 1280;
       canvasOpts.height = 720;
+    } else {
+      // Free crop for blog posts: preserve natural cropped aspect ratio
+      canvasOpts.maxWidth = 1600;
+      canvasOpts.maxHeight = 1600;
     }
 
     const canvas = activeCropper.getCroppedCanvas(canvasOpts);
