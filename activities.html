@@ -30,6 +30,12 @@
     }
   </script>
   <style>
+    html,
+    body {
+      overflow-x: hidden;
+      max-width: 100%;
+    }
+
     body {
       font-family: 'Inter', sans-serif;
     }
@@ -127,7 +133,7 @@
 <body class="font-Inter bg-white text-gray-900">
 
   <!-- NAVBAR -->
-  <nav class="fixed start-0 top-0 z-50 w-full max-w-[100vw] border-b border-gray-200 bg-white">
+  <nav class="fixed start-0 top-0 z-50 w-full border-b border-gray-200 bg-white">
     <div class="container relative mx-auto flex flex-wrap items-center justify-between px-4 py-3">
       <a class="z-50 flex items-center" href="index.html">
         <img src="logo.png" class="h-12 w-12 object-contain" alt="RCSC Logo" />
@@ -219,17 +225,22 @@
     <!-- Empty State -->
     <div id="events-empty" class="hidden text-center py-20 max-w-md mx-auto">
       <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-zinc-800 text-blue-400 flex items-center justify-center">
-        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
       </div>
       <h3 class="text-xl font-bold text-white mb-2">No Activities Found</h3>
-      <p class="text-gray-400 text-sm">Activities will appear here once published from the <a href="dashboard.html" class="text-blue-500 underline">Admin Dashboard</a>.</p>
+      <p class="text-gray-400 text-sm">Activities will appear here once published from the <a href="dashboard.html"
+          class="text-blue-500 underline">Admin Dashboard</a>.</p>
     </div>
   </div>
 
   <!-- FOOTER -->
   <footer class="relative bg-[#1F1F1F] text-base">
     <span class="absolute bottom-3 left-3 mt-7 text-xs text-zinc-700 sm:text-center">&copy; 2026 <a
-        class="hover:underline" href="#">RCSC&trade;</a>. All Rights Reserved. <a href="dashboard.html" class="ml-2 opacity-40 hover:opacity-100 hover:text-blue-400 transition-opacity">Admin</a></span>
+        class="hover:underline" href="#">RCSC&trade;</a>. All Rights Reserved. <a href="dashboard.html"
+        class="ml-2 opacity-40 hover:opacity-100 hover:text-blue-400 transition-opacity">Admin</a></span>
     <div
       class="mx-auto flex w-full max-w-screen-xl flex-col justify-evenly gap-10 p-4 py-6 pb-12 md:flex-row md:pb-8 lg:py-8">
       <div class="order-3 flex justify-between gap-3 md:order-1 md:gap-24">
@@ -287,78 +298,78 @@
   <script src="firebase-config.js"></script>
 
   <script>
-  const DEFAULT_ACTIVITIES = [
-    {
-      id: 'chess-hub-2026',
-      title: 'RCSC Chess Hub — 1st Intra-City Online Chess Tournament',
-      subtitle: '',
-      description: 'Swiss system blitz chess (5+3). Qualifier on 20 Nov, Finals on 21 Nov — both at 9:00 PM on lichess.org. Top 5 leaderboard published on Facebook.',
-      date: '2026-11-20',
-      deadline: '19 Nov',
-      regLink: 'https://forms.gle/KhpkwTJvrFMR8eQY8',
-      detailPage: 'chess-hub.html',
-      banner: 'banner-chess-hq.jpg',
-      tags: 'Event, ♟ Chess, Free Entry'
-    },
-    {
-      id: 'devsprint-2026',
-      title: 'RCSC DevSprint',
-      subtitle: '',
-      description: 'A 2-week app-building competition where teams design, develop, and ship a complete mobile or web application from scratch. Build under real pressure, with real deadlines.',
-      date: 'TBA',
-      deadline: 'TBA',
-      regLink: '',
-      detailPage: 'devsprint.html',
-      banner: 'banner-devsprint-hq.jpg',
-      tags: 'Competition, 💻 App Building, 2 Weeks'
-    },
-    {
-      id: 'science-fest-10',
-      title: '10th Rajshahi College National Science Fest',
-      subtitle: '',
-      description: 'The grandest science festival in Rajshahi returns for its 10th consecutive year — with olympiads in physics, chemistry, biology, astronomy, project exhibitions, and more.',
-      date: 'TBA',
-      deadline: 'TBA',
-      regLink: '',
-      detailPage: 'science-fest.html',
-      banner: 'activity-fest.jpg',
-      tags: 'Event, Flagship Event, 🔬 Multi-Science, National'
-    }
-  ];
+    const DEFAULT_ACTIVITIES = [
+      {
+        id: 'chess-hub-2026',
+        title: 'RCSC Chess Hub — 1st Intra-City Online Chess Tournament',
+        subtitle: '',
+        description: 'Swiss system blitz chess (5+3). Qualifier on 20 Nov, Finals on 21 Nov — both at 9:00 PM on lichess.org. Top 5 leaderboard published on Facebook.',
+        date: '2026-11-20',
+        deadline: '19 Nov',
+        regLink: 'https://forms.gle/KhpkwTJvrFMR8eQY8',
+        detailPage: 'chess-hub.html',
+        banner: 'banner-chess-hq.jpg',
+        tags: 'Event, ♟ Chess, Free Entry'
+      },
+      {
+        id: 'devsprint-2026',
+        title: 'RCSC DevSprint',
+        subtitle: '',
+        description: 'A 2-week app-building competition where teams design, develop, and ship a complete mobile or web application from scratch. Build under real pressure, with real deadlines.',
+        date: 'TBA',
+        deadline: 'TBA',
+        regLink: '',
+        detailPage: 'devsprint.html',
+        banner: 'banner-devsprint-hq.jpg',
+        tags: 'Competition, 💻 App Building, 2 Weeks'
+      },
+      {
+        id: 'science-fest-10',
+        title: '10th Rajshahi College National Science Fest',
+        subtitle: '',
+        description: 'The grandest science festival in Rajshahi returns for its 10th consecutive year — with olympiads in physics, chemistry, biology, astronomy, project exhibitions, and more.',
+        date: 'TBA',
+        deadline: 'TBA',
+        regLink: '',
+        detailPage: 'science-fest.html',
+        banner: 'activity-fest.jpg',
+        tags: 'Event, Flagship Event, 🔬 Multi-Science, National'
+      }
+    ];
 
-  let currentActivities = [];
-  let currentFilter = 'all';
+    let currentActivities = [];
+    let currentFilter = 'all';
 
-  function filterActivities(btn, filter) {
-    document.querySelectorAll('#activities-filter-bar .tab-btn').forEach(b => b.classList.remove('active'));
-    if (btn) btn.classList.add('active');
-    currentFilter = filter;
-    renderActivitiesGrid();
-  }
-
-  function renderActivitiesGrid() {
-    const grid = document.getElementById('events-grid');
-    const empty = document.getElementById('events-empty');
-    if (!grid) return;
-
-    let items = currentActivities || [];
-    if (currentFilter !== 'all') {
-      const q = currentFilter.toLowerCase();
-      items = items.filter(ev => {
-        const t = (ev.tags || '').toLowerCase();
-        const title = (ev.title || '').toLowerCase();
-        return t.includes(q) || title.includes(q);
-      });
+    function filterActivities(btn, filter) {
+      document.querySelectorAll('#activities-filter-bar .tab-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      currentFilter = filter;
+      renderActivitiesGrid();
     }
 
-    if (!items.length) {
-      grid.innerHTML = '';
-      if (empty) empty.classList.remove('hidden');
-      return;
-    }
-    if (empty) empty.classList.add('hidden');
+    function renderActivitiesGrid() {
+      const grid = document.getElementById('events-grid');
+      const empty = document.getElementById('events-empty');
+      if (!grid) return;
 
-    grid.innerHTML = items.map(ev => `
+      let items = currentActivities || [];
+      if (currentFilter !== 'all') {
+        const q = currentFilter.toLowerCase();
+        items = items.filter(ev => {
+          const t = (ev.tags || '').toLowerCase();
+          const title = (ev.title || '').toLowerCase();
+          return t.includes(q) || title.includes(q);
+        });
+      }
+
+      if (!items.length) {
+        grid.innerHTML = '';
+        if (empty) empty.classList.remove('hidden');
+        return;
+      }
+      if (empty) empty.classList.add('hidden');
+
+      grid.innerHTML = items.map(ev => `
       <div class="activity-card flex flex-col justify-between">
         <div class="relative">
           <img src="${ev.banner || 'logo.png'}" alt="${ev.title}" class="w-full h-48 object-cover" onerror="this.src='logo.png'" />
@@ -381,29 +392,29 @@
         </div>
       </div>
     `).join('');
-  }
-
-  (function(){
-    // 1. Instant local render
-    try {
-      const raw = localStorage.getItem('rcsc_events');
-      currentActivities = raw ? JSON.parse(raw) : DEFAULT_ACTIVITIES;
-    } catch(e) {
-      currentActivities = DEFAULT_ACTIVITIES;
     }
-    renderActivitiesGrid();
 
-    // 2. Live fetch from Firestore
-    if (typeof db !== 'undefined' && db) {
-      db.collection('events').get().then(snap => {
-        if (!snap.empty) {
-          currentActivities = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-          localStorage.setItem('rcsc_events', JSON.stringify(currentActivities));
-          renderActivitiesGrid();
-        }
-      }).catch(err => console.warn('Firestore events error:', err));
-    }
-  })();
+    (function () {
+      // 1. Instant local render
+      try {
+        const raw = localStorage.getItem('rcsc_events');
+        currentActivities = raw ? JSON.parse(raw) : DEFAULT_ACTIVITIES;
+      } catch (e) {
+        currentActivities = DEFAULT_ACTIVITIES;
+      }
+      renderActivitiesGrid();
+
+      // 2. Live fetch from Firestore
+      if (typeof db !== 'undefined' && db) {
+        db.collection('events').get().then(snap => {
+          if (!snap.empty) {
+            currentActivities = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            localStorage.setItem('rcsc_events', JSON.stringify(currentActivities));
+            renderActivitiesGrid();
+          }
+        }).catch(err => console.warn('Firestore events error:', err));
+      }
+    })();
   </script>
 
 </body>

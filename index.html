@@ -36,6 +36,12 @@
     }
   </script>
   <style>
+    html,
+    body {
+      overflow-x: hidden;
+      max-width: 100%;
+    }
+
     body {
       font-family: 'Inter', sans-serif;
     }
@@ -395,7 +401,7 @@
 <body class="font-Inter bg-white text-gray-900">
 
   <!-- NAVBAR -->
-  <nav class="fixed start-0 top-0 z-50 w-full max-w-[100vw] border-b border-gray-200 bg-white">
+  <nav class="fixed start-0 top-0 z-50 w-full border-b border-gray-200 bg-white">
     <div class="container relative mx-auto flex flex-wrap items-center justify-between px-4 py-3">
       <a class="z-50 flex items-center" href="#">
         <img src="logo.png" class="h-12 w-12 object-contain" alt="RCSC Logo" />
@@ -518,20 +524,20 @@
   </div>
 
   <!-- MAIN -->
-  <main class="container mx-auto flex flex-col items-center justify-center">
+  <main class="container mx-auto flex flex-col items-center justify-center px-4 sm:px-6">
 
     <!-- HERO -->
-    <section
-      class="relative flex min-h-screen w-full flex-col items-center justify-center pt-[75px] md:flex-row md:justify-between">
+    <section class="relative flex w-full flex-col items-center justify-between pt-20 pb-2 md:pt-28 md:pb-3 md:flex-row overflow-hidden">
       <div
-        class="order-2 flex flex-col items-center md:order-1 md:max-w-[45vw] md:items-start md:gap-1 lg:max-w-[42vw]">
-        <h1 class="w-fit text-center text-4xl sm:text-5xl font-bold tracking-wide md:text-left lg:tracking-widest 2xl:text-6xl text-gray-900">
+        class="order-2 flex flex-col items-center md:order-1 md:max-w-[48vw] md:items-start md:gap-1 lg:max-w-[45vw] px-2 sm:px-0">
+        <h1
+          class="w-full text-center text-3xl sm:text-4xl md:text-5xl font-bold tracking-wide md:text-left lg:tracking-widest 2xl:text-6xl text-gray-900">
           RAJSHAHI COLLEGE</h1>
         <h1
-          class="text-center text-4xl sm:text-5xl font-bold tracking-wide text-blue-500 md:text-left lg:tracking-widest 2xl:text-6xl">
+          class="w-full text-center text-3xl sm:text-4xl md:text-5xl font-bold tracking-wide text-blue-500 md:text-left lg:tracking-widest 2xl:text-6xl">
           SCIENCE CLUB</h1>
         <p
-          class="mt-3 w-[85vw] break-words text-center text-lg md:w-fit md:text-left 2xl:text-[1.375rem] 2xl:leading-8 text-gray-600 leading-relaxed">
+          class="mt-3 w-full max-w-md break-words text-center text-base sm:text-lg md:max-w-none md:text-left 2xl:text-[1.375rem] 2xl:leading-8 text-gray-600 leading-relaxed">
           Where curious minds meet to learn, build, and explore science, technology, and innovation together.</p>
         <a class="relative mb-2 me-2 mt-5 flex items-center justify-center overflow-hidden rounded-lg border border-gray-600 bg-black px-7 py-2 font-Bebas text-xl font-medium text-white shadow-2xl transition-all hover:border-blue-500 hover:bg-zinc-700 hover:shadow-blue-500"
           href="#about">
@@ -539,18 +545,20 @@
         </a>
       </div>
       <img src="logo.png" alt="RCSC Hero"
-        class="relative order-1 aspect-square max-h-[70vh] max-w-[90vw] object-contain sm:max-w-[60vw] md:order-2 md:max-w-[45vw] lg:mt-0 xl:ml-0 2xl:max-h-[65vh]"
+        class="relative order-1 aspect-square max-h-[50vh] max-w-[85vw] object-contain sm:max-w-[50vw] md:order-2 md:max-w-[40vw] md:max-h-[440px] lg:mt-0 xl:ml-0 2xl:max-h-[480px]"
         style="filter: url(#darken-text)" />
-      <img src="rcsc-watermark-text.svg" class="absolute bottom-[-4vh] right-0 -z-10 select-none pointer-events-none" alt="Rajshahi College Science Club" />
+      <img src="rcsc-watermark-text.svg"
+        class="absolute bottom-0 right-0 -z-10 max-h-[75%] max-w-[50vw] object-contain select-none pointer-events-none opacity-80"
+        alt="Rajshahi College Science Club" />
     </section>
 
     <!-- DEPARTMENTS -->
-    <div class="mt-16 h-fit w-screen pb-16 text-center">
+    <div class="mt-2 md:mt-3 h-fit w-full pb-10 text-center overflow-hidden">
       <h1 class="mx-auto mb-5 md:mb-8">
-        <span class="text-center text-4xl md:text-5xl">WE HAVE </span>
+        <span class="text-center text-3xl sm:text-4xl md:text-5xl">WE HAVE </span>
         <br class="inline md:hidden" />
-        <span class="text-center text-4xl text-blue-500 md:text-5xl">DEPARTMENTS </span>
-        <span class="text-center text-4xl md:text-5xl">ON</span>
+        <span class="text-center text-3xl sm:text-4xl text-blue-500 md:text-5xl">DEPARTMENTS </span>
+        <span class="text-center text-3xl sm:text-4xl md:text-5xl">ON</span>
       </h1>
       <div class="container flex flex-wrap items-stretch justify-between gap-4 md:gap-6">
 
@@ -631,39 +639,48 @@
               <!-- DNA Double Helix Structure -->
               <g transform="rotate(-22 50 50)">
                 <!-- Base Pairs / Hydrogen bonds with nucleotide endcaps -->
-                <line x1="28" y1="16" x2="72" y2="16" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity="0.6" />
+                <line x1="28" y1="16" x2="72" y2="16" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                  opacity="0.6" />
                 <circle cx="28" cy="16" r="3" fill="currentColor" />
                 <circle cx="72" cy="16" r="3" fill="currentColor" />
 
-                <line x1="34" y1="26" x2="66" y2="26" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity="0.6" />
+                <line x1="34" y1="26" x2="66" y2="26" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                  opacity="0.6" />
                 <circle cx="34" cy="26" r="2.8" fill="currentColor" />
                 <circle cx="66" cy="26" r="2.8" fill="currentColor" />
 
-                <line x1="42" y1="42" x2="58" y2="42" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity="0.6" />
+                <line x1="42" y1="42" x2="58" y2="42" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                  opacity="0.6" />
                 <circle cx="42" cy="42" r="2.5" fill="currentColor" />
                 <circle cx="58" cy="42" r="2.5" fill="currentColor" />
 
-                <line x1="28" y1="50" x2="72" y2="50" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity="0.6" />
+                <line x1="28" y1="50" x2="72" y2="50" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                  opacity="0.6" />
                 <circle cx="28" cy="50" r="3" fill="currentColor" />
                 <circle cx="72" cy="50" r="3" fill="currentColor" />
 
-                <line x1="42" y1="58" x2="58" y2="58" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity="0.6" />
+                <line x1="42" y1="58" x2="58" y2="58" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                  opacity="0.6" />
                 <circle cx="42" cy="58" r="2.5" fill="currentColor" />
                 <circle cx="58" cy="58" r="2.5" fill="currentColor" />
 
-                <line x1="34" y1="74" x2="66" y2="74" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity="0.6" />
+                <line x1="34" y1="74" x2="66" y2="74" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                  opacity="0.6" />
                 <circle cx="34" cy="74" r="2.8" fill="currentColor" />
                 <circle cx="66" cy="74" r="2.8" fill="currentColor" />
 
-                <line x1="28" y1="84" x2="72" y2="84" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity="0.6" />
+                <line x1="28" y1="84" x2="72" y2="84" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                  opacity="0.6" />
                 <circle cx="28" cy="84" r="3" fill="currentColor" />
                 <circle cx="72" cy="84" r="3" fill="currentColor" />
 
                 <!-- Helical Backbone Strands -->
-                <path d="M 28 10 C 28 24, 50 26, 50 34 C 50 42, 72 44, 72 50 C 72 56, 50 58, 50 66 C 50 74, 28 76, 28 90"
-                      stroke="currentColor" stroke-width="4.5" stroke-linecap="round" fill="none" />
-                <path d="M 72 10 C 72 24, 50 26, 50 34 C 50 42, 28 44, 28 50 C 28 56, 50 58, 50 66 C 50 74, 72 76, 72 90"
-                      stroke="currentColor" stroke-width="4.5" stroke-linecap="round" fill="none" opacity="0.85" />
+                <path
+                  d="M 28 10 C 28 24, 50 26, 50 34 C 50 42, 72 44, 72 50 C 72 56, 50 58, 50 66 C 50 74, 28 76, 28 90"
+                  stroke="currentColor" stroke-width="4.5" stroke-linecap="round" fill="none" />
+                <path
+                  d="M 72 10 C 72 24, 50 26, 50 34 C 50 42, 28 44, 28 50 C 28 56, 50 58, 50 66 C 50 74, 72 76, 72 90"
+                  stroke="currentColor" stroke-width="4.5" stroke-linecap="round" fill="none" opacity="0.85" />
               </g>
             </svg>
             <p class="text-center text-lg">Biology</p>
@@ -698,7 +715,7 @@
     </div>
 
     <!-- LATEST POST HIGHLIGHT -->
-    <section class="relative my-auto w-screen bg-cover bg-center bg-no-repeat"
+    <section class="relative my-auto w-full bg-cover bg-center bg-no-repeat"
       style="background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%);">
       <section class="container my-auto flex flex-col items-center gap-4 py-10">
         <div class="z-10 flex flex-col items-center self-center text-white md:flex-row md:gap-3">
@@ -720,11 +737,14 @@
               <div class="flex items-center gap-2">
                 <span
                   class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-2.5 py-1 rounded-full border border-blue-500/40">Featured</span>
-                <span id="latest-banner-tag" class="bg-white/10 text-gray-300 text-xs px-2.5 py-1 rounded-full">Blog</span>
+                <span id="latest-banner-tag"
+                  class="bg-white/10 text-gray-300 text-xs px-2.5 py-1 rounded-full">Blog</span>
               </div>
-              <h3 id="latest-banner-title" class="font-bold text-xl sm:text-2xl leading-snug text-white">Introducing Our Very Own
+              <h3 id="latest-banner-title" class="font-bold text-xl sm:text-2xl leading-snug text-white">Introducing Our
+                Very Own
                 Blog Site</h3>
-              <p id="latest-banner-excerpt" class="break-words text-xs sm:text-sm leading-relaxed text-gray-300 line-clamp-3">After
+              <p id="latest-banner-excerpt"
+                class="break-words text-xs sm:text-sm leading-relaxed text-gray-300 line-clamp-3">After
                 months of development, the RCSC blog is officially live. This platform will serve as a space for student
                 voices, science articles, and club announcements.</p>
               <div id="latest-banner-meta" class="text-xs text-gray-400 mt-1">By RCSC Team &bull; September 19, 2026
@@ -861,7 +881,7 @@
     </div>
 
     <!-- OUR ACTIVITIES -->
-    <div id="activities" class="relative mt-16 w-screen">
+    <div id="activities" class="relative mt-12 md:mt-16 w-full overflow-hidden">
       <section class="container relative flex w-full flex-col items-start justify-start md:gap-3">
         <div class="flex flex-col self-center md:flex-row md:gap-2">
           <h1 class="mx-auto text-center text-4xl text-blue-500 md:text-left md:text-5xl">OUR ACTIVITIES</h1>
@@ -930,7 +950,7 @@
 
     <!-- LATEST BLOGS -->
     <section id="blogs" class="mt-16 w-full">
-      <div class="flex w-screen items-center justify-center gap-3.5 md:justify-start">
+      <div class="flex w-full items-center justify-center gap-3.5 md:justify-start">
         <div class="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-white shadow-md">
           <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
             stroke-linejoin="round" class="h-6 w-6 text-gray-800" xmlns="http://www.w3.org/2000/svg">
@@ -951,9 +971,11 @@
     </section>
 
     <!-- WHY JOIN RCSC -->
-    <div id="about" class="relative w-screen overflow-x-clip mt-8">
-      <img class="absolute left-0 top-[20%] -z-10 w-[125%] max-w-[750px] md:-top-1/2 md:w-[80%] select-none pointer-events-none"
-        src="rcsc-watermark-logo.svg" onerror="this.src='logo.png';this.classList.add('opacity-[0.04]','grayscale')" alt="RCSC Logo Watermark" />
+    <div id="about" class="relative w-full overflow-hidden mt-8">
+      <img
+        class="absolute left-0 top-[20%] -z-10 max-w-full md:max-w-[750px] md:-top-1/2 md:w-[80%] select-none pointer-events-none object-contain"
+        src="rcsc-watermark-logo.svg" onerror="this.src='logo.png';this.classList.add('opacity-[0.04]','grayscale')"
+        alt="RCSC Logo Watermark" />
       <section class="container relative mb-10 mt-8 flex flex-col items-center gap-7 md:mb-20 md:mt-16">
         <div class="flex flex-col gap-1 md:flex-row">
           <h1 class="text-center text-4xl md:text-5xl">WHY YOU SHOULD</h1>
@@ -993,7 +1015,8 @@
     <div class="container mb-12">
       <div id="nwslttr_crd" class="max-w-2xl mx-auto shadow-xl">
         <h3 id="hdr">Subscribe to our <span>Newsletter</span></h3>
-        <p id="abt">Quark is our official club publication. Subscribe now for the latest updates on Science Fest, workshops, student research, and innovation!</p>
+        <p id="abt">Quark is our official club publication. Subscribe now for the latest updates on Science Fest,
+          workshops, student research, and innovation!</p>
         <div id="usr_inf">
           <input type="email" placeholder="Your Email" id="eml" value="" />
           <button id="sbscrb"><span>Subscribe</span></button>
