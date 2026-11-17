@@ -179,10 +179,10 @@
   <section class="bg-[#F6F6F6] pt-[80px] border-b border-gray-100">
     <div class="container mx-auto px-4 py-16">
       <p class="font-ShareTechTown text-sm text-blue-500 mb-3 tracking-widest">RCSC / CONTACT</p>
-      <h1 class="font-Bebas text-6xl md:text-8xl tracking-widest leading-none mb-3">
+      <h1 class="font-Bebas text-6xl md:text-8xl tracking-widest leading-none mb-3" id="contactHeroTitleDisplay">
         GET IN <span class="text-blue-500">TOUCH</span>
       </h1>
-      <p class="text-gray-500 text-lg max-w-xl">
+      <p class="text-gray-500 text-lg max-w-xl" id="contactHeroSubDisplay">
         Have a question, want to collaborate, or just want to say hi? We'd love to hear from you.
       </p>
     </div>
@@ -200,8 +200,8 @@
           </svg>
         </div>
         <div class="font-ShareTechTown text-xs text-gray-400 uppercase tracking-widest mb-1">Phone</div>
-        <div class="font-semibold text-gray-800 text-sm">+880 1XXXXXXXXX</div>
-        <div class="text-xs text-gray-400 mt-1">Sun – Thu, 9am – 5pm</div>
+        <div class="font-semibold text-gray-800 text-sm" id="contactPhoneDisplay">+880 1XXXXXXXXX</div>
+        <div class="text-xs text-gray-400 mt-1" id="contactPhoneSubDisplay">Sun – Thu, 9am – 5pm</div>
       </div>
 
       <!-- Email -->
@@ -212,8 +212,8 @@
           </svg>
         </div>
         <div class="font-ShareTechTown text-xs text-gray-400 uppercase tracking-widest mb-1">Email</div>
-        <a href="mailto:rcsc.official@gmail.com" class="font-semibold text-gray-800 text-sm hover:text-blue-500 transition break-all">rcsc.official@gmail.com</a>
-        <div class="text-xs text-gray-400 mt-1">We reply within 24 hours</div>
+        <a href="mailto:rcsc.official@gmail.com" class="font-semibold text-gray-800 text-sm hover:text-blue-500 transition break-all" id="contactEmailDisplay">rcsc.official@gmail.com</a>
+        <div class="text-xs text-gray-400 mt-1" id="contactEmailSubDisplay">We reply within 24 hours</div>
       </div>
 
       <!-- Address -->
@@ -225,8 +225,8 @@
           </svg>
         </div>
         <div class="font-ShareTechTown text-xs text-gray-400 uppercase tracking-widest mb-1">Address</div>
-        <div class="font-semibold text-gray-800 text-sm">Rajshahi College Rd</div>
-        <div class="text-xs text-gray-400 mt-1">Rajshahi – 6000, Bangladesh</div>
+        <div class="font-semibold text-gray-800 text-sm" id="contactAddressDisplay">Rajshahi College Rd</div>
+        <div class="text-xs text-gray-400 mt-1" id="contactAddressSubDisplay">Rajshahi – 6000, Bangladesh</div>
       </div>
 
       <!-- Social -->
@@ -238,12 +238,12 @@
         </div>
         <div class="font-ShareTechTown text-xs text-gray-400 uppercase tracking-widest mb-2">Follow Us</div>
         <div class="flex flex-col gap-2">
-          <a href="https://www.facebook.com/rajshahicollegescienceclub" target="_blank"
+          <a href="https://www.facebook.com/rajshahicollegescienceclub" target="_blank" id="contactFacebookDisplay"
             class="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-blue-600 transition">
             <svg class="w-4 h-4 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951"/></svg>
             Facebook
           </a>
-          <a href="https://www.instagram.com/rajshahi_college_science_club/" target="_blank"
+          <a href="https://www.instagram.com/rajshahi_college_science_club/" target="_blank" id="contactInstagramDisplay"
             class="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-pink-500 transition">
             <svg class="w-4 h-4 flex-shrink-0" fill="url(#ig-grad)" viewBox="0 0 24 24">
               <defs>
@@ -258,6 +258,20 @@
               <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
             </svg>
             Instagram
+          </a>
+          <a href="https://www.youtube.com/@rcscofficial" target="_blank" id="contactYoutubeDisplay"
+            class="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-red-600 transition">
+            <svg class="w-4 h-4 text-red-600 flex-shrink-0" fill="currentColor" viewBox="0 0 1024 1024">
+              <path d="M941.3 296.1a112.3 112.3 0 0 0-79.2-79.3C792.2 198 512 198 512 198s-280.2 0-350.1 18.7A112.12 112.12 0 0 0 82.7 296C64 366 64 512 64 512s0 146 18.7 215.9c10.3 38.6 40.7 69 79.2 79.3C231.8 826 512 826 512 826s280.2 0 350.1-18.8c38.6-10.3 68.9-40.7 79.2-79.3C960 658 960 512 960 512s0-146-18.7-215.9zM423 646V378l232 133-232 135z" />
+            </svg>
+            YouTube
+          </a>
+          <a href="https://github.com/rcsc" target="_blank" id="contactGithubDisplay"
+            class="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition">
+            <svg class="w-4 h-4 text-gray-800 flex-shrink-0" fill="currentColor" viewBox="0 0 496 512">
+              <path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8z" />
+            </svg>
+            GitHub
           </a>
         </div>
       </div>
@@ -542,6 +556,104 @@
         body.classList.remove('hidden');
         icon.style.transform = 'rotate(180deg)';
       }
+    }
+  </script>
+  <!-- Firebase SDK Compat -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+
+  <script>
+    function renderContact(data) {
+      if (!data) return;
+
+      // Hero
+      if (data.heroTitle) {
+        const el = document.getElementById('contactHeroTitleDisplay');
+        if (el) {
+          const parts = data.heroTitle.trim().split(' ');
+          if (parts.length > 1) {
+            const last = parts.pop();
+            el.innerHTML = `${parts.join(' ')} <span class="text-blue-500">${last}</span>`;
+          } else {
+            el.textContent = data.heroTitle;
+          }
+        }
+      }
+      if (data.heroSub) {
+        const el = document.getElementById('contactHeroSubDisplay');
+        if (el) el.textContent = data.heroSub;
+      }
+
+      // Phone
+      if (data.phone) {
+        const el = document.getElementById('contactPhoneDisplay');
+        if (el) el.textContent = data.phone;
+      }
+      if (data.phoneSub) {
+        const el = document.getElementById('contactPhoneSubDisplay');
+        if (el) el.textContent = data.phoneSub;
+      }
+
+      // Email
+      if (data.email) {
+        const el = document.getElementById('contactEmailDisplay');
+        if (el) {
+          el.textContent = data.email;
+          el.href = 'mailto:' + data.email;
+        }
+      }
+      if (data.emailSub) {
+        const el = document.getElementById('contactEmailSubDisplay');
+        if (el) el.textContent = data.emailSub;
+      }
+
+      // Address
+      if (data.address) {
+        const el = document.getElementById('contactAddressDisplay');
+        if (el) el.textContent = data.address;
+      }
+      if (data.addressSub) {
+        const el = document.getElementById('contactAddressSubDisplay');
+        if (el) el.textContent = data.addressSub;
+      }
+
+      // Social Links
+      if (data.facebook) {
+        const el = document.getElementById('contactFacebookDisplay');
+        if (el) { el.href = data.facebook; el.style.display = 'flex'; }
+      }
+      if (data.instagram) {
+        const el = document.getElementById('contactInstagramDisplay');
+        if (el) { el.href = data.instagram; el.style.display = 'flex'; }
+      }
+      const ytEl = document.getElementById('contactYoutubeDisplay');
+      if (ytEl) {
+        if (data.youtube) { ytEl.href = data.youtube; ytEl.style.display = 'flex'; }
+        else { ytEl.style.display = 'none'; }
+      }
+      const ghEl = document.getElementById('contactGithubDisplay');
+      if (ghEl) {
+        if (data.github) { ghEl.href = data.github; ghEl.style.display = 'flex'; }
+        else { ghEl.style.display = 'none'; }
+      }
+    }
+
+    // 1. Instant local render
+    try {
+      const raw = localStorage.getItem('rcsc_contact');
+      if (raw) renderContact(JSON.parse(raw));
+    } catch (e) {}
+
+    // 2. Live fetch from Firestore
+    if (typeof db !== 'undefined' && db) {
+      db.collection('content').doc('contact').get().then(doc => {
+        if (doc.exists) {
+          const data = doc.data();
+          localStorage.setItem('rcsc_contact', JSON.stringify(data));
+          renderContact(data);
+        }
+      }).catch(err => console.warn('Firestore contact sync note:', err));
     }
   </script>
 </body>

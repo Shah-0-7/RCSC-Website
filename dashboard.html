@@ -127,6 +127,14 @@
         <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
         <span class="sidebar-label">Blog</span>
       </div>
+      <div class="sidebar-link" onclick="navigate('about')" id="nav-about">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span class="sidebar-label">About Page</span>
+      </div>
+      <div class="sidebar-link" onclick="navigate('contact')" id="nav-contact">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        <span class="sidebar-label">Contact Info</span>
+      </div>
       <div class="mt-4 pt-4 border-t border-white/10 sidebar-label"></div>
       <div class="sidebar-link" onclick="navigate('settings')" id="nav-settings">
         <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
@@ -197,20 +205,58 @@
       <!-- ───── EXECUTIVES ───── -->
       <div id="sec-executives" class="section">
         <div class="card mb-6">
-          <div class="flex flex-wrap gap-4 items-end">
-            <div class="flex-1 min-w-48">
+          <div class="flex items-center justify-between mb-4 border-b pb-3">
+            <div>
+              <h3 class="font-bold text-gray-900">Header & Faculty Leadership</h3>
+              <p class="text-xs text-gray-400 mt-0.5">Edit session year, page title, and faculty leadership info</p>
+            </div>
+            <button onclick="saveExecHeader()" class="btn-primary">Save Header</button>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div>
               <label class="form-label">Session Year</label>
               <input id="execYear" class="form-input" placeholder="e.g. 2025–2026" />
             </div>
-            <div class="flex-1 min-w-48">
-              <label class="form-label">Principal Name</label>
-              <input id="principalName" class="form-input" placeholder="Principal's full name" />
+            <div>
+              <label class="form-label">Page Hero Title</label>
+              <input id="execHeroTitle" class="form-input" placeholder="e.g. MEET THE EXECUTIVES" />
             </div>
-            <div class="flex-1 min-w-48">
-              <label class="form-label">Moderator Name</label>
-              <input id="moderatorName" class="form-input" placeholder="Club moderator's name" />
+            <div>
+              <label class="form-label">Page Notice / Subtitle</label>
+              <input id="execNotice" class="form-input" placeholder="Notice text or leave empty" />
             </div>
-            <button onclick="saveExecHeader()" class="btn-primary">Save Header</button>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 space-y-3">
+              <div class="font-bold text-sm text-gray-800">Principal & Patron</div>
+              <div>
+                <label class="form-label">Principal Name</label>
+                <input id="principalName" class="form-input bg-white" placeholder="e.g. Prof. Dr. Md. Abdul Khalek" />
+              </div>
+              <div>
+                <label class="form-label">Role / Title</label>
+                <input id="principalRole" class="form-input bg-white" placeholder="e.g. Principal & Patron" />
+              </div>
+              <div>
+                <label class="form-label">Department / Institution</label>
+                <input id="principalSub" class="form-input bg-white" placeholder="e.g. Rajshahi College · Honorary Head of RCSC" />
+              </div>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 space-y-3">
+              <div class="font-bold text-sm text-gray-800">Club Moderator</div>
+              <div>
+                <label class="form-label">Moderator Name</label>
+                <input id="moderatorName" class="form-input bg-white" placeholder="e.g. Dr. Shariful Islam" />
+              </div>
+              <div>
+                <label class="form-label">Role / Title</label>
+                <input id="moderatorRole" class="form-input bg-white" placeholder="e.g. Club Moderator" />
+              </div>
+              <div>
+                <label class="form-label">Department / Designation</label>
+                <input id="moderatorSub" class="form-input bg-white" placeholder="e.g. Faculty Advisor · Department of Science" />
+              </div>
+            </div>
           </div>
         </div>
         <div class="card">
@@ -229,6 +275,166 @@
       <!-- ───── BLOG ───── -->
       <div id="sec-blog" class="section">
         <div id="blogList"></div>
+      </div>
+
+      <!-- ───── ABOUT PAGE ───── -->
+      <div id="sec-about" class="section">
+        <div class="card mb-6">
+          <div class="flex items-center justify-between mb-4 border-b pb-3">
+            <div>
+              <h3 class="font-bold text-gray-900">Intro: Who We Are</h3>
+              <p class="text-xs text-gray-400 mt-0.5">Edit the main introduction text on the About page</p>
+            </div>
+            <button onclick="saveAbout()" class="btn-primary">Save About Page</button>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <label class="form-label">Section Heading</label>
+              <input id="aboutWhoTitle" class="form-input" placeholder="e.g. Who We Are" />
+            </div>
+            <div>
+              <label class="form-label">Introduction Paragraph 1</label>
+              <textarea id="aboutWhoP1" class="form-input" rows="3" placeholder="Paragraph 1 content..."></textarea>
+            </div>
+            <div>
+              <label class="form-label">Introduction Paragraph 2</label>
+              <textarea id="aboutWhoP2" class="form-input" rows="3" placeholder="Paragraph 2 content..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mb-6">
+          <div class="flex items-center justify-between mb-4 border-b pb-3">
+            <div>
+              <h3 class="font-bold text-gray-900">Milestones</h3>
+              <p class="text-xs text-gray-400 mt-0.5">Edit the statistics and counter cards on the About page</p>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="addMilestoneRow()" class="btn-secondary">+ Add Milestone</button>
+              <button onclick="saveAbout()" class="btn-primary">Save Milestones</button>
+            </div>
+          </div>
+          <div class="mb-4">
+            <label class="form-label">Milestones Section Title</label>
+            <input id="aboutMilestonesTitle" class="form-input" placeholder="e.g. Our Milestones" />
+          </div>
+          <div id="milestonesRows" class="space-y-3">
+            <!-- Dynamically rendered rows -->
+          </div>
+        </div>
+
+        <div class="card mb-6">
+          <div class="flex items-center justify-between mb-4 border-b pb-3">
+            <div>
+              <h3 class="font-bold text-gray-900">Our Motive / Mission</h3>
+              <p class="text-xs text-gray-400 mt-0.5">Edit the bottom motive and mission statements</p>
+            </div>
+            <button onclick="saveAbout()" class="btn-primary">Save About Page</button>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <label class="form-label">Motive Heading</label>
+              <input id="aboutMotiveTitle" class="form-input" placeholder="e.g. Our Motive" />
+            </div>
+            <div>
+              <label class="form-label">Motive Paragraph 1</label>
+              <textarea id="aboutMotiveP1" class="form-input" rows="3" placeholder="Motive paragraph 1..."></textarea>
+            </div>
+            <div>
+              <label class="form-label">Motive Paragraph 2</label>
+              <textarea id="aboutMotiveP2" class="form-input" rows="3" placeholder="Motive paragraph 2..."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ───── CONTACT PAGE ───── -->
+      <div id="sec-contact" class="section">
+        <div class="card mb-6">
+          <div class="flex items-center justify-between mb-4 border-b pb-3">
+            <div>
+              <h3 class="font-bold text-gray-900">Contact Information</h3>
+              <p class="text-xs text-gray-400 mt-0.5">Edit contact details and info cards displayed on the Contact page</p>
+            </div>
+            <button onclick="saveContact()" class="btn-primary">Save Contact Info</button>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="form-label">Hero Title</label>
+              <input id="contactHeroTitle" class="form-input" placeholder="e.g. GET IN TOUCH" />
+            </div>
+            <div>
+              <label class="form-label">Hero Subtitle</label>
+              <input id="contactHeroSub" class="form-input" placeholder="e.g. Have a question, want to collaborate..." />
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Phone -->
+            <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 space-y-3">
+              <div class="font-bold text-sm text-gray-800">Phone Card</div>
+              <div>
+                <label class="form-label">Phone Number</label>
+                <input id="contactPhone" class="form-input bg-white" placeholder="e.g. +880 1XXXXXXXXX" />
+              </div>
+              <div>
+                <label class="form-label">Hours / Subtitle</label>
+                <input id="contactPhoneSub" class="form-input bg-white" placeholder="e.g. Sun – Thu, 9am – 5pm" />
+              </div>
+            </div>
+            <!-- Email -->
+            <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 space-y-3">
+              <div class="font-bold text-sm text-gray-800">Email Card</div>
+              <div>
+                <label class="form-label">Email Address</label>
+                <input id="contactEmail" class="form-input bg-white" placeholder="e.g. rcsc.official@gmail.com" />
+              </div>
+              <div>
+                <label class="form-label">Subtitle / Response Time</label>
+                <input id="contactEmailSub" class="form-input bg-white" placeholder="e.g. We reply within 24 hours" />
+              </div>
+            </div>
+            <!-- Address -->
+            <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 space-y-3">
+              <div class="font-bold text-sm text-gray-800">Location Card</div>
+              <div>
+                <label class="form-label">Address Line 1</label>
+                <input id="contactAddress" class="form-input bg-white" placeholder="e.g. Rajshahi College Rd" />
+              </div>
+              <div>
+                <label class="form-label">Address Line 2 / City</label>
+                <input id="contactAddressSub" class="form-input bg-white" placeholder="e.g. Rajshahi – 6000, Bangladesh" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mb-6">
+          <div class="flex items-center justify-between mb-4 border-b pb-3">
+            <div>
+              <h3 class="font-bold text-gray-900">Social Media Channels</h3>
+              <p class="text-xs text-gray-400 mt-0.5">Update official social media links across the contact page and website</p>
+            </div>
+            <button onclick="saveContact()" class="btn-primary">Save Contact Info</button>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="form-label">Facebook Page URL</label>
+              <input id="contactFacebook" class="form-input" placeholder="https://www.facebook.com/..." />
+            </div>
+            <div>
+              <label class="form-label">Instagram Profile URL</label>
+              <input id="contactInstagram" class="form-input" placeholder="https://www.instagram.com/..." />
+            </div>
+            <div>
+              <label class="form-label">YouTube Channel URL</label>
+              <input id="contactYoutube" class="form-input" placeholder="https://www.youtube.com/@..." />
+            </div>
+            <div>
+              <label class="form-label">GitHub URL</label>
+              <input id="contactGithub" class="form-input" placeholder="https://github.com/..." />
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- ───── SETTINGS ───── -->
@@ -435,7 +641,15 @@ async function changePassword() {
 // ══════════════════════════════════════════════
 // DATA HELPERS & INITIAL SEED
 // ══════════════════════════════════════════════
-const KEYS = { events:'rcsc_events', gallery:'rcsc_gallery', exec:'rcsc_exec', blog:'rcsc_blog', settings:'rcsc_settings' };
+const KEYS = {
+  events: 'rcsc_events',
+  gallery: 'rcsc_gallery',
+  exec: 'rcsc_exec',
+  blog: 'rcsc_blog',
+  settings: 'rcsc_settings',
+  about: 'rcsc_about',
+  contact: 'rcsc_contact'
+};
 
 const SEED_EVENTS = [
   { id:'chess-hub-2026', title:'RCSC Chess Hub', subtitle:'1st Intra-City Online Chess Tournament', description:'Swiss system blitz chess (5+3). Qualifier on 20 Nov, Finals on 21 Nov — both at 9:00 PM on lichess.org. Top 5 leaderboard published on Facebook.', date:'2026-11-20', deadline:'2026-11-19', regLink:'https://forms.gle/KhpkwTJvrFMR8eQY8', detailPage:'chess-hub.html', banner:'banner-chess-hq.jpg', tags:'Chess, Free Entry, 20–21 Nov', status:'upcoming' },
@@ -444,7 +658,15 @@ const SEED_EVENTS = [
 ];
 
 const SEED_EXEC = {
-  year:'2025–2026', principal:'Prof. Dr. Md. Abdul Khalek', moderator:'Dr. Shariful Islam',
+  year: '2025–2026',
+  heroTitle: 'MEET THE EXECUTIVES',
+  notice: 'Executive details will be updated soon. Placeholder template shown below.',
+  principal: 'Prof. Dr. Md. Abdul Khalek',
+  principalRole: 'Principal & Patron',
+  principalSub: 'Rajshahi College · Honorary Head of RCSC',
+  moderator: 'Dr. Shariful Islam',
+  moderatorRole: 'Club Moderator',
+  moderatorSub: 'Faculty Advisor · Department of Science',
   members: [
     { id:'e1', name:'Member Name', position:'President', dept:'Administration', photo:'' },
     { id:'e2', name:'Member Name', position:'Vice President', dept:'Administration', photo:'' },
@@ -459,6 +681,38 @@ const SEED_EXEC = {
     { id:'e11', name:'Member Name', position:'Executive Member', dept:'Science & Technology', photo:'' },
     { id:'e12', name:'Member Name', position:'Executive Member', dept:'Events & Logistics', photo:'' }
   ]
+};
+
+const SEED_ABOUT = {
+  whoTitle: 'Who We Are',
+  whoP1: 'Rajshahi College Science Club (RCSC), a co-curricular club of Rajshahi College, has started its journey to promote science and technology awareness among students. <span class="font-semibold text-gray-800">"Igniting Scientific Curiosity"</span> — bearing this motto, RCSC strives to cultivate a generation of curious minds who push the boundaries of knowledge and innovation.',
+  whoP2: 'RCSC provides a platform for students to explore disciplines such as physics, chemistry, biology, computer science, astronomy, robotics, and more — through workshops, competitions, seminars, and collaborative projects. We believe every student has the potential to change the world through science.',
+  milestonesTitle: 'Our Milestones',
+  milestones: [
+    { value: '22+', label: 'Total Events', sub: '15 Intra · 7 National' },
+    { value: '500+', label: 'Active Members', sub: 'And growing' },
+    { value: '2700+', label: 'Alumni', sub: 'Across all batches' },
+    { value: '8', label: 'Years of Journey', sub: 'Est. 2018' },
+    { value: '20+', label: 'Total Panelists', sub: 'Across all years' }
+  ],
+  motiveTitle: 'Our Motive',
+  motiveP1: 'At RCSC, our core belief is that science belongs to everyone. We exist to democratize access to scientific thinking and exposure for the students of Rajshahi College — regardless of background or prior knowledge. We want every student to leave college with not just a certificate, but a love for discovery and a habit of questioning the world.',
+  motiveP2: 'Through hands-on experience, mentorship, and community events, we build the scientists, engineers, and thinkers of tomorrow — right here in Rajshahi.'
+};
+
+const SEED_CONTACT = {
+  heroTitle: 'GET IN TOUCH',
+  heroSub: "Have a question, want to collaborate, or just want to say hi? We'd love to hear from you.",
+  phone: '+880 1XXXXXXXXX',
+  phoneSub: 'Sun – Thu, 9am – 5pm',
+  email: 'rcsc.official@gmail.com',
+  emailSub: 'We reply within 24 hours',
+  address: 'Rajshahi College Rd',
+  addressSub: 'Rajshahi – 6000, Bangladesh',
+  facebook: 'https://www.facebook.com/rajshahicollegescienceclub',
+  instagram: 'https://www.instagram.com/rajshahi_college_science_club/',
+  youtube: 'https://www.youtube.com/@rcscofficial',
+  github: 'https://github.com/rcsc'
 };
 
 const SEED_BLOG = [
@@ -485,7 +739,9 @@ let appData = {
   gallery: getD(KEYS.gallery, SEED_GALLERY),
   exec: getD(KEYS.exec, SEED_EXEC),
   blog: getD(KEYS.blog, SEED_BLOG),
-  settings: getD(KEYS.settings, {})
+  settings: getD(KEYS.settings, {}),
+  about: getD(KEYS.about, SEED_ABOUT),
+  contact: getD(KEYS.contact, SEED_CONTACT)
 };
 
 function updateSyncStatus(text, color = 'green') {
@@ -563,6 +819,26 @@ async function syncWithFirestore() {
       setD(KEYS.settings, appData.settings);
     }
 
+    // 6. About
+    const aboutDoc = await db.collection('content').doc('about').get();
+    if (aboutDoc.exists) {
+      appData.about = aboutDoc.data();
+    } else {
+      await db.collection('content').doc('about').set(SEED_ABOUT);
+      appData.about = JSON.parse(JSON.stringify(SEED_ABOUT));
+    }
+    setD(KEYS.about, appData.about);
+
+    // 7. Contact
+    const contactDoc = await db.collection('content').doc('contact').get();
+    if (contactDoc.exists) {
+      appData.contact = contactDoc.data();
+    } else {
+      await db.collection('content').doc('contact').set(SEED_CONTACT);
+      appData.contact = JSON.parse(JSON.stringify(SEED_CONTACT));
+    }
+    setD(KEYS.contact, appData.contact);
+
     updateSyncStatus('Cloud Live (Firestore)', 'green');
     renderSection(currentSection);
   } catch (err) {
@@ -579,6 +855,8 @@ const NAV_CONFIG = {
   gallery:    { title:'Gallery', subtitle:'Manage photo albums by event', addLabel:'Add Album' },
   executives: { title:'Executives', subtitle:'Update the executive committee', addLabel:'Add Member' },
   blog:       { title:'Blog', subtitle:'Write and manage blog posts', addLabel:'New Post' },
+  about:      { title:'About Page', subtitle:'Edit Who We Are, Milestones, and Motive text', addLabel:'Save About' },
+  contact:    { title:'Contact Info', subtitle:'Manage contact details, addresses, and social links', addLabel:'Save Contact' },
   settings:   { title:'Settings', subtitle:'Passwords, club info, data management', addLabel:null }
 };
 
@@ -608,6 +886,8 @@ function renderSection(sec) {
   if (sec === 'gallery')    renderAlbums();
   if (sec === 'executives') renderExec();
   if (sec === 'blog')       renderBlog();
+  if (sec === 'about')      renderAbout();
+  if (sec === 'contact')    renderContact();
   if (sec === 'settings')   loadSettings();
 }
 
@@ -616,6 +896,8 @@ function openAddModal() {
   if (currentSection === 'gallery')    openAlbumModal();
   if (currentSection === 'executives') openExecModal();
   if (currentSection === 'blog')       openBlogModal();
+  if (currentSection === 'about')      saveAbout();
+  if (currentSection === 'contact')    saveContact();
 }
 
 // ══════════════════════════════════════════════════════════
@@ -907,9 +1189,17 @@ async function deletePhoto(idx) {
 // ══════════════════════════════════════════════════════════
 function renderExec() {
   const data = appData.exec || SEED_EXEC;
-  document.getElementById('execYear').value = data.year || '';
-  document.getElementById('principalName').value = data.principal || '';
-  document.getElementById('moderatorName').value = data.moderator || '';
+  const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+  setVal('execYear', data.year || '2025–2026');
+  setVal('execHeroTitle', data.heroTitle || 'MEET THE EXECUTIVES');
+  setVal('execNotice', data.notice || '');
+  setVal('principalName', data.principal || '');
+  setVal('principalRole', data.principalRole || 'Principal & Patron');
+  setVal('principalSub', data.principalSub || 'Rajshahi College · Honorary Head of RCSC');
+  setVal('moderatorName', data.moderator || '');
+  setVal('moderatorRole', data.moderatorRole || 'Club Moderator');
+  setVal('moderatorSub', data.moderatorSub || 'Faculty Advisor · Department of Science');
+
   const list = document.getElementById('execList');
   list.innerHTML = (data.members||[]).map((m,i) => `
     <div class="exec-row">
@@ -926,9 +1216,17 @@ function renderExec() {
 
 async function saveExecHeader() {
   if (!appData.exec) appData.exec = JSON.parse(JSON.stringify(SEED_EXEC));
-  appData.exec.year      = document.getElementById('execYear').value.trim();
-  appData.exec.principal = document.getElementById('principalName').value.trim();
-  appData.exec.moderator = document.getElementById('moderatorName').value.trim();
+  const getVal = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+  appData.exec.year          = getVal('execYear') || '2025–2026';
+  appData.exec.heroTitle     = getVal('execHeroTitle') || 'MEET THE EXECUTIVES';
+  appData.exec.notice        = getVal('execNotice');
+  appData.exec.principal     = getVal('principalName');
+  appData.exec.principalRole = getVal('principalRole') || 'Principal & Patron';
+  appData.exec.principalSub  = getVal('principalSub') || 'Rajshahi College · Honorary Head of RCSC';
+  appData.exec.moderator     = getVal('moderatorName');
+  appData.exec.moderatorRole = getVal('moderatorRole') || 'Club Moderator';
+  appData.exec.moderatorSub  = getVal('moderatorSub') || 'Faculty Advisor · Department of Science';
+
   setD(KEYS.exec, appData.exec);
   showToast('Saving leadership info...', 'success');
   if (db) {
@@ -1145,6 +1443,131 @@ async function deletePost(id) {
       await db.collection('blogs').doc(id).delete();
       showToast('Post deleted from cloud.', 'success');
     } catch(err) {}
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// ABOUT PAGE
+// ══════════════════════════════════════════════════════════
+let currentMilestones = [];
+
+function renderAbout() {
+  const data = appData.about || SEED_ABOUT;
+  const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+  setVal('aboutWhoTitle', data.whoTitle || 'Who We Are');
+  setVal('aboutWhoP1', data.whoP1 || '');
+  setVal('aboutWhoP2', data.whoP2 || '');
+
+  setVal('aboutMilestonesTitle', data.milestonesTitle || 'Our Milestones');
+  currentMilestones = Array.isArray(data.milestones) ? JSON.parse(JSON.stringify(data.milestones)) : JSON.parse(JSON.stringify(SEED_ABOUT.milestones));
+  renderMilestonesRows();
+
+  setVal('aboutMotiveTitle', data.motiveTitle || 'Our Motive');
+  setVal('aboutMotiveP1', data.motiveP1 || '');
+  setVal('aboutMotiveP2', data.motiveP2 || '');
+}
+
+function renderMilestonesRows() {
+  const container = document.getElementById('milestonesRows');
+  if (!container) return;
+  container.innerHTML = currentMilestones.map((m, i) => `
+    <div class="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-100">
+      <div class="w-24">
+        <label class="form-label text-[10px]">Value</label>
+        <input class="form-input bg-white text-sm" value="${esc(m.value||'')}" onchange="currentMilestones[${i}].value=this.value" placeholder="e.g. 22+" />
+      </div>
+      <div class="flex-1">
+        <label class="form-label text-[10px]">Label</label>
+        <input class="form-input bg-white text-sm" value="${esc(m.label||'')}" onchange="currentMilestones[${i}].label=this.value" placeholder="e.g. Total Events" />
+      </div>
+      <div class="flex-1">
+        <label class="form-label text-[10px]">Subtext / Detail</label>
+        <input class="form-input bg-white text-sm" value="${esc(m.sub||'')}" onchange="currentMilestones[${i}].sub=this.value" placeholder="e.g. 15 Intra · 7 National" />
+      </div>
+      <button type="button" onclick="removeMilestoneRow(${i})" class="btn-danger mt-4 text-xs px-2.5 py-1.5" title="Remove">&times;</button>
+    </div>
+  `).join('');
+}
+
+function addMilestoneRow() {
+  currentMilestones.push({ value: '', label: '', sub: '' });
+  renderMilestonesRows();
+}
+
+function removeMilestoneRow(index) {
+  currentMilestones.splice(index, 1);
+  renderMilestonesRows();
+}
+
+async function saveAbout() {
+  if (!appData.about) appData.about = JSON.parse(JSON.stringify(SEED_ABOUT));
+  const getVal = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+  appData.about.whoTitle        = getVal('aboutWhoTitle') || 'Who We Are';
+  appData.about.whoP1           = getVal('aboutWhoP1');
+  appData.about.whoP2           = getVal('aboutWhoP2');
+  appData.about.milestonesTitle = getVal('aboutMilestonesTitle') || 'Our Milestones';
+  appData.about.milestones      = currentMilestones;
+  appData.about.motiveTitle     = getVal('aboutMotiveTitle') || 'Our Motive';
+  appData.about.motiveP1        = getVal('aboutMotiveP1');
+  appData.about.motiveP2        = getVal('aboutMotiveP2');
+
+  setD(KEYS.about, appData.about);
+  showToast('Saving About page content...', 'success');
+  if (db) {
+    try {
+      await db.collection('content').doc('about').set(appData.about);
+      showToast('About page saved to cloud!', 'success');
+    } catch(err) {
+      showToast('Saved locally.', 'orange');
+    }
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// CONTACT INFO
+// ══════════════════════════════════════════════════════════
+function renderContact() {
+  const data = appData.contact || SEED_CONTACT;
+  const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+  setVal('contactHeroTitle', data.heroTitle || 'GET IN TOUCH');
+  setVal('contactHeroSub', data.heroSub || "Have a question, want to collaborate, or just want to say hi? We'd love to hear from you.");
+  setVal('contactPhone', data.phone || '+880 1XXXXXXXXX');
+  setVal('contactPhoneSub', data.phoneSub || 'Sun – Thu, 9am – 5pm');
+  setVal('contactEmail', data.email || 'rcsc.official@gmail.com');
+  setVal('contactEmailSub', data.emailSub || 'We reply within 24 hours');
+  setVal('contactAddress', data.address || 'Rajshahi College Rd');
+  setVal('contactAddressSub', data.addressSub || 'Rajshahi – 6000, Bangladesh');
+  setVal('contactFacebook', data.facebook || 'https://www.facebook.com/rajshahicollegescienceclub');
+  setVal('contactInstagram', data.instagram || 'https://www.instagram.com/rajshahi_college_science_club/');
+  setVal('contactYoutube', data.youtube || 'https://www.youtube.com/@rcscofficial');
+  setVal('contactGithub', data.github || 'https://github.com/rcsc');
+}
+
+async function saveContact() {
+  if (!appData.contact) appData.contact = JSON.parse(JSON.stringify(SEED_CONTACT));
+  const getVal = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+  appData.contact.heroTitle   = getVal('contactHeroTitle') || 'GET IN TOUCH';
+  appData.contact.heroSub     = getVal('contactHeroSub');
+  appData.contact.phone       = getVal('contactPhone');
+  appData.contact.phoneSub    = getVal('contactPhoneSub');
+  appData.contact.email       = getVal('contactEmail');
+  appData.contact.emailSub    = getVal('contactEmailSub');
+  appData.contact.address     = getVal('contactAddress');
+  appData.contact.addressSub  = getVal('contactAddressSub');
+  appData.contact.facebook    = getVal('contactFacebook');
+  appData.contact.instagram   = getVal('contactInstagram');
+  appData.contact.youtube     = getVal('contactYoutube');
+  appData.contact.github      = getVal('contactGithub');
+
+  setD(KEYS.contact, appData.contact);
+  showToast('Saving contact info...', 'success');
+  if (db) {
+    try {
+      await db.collection('content').doc('contact').set(appData.contact);
+      showToast('Contact info saved to cloud!', 'success');
+    } catch(err) {
+      showToast('Saved locally.', 'orange');
+    }
   }
 }
 
