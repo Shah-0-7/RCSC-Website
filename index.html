@@ -545,8 +545,7 @@
         </a>
       </div>
       <img src="logo.png" alt="RCSC Hero"
-        class="relative order-1 aspect-square max-h-[50vh] max-w-[85vw] object-contain sm:max-w-[50vw] md:order-2 md:max-w-[40vw] md:max-h-[440px] lg:mt-0 xl:ml-0 2xl:max-h-[480px]"
-        style="filter: url(#darken-text)" />
+        class="relative order-1 aspect-square max-h-[50vh] max-w-[85vw] object-contain sm:max-w-[50vw] md:order-2 md:max-w-[40vw] md:max-h-[440px] lg:mt-0 xl:ml-0 2xl:max-h-[480px]" />
       <img src="rcsc-watermark-text.svg"
         class="absolute bottom-0 right-0 -z-10 max-h-[75%] max-w-[50vw] object-contain select-none pointer-events-none opacity-80"
         alt="Rajshahi College Science Club" />
@@ -1172,19 +1171,6 @@
     setInterval(updateCountdowns, 60000);
   </script>
 
-  <!-- SVG filter: darkens the light gray circular text on logo.png to black -->
-  <svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
-    <defs>
-      <filter id="darken-text" color-interpolation-filters="sRGB">
-        <!-- Pull light grays (the text ring) toward black; vibrant colours stay vivid -->
-        <feComponentTransfer>
-          <feFuncR type="gamma" amplitude="1" exponent="2.2" offset="0" />
-          <feFuncG type="gamma" amplitude="1" exponent="2.2" offset="0" />
-          <feFuncB type="gamma" amplitude="1" exponent="2.2" offset="0" />
-        </feComponentTransfer>
-      </filter>
-    </defs>
-  </svg>
   <!-- Firebase SDK Compat -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
