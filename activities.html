@@ -212,207 +212,25 @@
     </div>
   </section>
 
-  <!-- FILTER TABS -->
+  <!-- FILTER TABS & ACTIVITIES GRID -->
   <div class="container mx-auto px-4 py-8">
-    <div class="flex flex-wrap gap-3 mb-10">
-      <button class="tab-btn active" onclick="switchTab(event,'events')">Events</button>
-      <button class="tab-btn" onclick="switchTab(event,'workshop')">Workshop</button>
-      <button class="tab-btn" onclick="switchTab(event,'projects')">Projects</button>
-      <button class="tab-btn" onclick="switchTab(event,'publication')">Publication</button>
+    <div class="flex flex-wrap gap-3 mb-10 justify-center" id="activities-filter-bar">
+      <button class="tab-btn active" onclick="filterActivities(this, 'all')">All Activities</button>
+      <button class="tab-btn" onclick="filterActivities(this, 'Competition')">Competitions</button>
+      <button class="tab-btn" onclick="filterActivities(this, 'Event')">Events &amp; Fests</button>
+      <button class="tab-btn" onclick="filterActivities(this, 'Workshop')">Workshops</button>
     </div>
 
-    <!-- EVENTS TAB -->
-    <div id="tab-events" class="tab-panel active grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-      <!-- RCSC Chess Hub -->
-      <div class="activity-card">
-        <div class="relative">
-          <img src="banner-chess-hq.jpg" alt="Chess Hub" class="w-full h-48 object-cover" />
-          <span class="absolute top-3 right-3 bg-green-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">Free
-            Entry</span>
-        </div>
-        <div class="p-6 flex flex-col gap-3 flex-1">
-          <div class="flex gap-2 flex-wrap">
-            <span class="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">Event</span>
-            <span class="bg-gray-100 text-gray-600 text-xs font-semibold px-3 py-1 rounded-full">♟ Chess</span>
-            <span class="bg-red-100 text-red-600 text-xs font-semibold px-3 py-1 rounded-full">20–21 Nov</span>
-          </div>
-          <h3 class="text-white font-bold text-xl leading-snug">RCSC Chess Hub — 1st Intra-City Online Chess Tournament
-          </h3>
-          <p class="text-gray-400 text-sm leading-relaxed flex-1">Swiss system blitz chess (5+3). Qualifier on 20 Nov,
-            Finals on 21 Nov — both at 9:00 PM on lichess.org. Top 5 leaderboard published on Facebook.</p>
-          <div class="flex items-center justify-between mt-2">
-            <a href="chess-hub.html" class="learn-more-button">LEARN MORE</a>
-            <span class="text-xs text-red-400 font-ShareTechTown">Deadline: 19 Nov</span>
-          </div>
-        </div>
-      </div>
-      <!-- RCSC DevSprint -->
-      <div class="activity-card">
-        <div class="relative">
-          <img src="banner-devsprint-hq.jpg" alt="DevSprint" class="w-full h-48 object-cover" />
-          <span class="absolute top-3 right-3 bg-blue-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">Coming
-            Soon</span>
-        </div>
-        <div class="p-6 flex flex-col gap-3 flex-1">
-          <div class="flex gap-2 flex-wrap">
-            <span class="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">Competition</span>
-            <span class="bg-gray-100 text-gray-600 text-xs font-semibold px-3 py-1 rounded-full">💻 App Building</span>
-            <span class="bg-purple-100 text-purple-700 text-xs font-semibold px-3 py-1 rounded-full">2 Weeks</span>
-          </div>
-          <h3 class="text-white font-bold text-xl leading-snug">RCSC DevSprint</h3>
-          <p class="text-gray-400 text-sm leading-relaxed flex-1">A 2-week app-building competition where teams design,
-            develop, and ship a complete mobile or web application from scratch. Build under real pressure, with real
-            deadlines.</p>
-          <div class="flex items-center justify-between mt-2">
-            <a href="devsprint.html" class="learn-more-button">LEARN MORE</a>
-            <span class="text-xs text-blue-400 font-ShareTechTown">Date: TBA</span>
-          </div>
-        </div>
-      </div>
+    <!-- DYNAMIC ACTIVITIES GRID -->
+    <div id="events-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-16"></div>
 
-      <!-- 10th National Science Fest -->
-      <div class="activity-card">
-        <div class="relative">
-          <img
-            src="activity-fest.jpg"
-            alt="National Science Fest" class="w-full h-48 object-cover" />
-          <span class="absolute top-3 right-3 bg-green-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">10th
-            Edition</span>
-        </div>
-        <div class="p-6 flex flex-col gap-3 flex-1">
-          <div class="flex gap-2 flex-wrap">
-            <span class="bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full">Flagship Event</span>
-            <span class="bg-gray-100 text-gray-600 text-xs font-semibold px-3 py-1 rounded-full">🔬 Multi-Science</span>
-            <span class="bg-yellow-100 text-yellow-700 text-xs font-semibold px-3 py-1 rounded-full">National</span>
-          </div>
-          <h3 class="text-white font-bold text-xl leading-snug">10th Rajshahi College National Science Fest</h3>
-          <p class="text-gray-400 text-sm leading-relaxed flex-1">The grandest science festival in Rajshahi returns for
-            its 10th consecutive year — with olympiads in physics, chemistry, biology, astronomy, project exhibitions,
-            and more.</p>
-          <div class="flex items-center justify-between mt-2">
-            <a href="science-fest.html" class="learn-more-button">LEARN MORE</a>
-            <span class="text-xs text-green-400 font-ShareTechTown">Date: TBA</span>
-          </div>
-        </div>
+    <!-- Empty State -->
+    <div id="events-empty" class="hidden text-center py-20 max-w-md mx-auto">
+      <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-zinc-800 text-blue-400 flex items-center justify-center">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
       </div>
-    </div>
-
-    <!-- DYNAMIC EVENTS (from Dashboard localStorage) -->
-    <div id="dynamic-events-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-8 hidden"></div>
-
-    <!-- WORKSHOP TAB -->
-    <div id="tab-workshop" class="tab-panel grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-      <div class="activity-card">
-        <img src="activity-workshop.jpg" alt="Robotics Workshop" class="w-full h-48 object-cover" />
-        <div class="p-6 flex flex-col gap-3 flex-1">
-          <div class="flex gap-2 flex-wrap">
-            <span class="bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full">Workshop</span>
-            <span class="bg-gray-100 text-gray-600 text-xs font-semibold px-3 py-1 rounded-full">Robotics</span>
-          </div>
-          <h3 class="text-white font-bold text-xl leading-snug">Robotics Fundamentals Workshop</h3>
-          <p class="text-gray-400 text-sm leading-relaxed flex-1">Hands-on training in Arduino, sensors, and motor
-            control. Build your first robot from scratch over 2 days.</p>
-          <a href="#" class="learn-more-button self-start mt-2">LEARN MORE</a>
-        </div>
-      </div>
-      <div class="activity-card">
-        <img
-          src="join-learning.jpg"
-          alt="Python Workshop" class="w-full h-48 object-cover" />
-        <div class="p-6 flex flex-col gap-3 flex-1">
-          <div class="flex gap-2 flex-wrap">
-            <span class="bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full">Workshop</span>
-            <span class="bg-gray-100 text-gray-600 text-xs font-semibold px-3 py-1 rounded-full">Programming</span>
-          </div>
-          <h3 class="text-white font-bold text-xl leading-snug">Python for Science Workshop</h3>
-          <p class="text-gray-400 text-sm leading-relaxed flex-1">Learn data analysis, visualization, and simulation
-            using Python. No prior programming knowledge needed.</p>
-          <a href="#" class="learn-more-button self-start mt-2">LEARN MORE</a>
-        </div>
-      </div>
-      <div class="activity-card">
-        <img
-          src="join-projects.jpg"
-          alt="Chemistry Lab Workshop" class="w-full h-48 object-cover" />
-        <div class="p-6 flex flex-col gap-3 flex-1">
-          <div class="flex gap-2 flex-wrap">
-            <span class="bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full">Workshop</span>
-            <span class="bg-gray-100 text-gray-600 text-xs font-semibold px-3 py-1 rounded-full">Chemistry</span>
-          </div>
-          <h3 class="text-white font-bold text-xl leading-snug">Advanced Chemistry Lab</h3>
-          <p class="text-gray-400 text-sm leading-relaxed flex-1">A practical lab session on titration,
-            electrochemistry, and organic reactions with mentorship from faculty.</p>
-          <a href="#" class="learn-more-button self-start mt-2">LEARN MORE</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- PROJECTS TAB -->
-    <div id="tab-projects" class="tab-panel grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-      <div class="activity-card">
-        <img
-          src="activity-project.jpg"
-          alt="Water Purifier" class="w-full h-48 object-cover" />
-        <div class="p-6 flex flex-col gap-3 flex-1">
-          <div class="flex gap-2 flex-wrap">
-            <span class="bg-purple-100 text-purple-700 text-xs font-semibold px-3 py-1 rounded-full">Project</span>
-            <span class="bg-gray-100 text-gray-600 text-xs font-semibold px-3 py-1 rounded-full">Environmental</span>
-          </div>
-          <h3 class="text-white font-bold text-xl leading-snug">Low-Cost Water Purifier</h3>
-          <p class="text-gray-400 text-sm leading-relaxed flex-1">A student-built DIY water purification system using
-            activated charcoal and bio-sand filtration for rural Bangladesh.</p>
-          <a href="#" class="learn-more-button self-start mt-2">LEARN MORE</a>
-        </div>
-      </div>
-      <div class="activity-card">
-        <img
-          src="join-network.jpg"
-          alt="Solar Tracker" class="w-full h-48 object-cover" />
-        <div class="p-6 flex flex-col gap-3 flex-1">
-          <div class="flex gap-2 flex-wrap">
-            <span class="bg-purple-100 text-purple-700 text-xs font-semibold px-3 py-1 rounded-full">Project</span>
-            <span class="bg-gray-100 text-gray-600 text-xs font-semibold px-3 py-1 rounded-full">Energy</span>
-          </div>
-          <h3 class="text-white font-bold text-xl leading-snug">Dual-Axis Solar Tracker</h3>
-          <p class="text-gray-400 text-sm leading-relaxed flex-1">An automated solar panel tracker that follows the
-            sun's path using LDR sensors and servo motors for maximum efficiency.</p>
-          <a href="#" class="learn-more-button self-start mt-2">LEARN MORE</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- PUBLICATION TAB -->
-    <div id="tab-publication" class="tab-panel grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-      <div class="activity-card">
-        <img
-          src="activity-quark.jpg"
-          alt="Science Digest" class="w-full h-48 object-cover" />
-        <div class="p-6 flex flex-col gap-3 flex-1">
-          <div class="flex gap-2 flex-wrap">
-            <span class="bg-yellow-100 text-yellow-700 text-xs font-semibold px-3 py-1 rounded-full">Publication</span>
-            <span class="bg-gray-100 text-gray-600 text-xs font-semibold px-3 py-1 rounded-full">Magazine</span>
-          </div>
-          <h3 class="text-white font-bold text-xl leading-snug">RCSC Science Digest Vol. 1</h3>
-          <p class="text-gray-400 text-sm leading-relaxed flex-1">Our inaugural science magazine featuring student
-            articles on quantum physics, neuroscience, and emerging technologies.</p>
-          <a href="#" class="learn-more-button self-start mt-2">LEARN MORE</a>
-        </div>
-      </div>
-      <div class="activity-card">
-        <img
-          src="join-learning.jpg"
-          alt="Research Paper" class="w-full h-48 object-cover" />
-        <div class="p-6 flex flex-col gap-3 flex-1">
-          <div class="flex gap-2 flex-wrap">
-            <span class="bg-yellow-100 text-yellow-700 text-xs font-semibold px-3 py-1 rounded-full">Publication</span>
-            <span class="bg-gray-100 text-gray-600 text-xs font-semibold px-3 py-1 rounded-full">Research</span>
-          </div>
-          <h3 class="text-white font-bold text-xl leading-snug">Student Research Compendium 2025</h3>
-          <p class="text-gray-400 text-sm leading-relaxed flex-1">A collection of research papers authored by RCSC
-            members covering topics from climate science to bioinformatics.</p>
-          <a href="#" class="learn-more-button self-start mt-2">LEARN MORE</a>
-        </div>
-      </div>
+      <h3 class="text-xl font-bold text-white mb-2">No Activities Found</h3>
+      <p class="text-gray-400 text-sm">Activities will appear here once published from the <a href="dashboard.html" class="text-blue-500 underline">Admin Dashboard</a>.</p>
     </div>
   </div>
 
@@ -472,69 +290,125 @@
     </div>
   </footer>
 
-  <script>
-    function switchTab(e, tab) {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-      e.target.classList.add('active');
-      document.getElementById('tab-' + tab).classList.add('active');
-    }
-  </script>
-
   <!-- Firebase SDK Compat -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <script src="firebase-config.js"></script>
 
   <script>
-  (function(){
-    const container = document.getElementById('dynamic-events-container');
-    if (!container) return;
+  const DEFAULT_ACTIVITIES = [
+    {
+      id: 'chess-hub-2026',
+      title: 'RCSC Chess Hub — 1st Intra-City Online Chess Tournament',
+      subtitle: '',
+      description: 'Swiss system blitz chess (5+3). Qualifier on 20 Nov, Finals on 21 Nov — both at 9:00 PM on lichess.org. Top 5 leaderboard published on Facebook.',
+      date: '2026-11-20',
+      deadline: '19 Nov',
+      regLink: 'https://forms.gle/KhpkwTJvrFMR8eQY8',
+      detailPage: 'chess-hub.html',
+      banner: 'banner-chess-hq.jpg',
+      tags: 'Event, ♟ Chess, Free Entry'
+    },
+    {
+      id: 'devsprint-2026',
+      title: 'RCSC DevSprint',
+      subtitle: '',
+      description: 'A 2-week app-building competition where teams design, develop, and ship a complete mobile or web application from scratch. Build under real pressure, with real deadlines.',
+      date: 'TBA',
+      deadline: 'TBA',
+      regLink: '',
+      detailPage: 'devsprint.html',
+      banner: 'banner-devsprint-hq.jpg',
+      tags: 'Competition, 💻 App Building, 2 Weeks'
+    },
+    {
+      id: 'science-fest-10',
+      title: '10th Rajshahi College National Science Fest',
+      subtitle: '',
+      description: 'The grandest science festival in Rajshahi returns for its 10th consecutive year — with olympiads in physics, chemistry, biology, astronomy, project exhibitions, and more.',
+      date: 'TBA',
+      deadline: 'TBA',
+      regLink: '',
+      detailPage: 'science-fest.html',
+      banner: 'activity-fest.jpg',
+      tags: 'Event, Flagship Event, 🔬 Multi-Science, National'
+    }
+  ];
 
-    function renderEvents(events) {
-      if (!events || !events.length) return;
-      const hardcoded = ['chess-hub-2026', 'devsprint-2026', 'science-fest-10', 'chess-hub', 'devsprint', 'science-fest'];
-      const newEvents = events.filter(e => !hardcoded.includes(e.id));
-      if (!newEvents.length) {
-        container.classList.add('hidden');
-        return;
-      }
-      container.classList.remove('hidden');
-      container.innerHTML = newEvents.map(ev => `
-        <div class="activity-card">
-          <div class="relative">
-            <img src="${ev.banner || 'logo.png'}" alt="${ev.title}" class="w-full h-48 object-cover" onerror="this.src='logo.png'" />
-            ${ev.deadline && ev.deadline !== 'TBA' ? `<span class="absolute top-3 right-3 bg-orange-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">Deadline: ${ev.deadline}</span>` : ''}
-          </div>
-          <div class="p-6 flex flex-col gap-3 flex-1">
-            <div class="flex gap-2 flex-wrap">
-              <span class="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">Event</span>
-              ${ev.date && ev.date !== 'TBA' ? `<span class="bg-gray-100 text-gray-700 text-xs font-semibold px-3 py-1 rounded-full">📅 ${ev.date}</span>` : ''}
-            </div>
-            <h3 class="text-white font-bold text-xl leading-snug">${ev.title}</h3>
-            ${ev.subtitle ? `<p class="text-blue-400 text-xs font-semibold">${ev.subtitle}</p>` : ''}
-            <p class="text-gray-400 text-sm leading-relaxed flex-1">${ev.description || ''}</p>
-            <div class="flex gap-3 mt-2">
-              ${ev.regLink ? `<a href="${ev.regLink}" target="_blank" class="learn-more-button self-start">REGISTER</a>` : ''}
-              ${ev.detailPage ? `<a href="${ev.detailPage}" class="learn-more-button self-start">DETAILS</a>` : ''}
-            </div>
-          </div>
-        </div>`).join('');
+  let currentActivities = [];
+  let currentFilter = 'all';
+
+  function filterActivities(btn, filter) {
+    document.querySelectorAll('#activities-filter-bar .tab-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    currentFilter = filter;
+    renderActivitiesGrid();
+  }
+
+  function renderActivitiesGrid() {
+    const grid = document.getElementById('events-grid');
+    const empty = document.getElementById('events-empty');
+    if (!grid) return;
+
+    let items = currentActivities || [];
+    if (currentFilter !== 'all') {
+      const q = currentFilter.toLowerCase();
+      items = items.filter(ev => {
+        const t = (ev.tags || '').toLowerCase();
+        const title = (ev.title || '').toLowerCase();
+        return t.includes(q) || title.includes(q);
+      });
     }
 
+    if (!items.length) {
+      grid.innerHTML = '';
+      if (empty) empty.classList.remove('hidden');
+      return;
+    }
+    if (empty) empty.classList.add('hidden');
+
+    grid.innerHTML = items.map(ev => `
+      <div class="activity-card flex flex-col justify-between">
+        <div class="relative">
+          <img src="${ev.banner || 'logo.png'}" alt="${ev.title}" class="w-full h-48 object-cover" onerror="this.src='logo.png'" />
+          ${ev.deadline && ev.deadline !== 'TBA' ? `<span class="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">Deadline: ${ev.deadline}</span>` : ''}
+        </div>
+        <div class="p-6 flex flex-col gap-3 flex-1">
+          <div class="flex gap-2 flex-wrap">
+            ${(ev.tags || 'Event').split(',').filter(Boolean).map(t => `<span class="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">${t.trim()}</span>`).join('')}
+          </div>
+          <h3 class="text-white font-bold text-xl leading-snug">${ev.title}</h3>
+          ${ev.subtitle ? `<p class="text-blue-400 text-xs font-semibold">${ev.subtitle}</p>` : ''}
+          <p class="text-gray-400 text-sm leading-relaxed flex-1">${ev.description || ''}</p>
+          <div class="flex items-center justify-between mt-2 pt-2 border-t border-zinc-800">
+            <div class="flex gap-2">
+              ${ev.regLink ? `<a href="${ev.regLink}" target="_blank" class="learn-more-button">REGISTER</a>` : ''}
+              ${ev.detailPage ? `<a href="${ev.detailPage}" class="learn-more-button">DETAILS</a>` : ''}
+            </div>
+            ${ev.date && ev.date !== 'TBA' ? `<span class="text-xs text-green-400 font-ShareTechTown">${ev.date}</span>` : ''}
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  (function(){
     // 1. Instant local render
     try {
       const raw = localStorage.getItem('rcsc_events');
-      if (raw) renderEvents(JSON.parse(raw));
-    } catch(e) {}
+      currentActivities = raw ? JSON.parse(raw) : DEFAULT_ACTIVITIES;
+    } catch(e) {
+      currentActivities = DEFAULT_ACTIVITIES;
+    }
+    renderActivitiesGrid();
 
     // 2. Live fetch from Firestore
-    if (db) {
+    if (typeof db !== 'undefined' && db) {
       db.collection('events').get().then(snap => {
         if (!snap.empty) {
-          const events = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-          localStorage.setItem('rcsc_events', JSON.stringify(events));
-          renderEvents(events);
+          currentActivities = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          localStorage.setItem('rcsc_events', JSON.stringify(currentActivities));
+          renderActivitiesGrid();
         }
       }).catch(err => console.warn('Firestore events error:', err));
     }

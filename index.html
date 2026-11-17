@@ -1,4 +1,3 @@
-3
 <!DOCTYPE html>
 <html lang="en">
 
@@ -713,9 +712,13 @@
                 <span
                   class="bg-blue-500/30 text-blue-300 text-xs font-semibold px-2.5 py-1 rounded-full border border-blue-500/40">Featured</span>
               </div>
-              <span id="latest-banner-title" class="font-bold text-xl leading-tight text-white">Introducing Our Very Own Blog Site</span>
-              <p id="latest-banner-excerpt" class="break-words text-xs leading-tight text-gray-300 sm:text-sm">After months of development, the RCSC blog is officially live. This platform will serve as a space for student voices, science articles, and club announcements.</p>
-              <div id="latest-banner-meta" class="text-xs text-gray-400 mt-1">By RCSC Team &bull; September 19, 2026</div>
+              <span id="latest-banner-title" class="font-bold text-xl leading-tight text-white">Introducing Our Very Own
+                Blog Site</span>
+              <p id="latest-banner-excerpt" class="break-words text-xs leading-tight text-gray-300 sm:text-sm">After
+                months of development, the RCSC blog is officially live. This platform will serve as a space for student
+                voices, science articles, and club announcements.</p>
+              <div id="latest-banner-meta" class="text-xs text-gray-400 mt-1">By RCSC Team &bull; September 19, 2026
+              </div>
             </div>
             <a target="_blank" href="blog.html"
               class="flex h-fit w-full items-center justify-center rounded-lg border border-blue-500/40 bg-blue-500/20 px-5 py-2.5 font-bold text-base text-white shadow-2xl transition-all hover:bg-blue-500 sm:w-36 sm:px-7 sm:text-lg self-center">
@@ -1212,12 +1215,12 @@
       }
     }
 
-    (function(){
+    (function () {
       // 1. Instant local render
       try {
         const raw = localStorage.getItem('rcsc_blog');
         if (raw) renderLatestBlogs(JSON.parse(raw));
-      } catch(e) {}
+      } catch (e) { }
 
       // 2. Live fetch from Firestore
       if (typeof db !== 'undefined' && db) {

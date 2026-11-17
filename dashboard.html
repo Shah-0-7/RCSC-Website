@@ -6,6 +6,9 @@
   <title>RCSC Admin Dashboard</title>
   <link rel="icon" href="logo.png" />
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Cropper.js CSS & JS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
   <!-- Firebase SDK Compat -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
@@ -50,6 +53,13 @@
     #toast.success { background:#22c55e; }
     #toast.error { background:#ef4444; }
     textarea.form-input { resize:vertical; min-height:120px; }
+    /* Cropper shape styling */
+    .cropper-view-box { outline: 2px dashed #3b82f6 !important; outline-color: #3b82f6 !important; }
+    .cropper-line, .cropper-point { background-color: #3b82f6 !important; }
+    .crop-circle .cropper-view-box,
+    .crop-circle .cropper-face { border-radius: 50% !important; }
+    .crop-circle .cropper-view-box { box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.65) !important; }
+    .crop-rect .cropper-view-box { border-radius: 12px !important; box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.65) !important; }
     .exec-row { display:grid; grid-template-columns:40px 1fr 1fr 1fr auto; align-items:center; gap:0.75rem; padding:0.75rem 1rem; border-bottom:1px solid #f1f5f9; }
     .exec-row:hover { background:#f8fafc; }
     @media(max-width:768px) {
@@ -275,6 +285,50 @@
   </div>
 </div>
 
+<!-- ═══════════════════ IMAGE CROPPER MODAL ═══════════════════ -->
+<div id="cropperModal" class="modal-overlay hidden" style="z-index: 150;">
+  <div class="modal-box max-w-2xl bg-white rounded-2xl overflow-hidden shadow-2xl flex flex-col" style="max-height: 92vh;">
+    <!-- Header -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gray-50">
+      <div>
+        <h3 id="cropperModalTitle" class="font-bold text-gray-900 text-lg">Crop &amp; Position Image</h3>
+        <p id="cropperModalSubtitle" class="text-xs text-gray-500 mt-0.5">Adjust and position your image inside the outline guide.</p>
+      </div>
+      <button type="button" onclick="closeCropperModal()" class="text-gray-400 hover:text-gray-700 text-2xl leading-none p-1">&times;</button>
+    </div>
+
+    <!-- Body / Canvas Area -->
+    <div class="p-4 bg-zinc-900 flex flex-col items-center justify-center relative overflow-hidden" style="min-height: 380px; max-height: 60vh;">
+      <div id="cropperWrapper" class="w-full flex items-center justify-center" style="max-height: 52vh;">
+        <img id="cropperImage" src="" alt="Crop target" style="max-width: 100%; max-height: 50vh; display: block;" />
+      </div>
+    </div>
+
+    <!-- Toolbar / Guide -->
+    <div class="px-6 py-3 bg-gray-50 border-t border-b border-gray-100 flex flex-wrap items-center justify-between gap-3 text-xs text-gray-600">
+      <div class="flex items-center gap-1.5">
+        <button type="button" onclick="cropperZoom(0.1)" class="px-2.5 py-1.5 bg-white border border-gray-300 rounded hover:bg-gray-100 font-semibold text-gray-700 shadow-sm" title="Zoom In">🔍 +</button>
+        <button type="button" onclick="cropperZoom(-0.1)" class="px-2.5 py-1.5 bg-white border border-gray-300 rounded hover:bg-gray-100 font-semibold text-gray-700 shadow-sm" title="Zoom Out">🔍 −</button>
+        <button type="button" onclick="cropperRotate(-90)" class="px-2.5 py-1.5 bg-white border border-gray-300 rounded hover:bg-gray-100 font-semibold text-gray-700 shadow-sm" title="Rotate Left">↺ 90°</button>
+        <button type="button" onclick="cropperRotate(90)" class="px-2.5 py-1.5 bg-white border border-gray-300 rounded hover:bg-gray-100 font-semibold text-gray-700 shadow-sm" title="Rotate Right">↻ 90°</button>
+        <button type="button" onclick="cropperReset()" class="px-2.5 py-1.5 bg-white border border-gray-300 rounded hover:bg-gray-100 text-gray-700 shadow-sm" title="Reset">Reset</button>
+      </div>
+      <div id="cropperGuideHint" class="text-gray-500 italic">
+        Drag image to align &bull; Scroll or pinch to zoom
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="flex items-center justify-end gap-3 px-6 py-4 bg-white">
+      <button type="button" onclick="closeCropperModal()" class="btn-secondary">Cancel</button>
+      <button type="button" id="cropperConfirmBtn" onclick="applyAndUploadCrop()" class="btn-primary flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        <span id="cropperConfirmText">Crop &amp; Upload</span>
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div id="toast"></div>
 
@@ -385,7 +439,7 @@ const KEYS = { events:'rcsc_events', gallery:'rcsc_gallery', exec:'rcsc_exec', b
 const SEED_EVENTS = [
   { id:'chess-hub-2026', title:'RCSC Chess Hub', subtitle:'1st Intra-City Online Chess Tournament', description:'Swiss system blitz chess (5+3). Qualifier on 20 Nov, Finals on 21 Nov — both at 9:00 PM on lichess.org. Top 5 leaderboard published on Facebook.', date:'2026-11-20', deadline:'2026-11-19', regLink:'https://forms.gle/KhpkwTJvrFMR8eQY8', detailPage:'chess-hub.html', banner:'banner-chess-hq.jpg', tags:'Chess, Free Entry, 20–21 Nov', status:'upcoming' },
   { id:'devsprint-2026',  title:'RCSC DevSprint', subtitle:'2-Week App Building Competition', description:'A 2-week app-building competition where teams design, develop, and ship a complete mobile or web application from scratch.', date:'TBA', deadline:'TBA', regLink:'', detailPage:'devsprint.html', banner:'banner-devsprint-hq.jpg', tags:'Competition, App Building, 2 Weeks', status:'upcoming' },
-  { id:'science-fest-10', title:'10th National Science Fest', subtitle:'Rajshahi College National Science Fest', description:'The grandest science festival in Rajshahi returns for its 10th consecutive year — with olympiads, project exhibitions, and more.', date:'TBA', deadline:'TBA', regLink:'', detailPage:'science-fest.html', banner:'', tags:'Flagship Event, National, Multi-Science', status:'upcoming' }
+  { id:'science-fest-10', title:'10th National Science Fest', subtitle:'Rajshahi College National Science Fest', description:'The grandest science festival in Rajshahi returns for its 10th consecutive year — with olympiads, project exhibitions, and more.', date:'TBA', deadline:'TBA', regLink:'', detailPage:'science-fest.html', banner:'activity-fest.jpg', tags:'Flagship Event, National, Multi-Science', status:'upcoming' }
 ];
 
 const SEED_EXEC = {
@@ -622,8 +676,8 @@ function openEventModal(id) {
           <div class="flex items-center gap-2">
             <input id="ev_banner" class="form-input flex-1" value="${esc(ev?.banner||'')}" placeholder="banner-chess.jpg or https://..." />
             <label class="btn-secondary cursor-pointer flex-shrink-0 text-xs flex items-center gap-1">
-              <span>Upload</span>
-              <input type="file" accept="image/*" class="hidden" onchange="uploadEventBanner(this)" />
+              <span>Upload &amp; Crop</span>
+              <input type="file" accept="image/*" class="hidden" onchange="openCropperFromInput(this, 'event')" />
             </label>
           </div>
         </div>
@@ -902,7 +956,7 @@ function openExecModal(id) {
         <div id="photoPreview" class="w-16 h-16 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
           ${member?.photo ? `<img src="${member.photo}" class="w-full h-full object-cover" />` : '<span class="text-2xl">👤</span>'}
         </div>
-        <label class="btn-secondary cursor-pointer">Upload Photo <input type="file" accept="image/*" class="hidden" onchange="previewExecPhoto(this)" /></label>
+        <label class="btn-secondary cursor-pointer">Upload &amp; Crop Photo <input type="file" accept="image/*" class="hidden" onchange="openCropperFromInput(this, 'exec')" /></label>
       </div>
       <input type="hidden" id="ex_photo" value="${member?.photo||''}" />
     </div>
@@ -1016,7 +1070,7 @@ function openBlogModal(id) {
           ${post?.thumbnail ? `<img src="${post.thumbnail}" class="w-full h-full object-cover" />` : 'No image'}
         </div>
         <div class="flex gap-2 flex-col">
-          <label class="btn-secondary cursor-pointer text-xs">Upload Image <input type="file" accept="image/*" class="hidden" onchange="previewBlogThumb(this)" /></label>
+          <label class="btn-secondary cursor-pointer text-xs">Upload &amp; Crop Image <input type="file" accept="image/*" class="hidden" onchange="openCropperFromInput(this, 'blog')" /></label>
           <input id="bl_thumbUrl" class="form-input text-xs" value="${esc(post?.thumbnail&&!post.thumbnail.startsWith('data:')?post.thumbnail:'')}" placeholder="Or paste image URL" oninput="updateBlogThumbFromUrl(this.value)" />
         </div>
       </div>
@@ -1182,6 +1236,170 @@ function showToast(msg, type='success') {
 function esc(str) {
   if (!str) return '';
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ══════════════════════════════════════════════════════════
+// INTERACTIVE IMAGE CROPPER (SHAPE OUTLINES)
+// ══════════════════════════════════════════════════════════
+let activeCropper = null;
+let currentCropType = null; // 'event' | 'blog' | 'exec'
+let currentCropInput = null;
+
+function openCropperFromInput(input, type) {
+  if (!input.files || !input.files[0]) return;
+  const file = input.files[0];
+  currentCropType = type;
+  currentCropInput = input;
+
+  const titleEl = document.getElementById('cropperModalTitle');
+  const subEl = document.getElementById('cropperModalSubtitle');
+  const wrapper = document.getElementById('cropperWrapper');
+  const guideHint = document.getElementById('cropperGuideHint');
+
+  wrapper.classList.remove('crop-circle', 'crop-rect');
+
+  if (type === 'exec') {
+    titleEl.textContent = 'Crop Executive Portrait (1:1 Circle)';
+    subEl.textContent = 'Reposition and scale inside the circle outline — exactly how it appears on the Executives page.';
+    wrapper.classList.add('crop-circle');
+    guideHint.textContent = 'Circular Crop: Drag to align face • Scroll to zoom';
+  } else if (type === 'event') {
+    titleEl.textContent = 'Crop Event Cover Banner (16:9)';
+    subEl.textContent = 'Reposition and scale inside the 16:9 outline — exactly how it appears on the Activities page.';
+    wrapper.classList.add('crop-rect');
+    guideHint.textContent = '16:9 Banner Crop: Drag to align • Scroll to zoom';
+  } else if (type === 'blog') {
+    titleEl.textContent = 'Crop Blog Thumbnail (16:9)';
+    subEl.textContent = 'Reposition and scale inside the 16:9 outline — exactly how it appears on Blog and Home cards.';
+    wrapper.classList.add('crop-rect');
+    guideHint.textContent = '16:9 Thumbnail Crop: Drag to align • Scroll to zoom';
+  }
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = document.getElementById('cropperImage');
+    if (activeCropper) {
+      activeCropper.destroy();
+      activeCropper = null;
+    }
+    img.src = e.target.result;
+    document.getElementById('cropperModal').classList.remove('hidden');
+
+    setTimeout(() => {
+      activeCropper = new Cropper(img, {
+        aspectRatio: (type === 'exec') ? 1 : (16 / 9),
+        viewMode: 1,
+        dragMode: 'move',
+        autoCropArea: 0.9,
+        restore: false,
+        guides: true,
+        center: true,
+        highlight: false,
+        cropBoxMovable: true,
+        cropBoxResizable: true,
+        toggleDragModeOnDblclick: false,
+        background: false,
+      });
+    }, 50);
+  };
+  reader.readAsDataURL(file);
+}
+
+function cropperZoom(delta) {
+  if (activeCropper) activeCropper.zoom(delta);
+}
+
+function cropperRotate(deg) {
+  if (activeCropper) activeCropper.rotate(deg);
+}
+
+function cropperReset() {
+  if (activeCropper) activeCropper.reset();
+}
+
+function closeCropperModal() {
+  if (activeCropper) {
+    activeCropper.destroy();
+    activeCropper = null;
+  }
+  if (currentCropInput) {
+    currentCropInput.value = '';
+  }
+  document.getElementById('cropperModal').classList.add('hidden');
+  const confirmBtn = document.getElementById('cropperConfirmBtn');
+  if (confirmBtn) confirmBtn.disabled = false;
+  const confirmText = document.getElementById('cropperConfirmText');
+  if (confirmText) confirmText.textContent = 'Crop & Upload';
+}
+
+async function applyAndUploadCrop() {
+  if (!activeCropper) return;
+  const confirmBtn = document.getElementById('cropperConfirmBtn');
+  const confirmText = document.getElementById('cropperConfirmText');
+  if (confirmBtn) confirmBtn.disabled = true;
+  if (confirmText) confirmText.textContent = 'Uploading...';
+
+  try {
+    const canvasOpts = {
+      imageSmoothingEnabled: true,
+      imageSmoothingQuality: 'high'
+    };
+    if (currentCropType === 'exec') {
+      canvasOpts.width = 600;
+      canvasOpts.height = 600;
+    } else {
+      canvasOpts.width = 1280;
+      canvasOpts.height = 720;
+    }
+
+    const canvas = activeCropper.getCroppedCanvas(canvasOpts);
+    if (!canvas) throw new Error('Could not generate cropped canvas');
+
+    canvas.toBlob(async blob => {
+      if (!blob) {
+        showToast('Failed to create image blob.', 'error');
+        if (confirmBtn) confirmBtn.disabled = false;
+        if (confirmText) confirmText.textContent = 'Crop & Upload';
+        return;
+      }
+
+      showToast('Uploading cropped image to ImgBB...', 'success');
+      try {
+        const url = await uploadToImgBB(blob);
+        
+        if (currentCropType === 'event') {
+          const evBanner = document.getElementById('ev_banner');
+          if (evBanner) evBanner.value = url;
+          showToast('Event banner cropped & uploaded!', 'success');
+        } else if (currentCropType === 'blog') {
+          const blThumb = document.getElementById('bl_thumb');
+          const blThumbUrl = document.getElementById('bl_thumbUrl');
+          const blogPreview = document.getElementById('blogThumbPreview');
+          if (blThumb) blThumb.value = url;
+          if (blThumbUrl) blThumbUrl.value = url;
+          if (blogPreview) blogPreview.innerHTML = `<img src="${url}" class="w-full h-full object-cover" />`;
+          showToast('Blog thumbnail cropped & uploaded!', 'success');
+        } else if (currentCropType === 'exec') {
+          const exPhoto = document.getElementById('ex_photo');
+          const photoPreview = document.getElementById('photoPreview');
+          if (exPhoto) exPhoto.value = url;
+          if (photoPreview) photoPreview.innerHTML = `<img src="${url}" class="w-full h-full object-cover" />`;
+          showToast('Executive portrait cropped & uploaded!', 'success');
+        }
+        
+        closeCropperModal();
+      } catch(uploadErr) {
+        showToast('Upload failed: ' + uploadErr.message, 'error');
+        if (confirmBtn) confirmBtn.disabled = false;
+        if (confirmText) confirmText.textContent = 'Crop & Upload';
+      }
+    }, 'image/jpeg', 0.92);
+
+  } catch(err) {
+    showToast('Cropping error: ' + err.message, 'error');
+    if (confirmBtn) confirmBtn.disabled = false;
+    if (confirmText) confirmText.textContent = 'Crop & Upload';
+  }
 }
 
 // ══════════════════════════════════════════════════════════

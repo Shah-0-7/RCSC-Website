@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -9,7 +10,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Nunito:wght@300;400;600;700&family=Share+Tech+Mono&family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Nunito:wght@300;400;600;700&family=Share+Tech+Mono&family=Bebas+Neue&display=swap"
+    rel="stylesheet" />
   <script>
     tailwind.config = {
       theme: {
@@ -27,30 +30,73 @@
     }
   </script>
   <style>
-    body { font-family: 'Inter', sans-serif; }
-    html { scroll-behavior: smooth; }
-    .nav-dropdown { display: none; }
-    .nav-dropdown-trigger:hover .nav-dropdown { display: block; }
-    .mobile-menu { transform: scaleY(0); transform-origin: top; pointer-events: none; transition: transform 0.2s; }
-    .mobile-menu.open { transform: scaleY(1); pointer-events: auto; }
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    .nav-dropdown {
+      display: none;
+    }
+
+    .nav-dropdown-trigger:hover .nav-dropdown {
+      display: block;
+    }
+
+    .mobile-menu {
+      transform: scaleY(0);
+      transform-origin: top;
+      pointer-events: none;
+      transition: transform 0.2s;
+    }
+
+    .mobile-menu.open {
+      transform: scaleY(1);
+      pointer-events: auto;
+    }
+
     .blog-card {
       display: flex;
       flex-direction: column;
       background: white;
       border-radius: 1rem;
       overflow: hidden;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
       transition: transform 0.3s, box-shadow 0.3s;
     }
+
     @media(min-width:768px) {
-      .blog-card { flex-direction: row; min-height: 220px; }
-      .blog-card .blog-img { width: 280px; flex-shrink: 0; }
+      .blog-card {
+        flex-direction: row;
+        min-height: 220px;
+      }
+
+      .blog-card .blog-img {
+        width: 280px;
+        flex-shrink: 0;
+      }
     }
-    .blog-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.12); }
-    .blog-card .blog-img img { width: 100%; height: 100%; object-fit: cover; }
+
+    .blog-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+    }
+
+    .blog-card .blog-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
     @media(max-width:767px) {
-      .blog-card .blog-img { height: 200px; }
+      .blog-card .blog-img {
+        height: 200px;
+      }
     }
+
     .blog-title-fancy {
       font-family: 'Bebas Neue', sans-serif;
       font-size: 2.5rem;
@@ -58,6 +104,7 @@
     }
   </style>
 </head>
+
 <body class="font-Inter bg-[#F6F6F6] text-gray-900">
 
   <!-- NAVBAR -->
@@ -74,14 +121,21 @@
           <li class="relative nav-dropdown-trigger">
             <button class="flex items-center gap-1 text-gray-900 hover:text-blue-500">
               Activities
-              <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 320 512"><path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z"/></svg>
+              <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 320 512">
+                <path
+                  d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
+              </svg>
             </button>
             <div class="nav-dropdown absolute left-0 top-full pt-2 z-50">
               <ul class="bg-white rounded-lg shadow-2xl py-2 min-w-[150px] text-sm text-gray-700">
-                <li><a class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500" href="activities.html">Events</a></li>
-                <li><a class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500" href="activities.html">Workshops</a></li>
-                <li><a class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500" href="activities.html">Publications</a></li>
-                <li><a class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500" href="activities.html">Projects</a></li>
+                <li><a class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500" href="activities.html">Events</a>
+                </li>
+                <li><a class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500"
+                    href="activities.html">Workshops</a></li>
+                <li><a class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500"
+                    href="activities.html">Publications</a></li>
+                <li><a class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500" href="activities.html">Projects</a>
+                </li>
               </ul>
             </div>
           </li>
@@ -92,21 +146,33 @@
         </ul>
       </div>
       <div class="flex items-center gap-2">
-        <a class="hidden sm:flex items-center gap-1 rounded-lg border border-black bg-[#252525] px-4 py-2 text-sm font-medium text-white shadow-lg transition hover:bg-zinc-700" href="#">
-          <svg class="w-4 h-4" fill="white" viewBox="0 0 24 24"><path d="M17 1.01 7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
+        <a class="hidden sm:flex items-center gap-1 rounded-lg border border-black bg-[#252525] px-4 py-2 text-sm font-medium text-white shadow-lg transition hover:bg-zinc-700"
+          href="#">
+          <svg class="w-4 h-4" fill="white" viewBox="0 0 24 24">
+            <path
+              d="M17 1.01 7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z" />
+          </svg>
           <span>APP</span>
         </a>
-        <a class="rounded-lg border border-blue-600 bg-blue-500 px-4 py-2 text-sm font-medium text-white shadow-md transition hover:bg-blue-600 font-ShareTechTown" href="#">Club</a>
-        <button onclick="document.getElementById('mobile-menu').classList.toggle('open')" class="lg:hidden ml-2 inline-flex h-10 w-10 items-center justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-200">
-          <svg class="w-5 h-5" fill="none" viewBox="0 0 17 14"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/></svg>
+        <a class="rounded-lg border border-blue-600 bg-blue-500 px-4 py-2 text-sm font-medium text-white shadow-md transition hover:bg-blue-600 font-ShareTechTown"
+          href="#">Club</a>
+        <button onclick="document.getElementById('mobile-menu').classList.toggle('open')"
+          class="lg:hidden ml-2 inline-flex h-10 w-10 items-center justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-200">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 17 14">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M1 1h15M1 7h15M1 13h15" />
+          </svg>
         </button>
       </div>
-      <div id="mobile-menu" class="mobile-menu lg:hidden fixed left-0 top-[68px] w-full bg-white border-b border-gray-200 pb-5 z-30">
+      <div id="mobile-menu"
+        class="mobile-menu lg:hidden fixed left-0 top-[68px] w-full bg-white border-b border-gray-200 pb-5 z-30">
         <ul class="container mt-4 flex flex-col gap-1 rounded-lg border border-gray-100 bg-gray-50 p-4 font-medium">
           <li><a class="block rounded px-3 py-2 text-gray-900 hover:bg-gray-200" href="index.html">Home</a></li>
           <li><a class="block rounded px-3 py-2 text-gray-900 hover:bg-gray-200" href="about.html">About</a></li>
-          <li><a class="block rounded px-3 py-2 text-gray-900 hover:bg-gray-200" href="activities.html">Activities</a></li>
-          <li><a class="block rounded px-3 py-2 text-gray-900 hover:bg-gray-200" href="executive.html">Executives</a></li>
+          <li><a class="block rounded px-3 py-2 text-gray-900 hover:bg-gray-200" href="activities.html">Activities</a>
+          </li>
+          <li><a class="block rounded px-3 py-2 text-gray-900 hover:bg-gray-200" href="executive.html">Executives</a>
+          </li>
           <li><a class="text-gray-900 hover:text-blue-500" href="blog.html">Blog</a></li>
           <li><a class="text-gray-900 hover:text-blue-500" href="gallery.html">Gallery</a></li>
           <li><a class="text-gray-900 hover:text-blue-500" href="contact.html">Contact</a></li>
@@ -120,7 +186,8 @@
     <div class="container mx-auto px-4 py-16 text-center">
       <div class="inline-flex items-center gap-3 mb-2">
         <svg class="w-10 h-10 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+          <path
+            d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
         </svg>
         <h1 class="font-Bebas text-5xl md:text-7xl tracking-widest">
           THE <span class="text-blue-500">BLOG</span>
@@ -137,17 +204,25 @@
     <!-- Empty State -->
     <div id="blog-empty" class="hidden text-center py-20 max-w-md mx-auto">
       <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center">
-        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+            d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+        </svg>
       </div>
       <h3 class="text-xl font-bold text-gray-900 mb-2">No Blog Posts Yet</h3>
-      <p class="text-gray-500 text-sm">New articles and science insights will appear here once published from the <a href="dashboard.html" class="text-blue-500 underline">Admin Dashboard</a>.</p>
+      <p class="text-gray-500 text-sm">New articles and science insights will appear here once published from the <a
+          href="dashboard.html" class="text-blue-500 underline">Admin Dashboard</a>.</p>
     </div>
   </main>
 
   <!-- BLOG READING MODAL -->
-  <div id="blog-modal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onclick="closeBlogModal()">
-    <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 shadow-2xl relative" onclick="event.stopPropagation()">
-      <button onclick="closeBlogModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 font-bold transition">✕</button>
+  <div id="blog-modal"
+    class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+    onclick="closeBlogModal()">
+    <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 shadow-2xl relative"
+      onclick="event.stopPropagation()">
+      <button onclick="closeBlogModal()"
+        class="absolute top-4 right-4 w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 font-bold transition">✕</button>
       <div id="modal-tags" class="flex gap-2 flex-wrap mb-3"></div>
       <h2 id="modal-title" class="font-bold text-2xl md:text-3xl text-gray-900 leading-snug mb-3"></h2>
       <div id="modal-meta" class="text-xs text-gray-400 font-ShareTechTown mb-5"></div>
@@ -160,13 +235,17 @@
 
   <!-- FOOTER -->
   <footer class="relative bg-[#1F1F1F] text-base mt-10">
-    <span class="absolute bottom-3 left-3 mt-7 text-xs text-zinc-700 sm:text-center">&copy; 2026 <a class="hover:underline" href="#">RCSC&trade;</a>. All Rights Reserved. <a href="dashboard.html" class="ml-2 opacity-40 hover:opacity-100 hover:text-blue-400 transition-opacity">Admin</a></span>
-    <div class="mx-auto flex w-full max-w-screen-xl flex-col justify-evenly gap-10 p-4 py-6 pb-12 md:flex-row md:pb-8 lg:py-8">
+    <span class="absolute bottom-3 left-3 mt-7 text-xs text-zinc-700 sm:text-center">&copy; 2026 <a
+        class="hover:underline" href="#">RCSC&trade;</a>. All Rights Reserved. <a href="dashboard.html"
+        class="ml-2 opacity-40 hover:opacity-100 hover:text-blue-400 transition-opacity">Admin</a></span>
+    <div
+      class="mx-auto flex w-full max-w-screen-xl flex-col justify-evenly gap-10 p-4 py-6 pb-12 md:flex-row md:pb-8 lg:py-8">
       <div class="order-3 flex justify-between gap-3 md:order-1 md:gap-24">
         <div class="order-2 flex flex-col items-center md:hidden">
           <div class="text-center font-ShareTechTown font-semibold text-white">A CLUB OF</div>
           <a href="https://rc.edu.bd" target="_blank">
-            <img loading="lazy" src="rc-logo.png" alt="Rajshahi College Logo" width="128" height="128" class="scale-75" />
+            <img loading="lazy" src="rc-logo.png" alt="Rajshahi College Logo" width="128" height="128"
+              class="scale-75" />
           </a>
         </div>
         <div class="flex flex-col gap-3">
@@ -192,15 +271,17 @@
         <div class="cursor-pointer font-ShareTechTown text-xl font-semibold text-white">CONTACT US</div>
         <div class="flex items-center gap-1 font-medium text-zinc-400">
           <svg class="mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 4a4 4 0 0 1 4 4v6M5 4a4 4 0 0 0-4 4v6h8M5 4h9M9 14h10V8a3.999 3.999 0 0 0-2.066-3.5M9 14v5m0-5h4v5m-9-8h2m8-4V1h2"/>
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M5 4a4 4 0 0 1 4 4v6M5 4a4 4 0 0 0-4 4v6h8M5 4h9M9 14h10V8a3.999 3.999 0 0 0-2.066-3.5M9 14v5m0-5h4v5m-9-8h2m8-4V1h2" />
           </svg>
           <p>rcsc.official@gmail.com</p>
         </div>
         <div class="flex items-center gap-1 font-medium text-zinc-400">
           <svg class="mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 21">
             <g stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-              <path d="M8 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
-              <path d="M13.8 12.938h-.01a7 7 0 1 0-11.465.144h-.016l.141.17c.1.128.2.252.3.372L8 20l5.13-6.248c.193-.209.373-.429.54-.66l.13-.154Z"/>
+              <path d="M8 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+              <path
+                d="M13.8 12.938h-.01a7 7 0 1 0-11.465.144h-.016l.141.17c.1.128.2.252.3.372L8 20l5.13-6.248c.193-.209.373-.429.54-.66l.13-.154Z" />
             </g>
           </svg>
           <p>Rajshahi College Rd, Rajshahi 6000</p>
@@ -215,55 +296,55 @@
   <script src="firebase-config.js"></script>
 
   <script>
-  let currentBlogs = [];
+    let currentBlogs = [];
 
-  function openBlogModal(idx) {
-    const p = currentBlogs[idx];
-    if (!p) return;
-    document.getElementById('modal-title').textContent = p.title || '';
-    document.getElementById('modal-meta').innerHTML = `By ${p.author || 'RCSC Team'} &bull; ${p.date || ''}`;
-    const tagsContainer = document.getElementById('modal-tags');
-    tagsContainer.innerHTML = (p.tags || '').split(',').filter(Boolean).map(t =>
-      `<span class="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">${t.trim()}</span>`
-    ).join('');
-    const imgWrap = document.getElementById('modal-img-wrap');
-    const modalImg = document.getElementById('modal-img');
-    if (p.thumbnail && p.thumbnail !== 'logo.png') {
-      modalImg.src = p.thumbnail;
-      modalImg.alt = p.title || '';
-      imgWrap.classList.remove('hidden');
-    } else {
-      imgWrap.classList.add('hidden');
-    }
-    document.getElementById('modal-content').textContent = p.content || p.excerpt || '';
-    document.getElementById('blog-modal').classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeBlogModal() {
-    document.getElementById('blog-modal').classList.add('hidden');
-    document.body.style.overflow = '';
-  }
-
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeBlogModal();
-  });
-
-  (function(){
-    const container = document.getElementById('blog-container');
-    const emptyState = document.getElementById('blog-empty');
-    if (!container) return;
-
-    function renderBlog(posts) {
-      currentBlogs = posts || [];
-      if (!posts || !posts.length) {
-        container.innerHTML = '';
-        if (emptyState) emptyState.classList.remove('hidden');
-        return;
+    function openBlogModal(idx) {
+      const p = currentBlogs[idx];
+      if (!p) return;
+      document.getElementById('modal-title').textContent = p.title || '';
+      document.getElementById('modal-meta').innerHTML = `By ${p.author || 'RCSC Team'} &bull; ${p.date || ''}`;
+      const tagsContainer = document.getElementById('modal-tags');
+      tagsContainer.innerHTML = (p.tags || '').split(',').filter(Boolean).map(t =>
+        `<span class="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">${t.trim()}</span>`
+      ).join('');
+      const imgWrap = document.getElementById('modal-img-wrap');
+      const modalImg = document.getElementById('modal-img');
+      if (p.thumbnail && p.thumbnail !== 'logo.png') {
+        modalImg.src = p.thumbnail;
+        modalImg.alt = p.title || '';
+        imgWrap.classList.remove('hidden');
+      } else {
+        imgWrap.classList.add('hidden');
       }
-      if (emptyState) emptyState.classList.add('hidden');
+      document.getElementById('modal-content').textContent = p.content || p.excerpt || '';
+      document.getElementById('blog-modal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
 
-      container.innerHTML = posts.map((p, idx) => `
+    function closeBlogModal() {
+      document.getElementById('blog-modal').classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeBlogModal();
+    });
+
+    (function () {
+      const container = document.getElementById('blog-container');
+      const emptyState = document.getElementById('blog-empty');
+      if (!container) return;
+
+      function renderBlog(posts) {
+        currentBlogs = posts || [];
+        if (!posts || !posts.length) {
+          container.innerHTML = '';
+          if (emptyState) emptyState.classList.remove('hidden');
+          return;
+        }
+        if (emptyState) emptyState.classList.add('hidden');
+
+        container.innerHTML = posts.map((p, idx) => `
         <article class="blog-card cursor-pointer hover:shadow-lg transition-shadow" onclick="openBlogModal(${idx})">
           <div class="blog-img">
             <img src="${p.thumbnail || 'logo.png'}" alt="${p.title}" style="width:100%;height:100%;object-fit:cover;" onerror="this.src='logo.png'" />
@@ -284,30 +365,31 @@
             </div>
           </div>
         </article>`).join('');
-    }
+      }
 
-    // 1. Instant local render
-    try {
-      const raw = localStorage.getItem('rcsc_blog');
-      if (raw) renderBlog(JSON.parse(raw));
-    } catch(e) {}
+      // 1. Instant local render
+      try {
+        const raw = localStorage.getItem('rcsc_blog');
+        if (raw) renderBlog(JSON.parse(raw));
+      } catch (e) { }
 
-    // 2. Live fetch from Firestore
-    if (typeof db !== 'undefined' && db) {
-      db.collection('blogs').get().then(snap => {
-        if (!snap.empty) {
-          const posts = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-          posts.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
-          localStorage.setItem('rcsc_blog', JSON.stringify(posts));
-          renderBlog(posts);
-        } else {
-          localStorage.setItem('rcsc_blog', JSON.stringify([]));
-          renderBlog([]);
-        }
-      }).catch(err => console.warn('Firestore blog error:', err));
-    }
-  })();
+      // 2. Live fetch from Firestore
+      if (typeof db !== 'undefined' && db) {
+        db.collection('blogs').get().then(snap => {
+          if (!snap.empty) {
+            const posts = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            posts.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+            localStorage.setItem('rcsc_blog', JSON.stringify(posts));
+            renderBlog(posts);
+          } else {
+            localStorage.setItem('rcsc_blog', JSON.stringify([]));
+            renderBlog([]);
+          }
+        }).catch(err => console.warn('Firestore blog error:', err));
+      }
+    })();
   </script>
 
 </body>
+
 </html>
