@@ -156,157 +156,24 @@
   <!-- FILTER TABS -->
   <div class="container mx-auto px-4 pt-10 pb-6">
     <div class="flex flex-wrap gap-3 justify-center" id="gallery-tabs">
-      <button class="tab-pill active" onclick="filterGallery(this,'all')">All Events</button>
-      <button class="tab-pill" onclick="filterGallery(this,'science-olympiad')">Science Olympiad</button>
-      <button class="tab-pill" onclick="filterGallery(this,'techfest')">TechFest</button>
-      <button class="tab-pill" onclick="filterGallery(this,'astro-night')">Astro Night</button>
-      <button class="tab-pill" onclick="filterGallery(this,'workshop')">Workshops</button>
+      <button class="tab-pill active" onclick="filterGallery(this,'all')">All Moments</button>
     </div>
   </div>
 
   <!-- GALLERY GRID -->
   <main class="container mx-auto px-4 pb-20">
 
-    <!-- ROW 1 — wide 4-col panoramic strip -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-2">
-      <div class="gallery-item overflow-hidden rounded-xl" data-event="science-olympiad">
-        <img src="https://res.cloudinary.com/dqnhzfqbu/image/upload/v1791125317/content/02d5baf3-dbc0-4a97-a975-3c79d19aefd9.jpg"
-          class="h-56 md:h-72" alt="Science Olympiad"
-          data-caption="001 · Science Olympiad" onclick="openLightbox(this)" />
+    <!-- DYNAMIC ALBUMS (from Dashboard & Cloud) -->
+    <div id="dynamicAlbums" class="grid grid-cols-2 md:grid-cols-4 gap-3"></div>
+
+    <!-- Empty State -->
+    <div id="galleryEmpty" class="hidden text-center py-20">
+      <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center text-gray-400">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
       </div>
-      <div class="gallery-item overflow-hidden rounded-xl" data-event="techfest">
-        <img src="https://res.cloudinary.com/dqnhzfqbu/image/upload/v1790947795/content/ed73d0aa-8ed5-4bfc-b06d-acf11efca7dd.jpg"
-          class="h-56 md:h-72" alt="TechFest"
-          data-caption="002 · TechFest 2.0" onclick="openLightbox(this)" />
-      </div>
-      <div class="gallery-item overflow-hidden rounded-xl" data-event="astro-night">
-        <img src="https://res.cloudinary.com/dqnhzfqbu/image/upload/v1790440561/content/4eadcaf4-7843-4bdd-a0e7-18de4c4c0e3c.jpg"
-          class="h-56 md:h-72" alt="Astro Night"
-          data-caption="003 · Astro Night 1.0" onclick="openLightbox(this)" />
-      </div>
-      <div class="gallery-item overflow-hidden rounded-xl" data-event="workshop">
-        <img src="https://res.cloudinary.com/dqnhzfqbu/image/upload/v1790440774/content/f2aacf9a-d6c9-456e-96e6-5ff93a3e62f1.jpg"
-          class="h-56 md:h-72" alt="Robotics Workshop"
-          data-caption="004 · Robotics Workshop" onclick="openLightbox(this)" />
-      </div>
+      <h3 class="text-xl font-bold text-gray-700 mb-2">No Gallery Photos Yet</h3>
+      <p class="text-gray-500 text-sm max-w-md mx-auto">Event albums will appear here once uploaded via the <a href="dashboard.html" class="text-blue-500 underline">Admin Dashboard</a>.</p>
     </div>
-
-    <!-- ROW 2 — staggered heights, numbered label + Details -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-2">
-
-      <div class="gallery-item flex flex-col gap-1" data-event="science-olympiad">
-        <div class="overflow-hidden rounded-xl flex-1">
-          <img src="https://nditc.net/image/hashtech_bg.png"
-            class="h-44 md:h-52" alt="Science Olympiad"
-            data-caption="005 · Science Olympiad" onclick="openLightbox(this)" />
-        </div>
-        <div class="flex items-center justify-between px-1 text-xs text-gray-400 font-ShareTechTown">
-          <span>001</span><a href="activities.html" class="hover:text-blue-500 transition">Details ↗</a>
-        </div>
-      </div>
-
-      <div class="gallery-item flex flex-col gap-1" data-event="techfest">
-        <div class="overflow-hidden rounded-xl flex-1">
-          <img src="https://res.cloudinary.com/dqnhzfqbu/image/upload/v1791125317/content/02d5baf3-dbc0-4a97-a975-3c79d19aefd9.jpg"
-            class="h-64 md:h-80" alt="TechFest"
-            data-caption="006 · TechFest 2.0" onclick="openLightbox(this)" />
-        </div>
-        <div class="flex items-center justify-between px-1 text-xs text-gray-400 font-ShareTechTown">
-          <span>002</span><a href="activities.html" class="hover:text-blue-500 transition">Details ↗</a>
-        </div>
-      </div>
-
-      <div class="gallery-item flex flex-col gap-1" data-event="astro-night">
-        <div class="overflow-hidden rounded-xl flex-1">
-          <img src="https://res.cloudinary.com/dqnhzfqbu/image/upload/v1790947795/content/ed73d0aa-8ed5-4bfc-b06d-acf11efca7dd.jpg"
-            class="h-44 md:h-52" alt="Astro Night"
-            data-caption="007 · Astro Night" onclick="openLightbox(this)" />
-        </div>
-        <div class="flex items-center justify-between px-1 text-xs text-gray-400 font-ShareTechTown">
-          <span>003</span><a href="activities.html" class="hover:text-blue-500 transition">Details ↗</a>
-        </div>
-      </div>
-
-      <div class="gallery-item flex flex-col gap-1" data-event="workshop">
-        <div class="overflow-hidden rounded-xl flex-1">
-          <img src="https://res.cloudinary.com/dqnhzfqbu/image/upload/v1790440561/content/4eadcaf4-7843-4bdd-a0e7-18de4c4c0e3c.jpg"
-            class="h-44 md:h-52" alt="Robotics Workshop"
-            data-caption="008 · Robotics Workshop" onclick="openLightbox(this)" />
-        </div>
-        <div class="flex items-center justify-between px-1 text-xs text-gray-400 font-ShareTechTown">
-          <span>004</span><a href="activities.html" class="hover:text-blue-500 transition">Details ↗</a>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- ROW 3 — 3-col, last card spans 2 on mobile -->
-    <div class="grid grid-cols-2 md:grid-cols-3 gap-2 mb-2">
-
-      <div class="gallery-item flex flex-col gap-1" data-event="science-olympiad">
-        <div class="overflow-hidden rounded-xl">
-          <img src="https://res.cloudinary.com/dqnhzfqbu/image/upload/v1790440774/content/f2aacf9a-d6c9-456e-96e6-5ff93a3e62f1.jpg"
-            class="h-48 md:h-64" alt="Science Olympiad"
-            data-caption="009 · Science Olympiad" onclick="openLightbox(this)" />
-        </div>
-        <div class="flex items-center justify-between px-1 text-xs text-gray-400 font-ShareTechTown">
-          <span>005</span><a href="activities.html" class="hover:text-blue-500 transition">Details ↗</a>
-        </div>
-      </div>
-
-      <div class="gallery-item flex flex-col gap-1" data-event="techfest">
-        <div class="overflow-hidden rounded-xl">
-          <img src="https://nditc.net/image/hashtech_bg.png"
-            class="h-48 md:h-64" alt="TechFest"
-            data-caption="010 · TechFest 2.0" onclick="openLightbox(this)" />
-        </div>
-        <div class="flex items-center justify-between px-1 text-xs text-gray-400 font-ShareTechTown">
-          <span>006</span><a href="activities.html" class="hover:text-blue-500 transition">Details ↗</a>
-        </div>
-      </div>
-
-      <div class="gallery-item col-span-2 md:col-span-1 flex flex-col gap-1" data-event="astro-night">
-        <div class="overflow-hidden rounded-xl">
-          <img src="https://res.cloudinary.com/dqnhzfqbu/image/upload/v1790440561/content/4eadcaf4-7843-4bdd-a0e7-18de4c4c0e3c.jpg"
-            class="h-48 md:h-64" alt="Astro Night"
-            data-caption="011 · Astro Night 1.0" onclick="openLightbox(this)" />
-        </div>
-        <div class="flex items-center justify-between px-1 text-xs text-gray-400 font-ShareTechTown">
-          <span>007</span><a href="activities.html" class="hover:text-blue-500 transition">Details ↗</a>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- ROW 4 — 2-col wide -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-
-      <div class="gallery-item flex flex-col gap-1" data-event="workshop">
-        <div class="overflow-hidden rounded-xl">
-          <img src="https://res.cloudinary.com/dqnhzfqbu/image/upload/v1790947795/content/ed73d0aa-8ed5-4bfc-b06d-acf11efca7dd.jpg"
-            class="h-56 md:h-72" alt="Workshop"
-            data-caption="012 · Python for Science Workshop" onclick="openLightbox(this)" />
-        </div>
-        <div class="flex items-center justify-between px-1 text-xs text-gray-400 font-ShareTechTown">
-          <span>008</span><a href="activities.html" class="hover:text-blue-500 transition">Details ↗</a>
-        </div>
-      </div>
-
-      <div class="gallery-item flex flex-col gap-1" data-event="science-olympiad">
-        <div class="overflow-hidden rounded-xl">
-          <img src="https://res.cloudinary.com/dqnhzfqbu/image/upload/v1791125317/content/02d5baf3-dbc0-4a97-a975-3c79d19aefd9.jpg"
-            class="h-56 md:h-72" alt="Science Olympiad"
-            data-caption="013 · Science Olympiad 1.0" onclick="openLightbox(this)" />
-        </div>
-        <div class="flex items-center justify-between px-1 text-xs text-gray-400 font-ShareTechTown">
-          <span>009</span><a href="activities.html" class="hover:text-blue-500 transition">Details ↗</a>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- DYNAMIC ALBUMS (from Dashboard) -->
-    <div id="dynamicAlbums" class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2"></div>
 
   </main>
 
@@ -438,10 +305,44 @@
   (function(){
     const container = document.getElementById('dynamicAlbums');
     const tabContainer = document.getElementById('gallery-tabs');
+    const emptyState = document.getElementById('galleryEmpty');
     if (!container) return;
 
+    // Authentic RCSC initial albums
+    const DEFAULT_ALBUMS = [
+      {
+        id: 'science-fest',
+        name: 'National Science Fest',
+        photos: [
+          'activity-fest.jpg',
+          'join-projects.jpg'
+        ]
+      },
+      {
+        id: 'workshops-seminars',
+        name: 'Workshops & Seminars',
+        photos: [
+          'activity-workshop.jpg',
+          'join-learning.jpg'
+        ]
+      },
+      {
+        id: 'projects-exhibitions',
+        name: 'Projects & Mentorship',
+        photos: [
+          'activity-project.jpg',
+          'join-network.jpg',
+          'activity-quark.jpg'
+        ]
+      }
+    ];
+
     function renderAlbums(albums) {
-      if (!albums || !albums.length) return;
+      if (!albums || !albums.length) {
+        if (emptyState) emptyState.classList.remove('hidden');
+        return;
+      }
+      if (emptyState) emptyState.classList.add('hidden');
       container.innerHTML = '';
       document.querySelectorAll('.dynamic-album-tab').forEach(b => b.remove());
 
@@ -474,11 +375,14 @@
       if (typeof buildIndex === 'function') buildIndex();
     }
 
-    // 1. Instant local render
+    // 1. Instant local render (use cached albums or default authentic albums)
     try {
       const raw = localStorage.getItem('rcsc_gallery');
-      if (raw) renderAlbums(JSON.parse(raw));
-    } catch(e) {}
+      const albums = raw ? JSON.parse(raw) : DEFAULT_ALBUMS;
+      renderAlbums(albums);
+    } catch(e) {
+      renderAlbums(DEFAULT_ALBUMS);
+    }
 
     // 2. Live fetch from Firestore
     if (db) {

@@ -414,6 +414,12 @@ const SEED_BLOG = [
   { id:'b5', title:'The False Alarm That Could Have Started WWIII', excerpt:'In 1983, one Soviet officer chose not to report what looked like a nuclear attack.', content:'In 1983, one Soviet officer chose not to report what looked like a nuclear attack. His decision may have saved the world.', author:'RCSC Admin', date:'2026-09-10', thumbnail:'https://res.cloudinary.com/dqnhzfqbu/image/upload/v1790440774/content/f2aacf9a-d6c9-456e-96e6-5ff93a3e62f1.jpg', tags:'History, Cold War' }
 ];
 
+const SEED_GALLERY = [
+  { id: 'science-fest', name: 'National Science Fest', photos: ['activity-fest.jpg', 'join-projects.jpg'] },
+  { id: 'workshops-seminars', name: 'Workshops & Seminars', photos: ['activity-workshop.jpg', 'join-learning.jpg'] },
+  { id: 'projects-exhibitions', name: 'Projects & Mentorship', photos: ['activity-project.jpg', 'join-network.jpg', 'activity-quark.jpg'] }
+];
+
 function getD(key, seed) {
   const s = localStorage.getItem(key);
   if (!s) return JSON.parse(JSON.stringify(seed));
@@ -425,7 +431,7 @@ function uid() { return Date.now().toString(36) + Math.random().toString(36).sli
 // Global memory store initialized with local cache
 let appData = {
   events: getD(KEYS.events, SEED_EVENTS),
-  gallery: getD(KEYS.gallery, []),
+  gallery: getD(KEYS.gallery, SEED_GALLERY),
   exec: getD(KEYS.exec, SEED_EXEC),
   blog: getD(KEYS.blog, SEED_BLOG),
   settings: getD(KEYS.settings, {})
