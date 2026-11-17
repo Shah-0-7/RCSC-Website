@@ -213,7 +213,7 @@
             
             <!-- Session Dropdown Button -->
             <div class="relative w-full" id="sessionDropdown">
-              <button id="sessionDropdownBtn" type="button" onclick="toggleSessionDropdown()" 
+              <button id="sessionDropdownBtn" type="button" onclick="toggleSessionDropdown(event)" 
                 class="w-full flex items-center justify-between gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 text-white font-bold text-sm shadow-md shadow-blue-500/20 hover:from-blue-700 hover:to-blue-600 focus:outline-none transition-all cursor-pointer">
                 <span class="flex items-center gap-2">
                   <svg class="w-4 h-4 text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
@@ -225,21 +225,7 @@
               </button>
 
               <!-- Dropdown Menu -->
-              <div id="sessionDropdownMenu" class="hidden absolute left-0 right-0 top-full mt-2 bg-white rounded-xl shadow-xl border border-gray-100 py-1.5 z-30 transition-all divide-y divide-gray-50">
-                <button type="button" onclick="selectSessionYear('2025–2026')" class="session-opt-btn w-full px-4 py-2.5 text-left text-sm font-semibold flex items-center justify-between hover:bg-blue-50 hover:text-blue-600 transition text-blue-600 bg-blue-50/50" data-year="2025–2026">
-                  <span class="flex items-center gap-2 text-gray-800 font-semibold">
-                    <span class="session-dot w-2 h-2 rounded-full bg-blue-500"></span>
-                    <span>2025–2026</span>
-                  </span>
-                  <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-blue-100 text-blue-600">Active</span>
-                </button>
-                <button type="button" onclick="selectSessionYear('2026–2027')" class="session-opt-btn w-full px-4 py-2.5 text-left text-sm font-semibold flex items-center justify-between hover:bg-blue-50 hover:text-blue-600 transition text-gray-700" data-year="2026–2027">
-                  <span class="flex items-center gap-2 text-gray-700 font-semibold">
-                    <span class="session-dot w-2 h-2 rounded-full bg-gray-300"></span>
-                    <span>2026–2027</span>
-                  </span>
-                  <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-amber-50 text-amber-600">Upcoming</span>
-                </button>
+              <div id="sessionDropdownMenu" class="hidden absolute left-0 right-0 top-full mt-2 bg-white rounded-xl shadow-xl border border-gray-100 py-1.5 z-30 transition-all max-h-72 overflow-y-auto divide-y divide-gray-50">
               </div>
             </div>
 
@@ -251,8 +237,13 @@
 
         <!-- Exec Grid -->
         <div class="flex-1">
-          <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
             <h2 id="execSessionTitle" class="font-Bebas text-3xl tracking-widest text-gray-800">Session <span class="text-blue-500">2025–2026</span></h2>
+            <div class="block md:hidden">
+              <select id="sessionMobileSelect" onchange="selectSessionYear(this.value)" class="bg-white border border-gray-200 text-gray-800 text-xs font-semibold rounded-xl px-3 py-2 shadow-sm focus:outline-none focus:border-blue-500">
+              </select>
+            </div>
+          </div>
           </div>
           <div id="execDynamicGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
 
@@ -470,70 +461,137 @@
   (function(){
     const AVATAR_SVG = `<svg class="w-14 h-14 text-gray-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>`;
 
-    let execStore = null;
+    const SESSIONS = [
+      { year: '2026–2027', status: 'Upcoming', badge: 'bg-amber-50 text-amber-600' },
+      { year: '2025–2026', status: 'Active',   badge: 'bg-blue-100 text-blue-600' },
+      { year: '2024–2025', status: 'Past',     badge: 'bg-gray-100 text-gray-500' },
+      { year: '2023–2024', status: 'Past',     badge: 'bg-gray-100 text-gray-500' },
+      { year: '2022–2023', status: 'Past',     badge: 'bg-gray-100 text-gray-500' },
+      { year: '2021–2022', status: 'Past',     badge: 'bg-gray-100 text-gray-500' },
+      { year: '2020–2021', status: 'Past',     badge: 'bg-gray-100 text-gray-500' },
+      { year: '2019–2020', status: 'Past',     badge: 'bg-gray-100 text-gray-500' },
+      { year: '2018–2019', status: 'Founding', badge: 'bg-purple-100 text-purple-700' }
+    ];
+
+    function normYear(y) {
+      if (!y) return '2025-2026';
+      return String(y).trim().replace(/[\u2013\u2014\u2212]/g, '-').replace(/\s+/g, '');
+    }
+
+    const DEFAULT_MEMBERS = [
+      { id:'e1', name:'Member Name', position:'President', dept:'Administration', photo:'' },
+      { id:'e2', name:'Member Name', position:'Vice President', dept:'Administration', photo:'' },
+      { id:'e3', name:'Member Name', position:'General Secretary', dept:'Administration', photo:'' },
+      { id:'e4', name:'Member Name', position:'Treasurer', dept:'Finance', photo:'' },
+      { id:'e5', name:'Member Name', position:'Joint Secretary', dept:'Administration', photo:'' },
+      { id:'e6', name:'Member Name', position:'Head of Department', dept:'Science & Technology', photo:'' },
+      { id:'e7', name:'Member Name', position:'Head of Department', dept:'Research & Publication', photo:'' },
+      { id:'e8', name:'Member Name', position:'Head of Department', dept:'Events & Logistics', photo:'' },
+      { id:'e9', name:'Member Name', position:'Head of Department', dept:'Media & Communications', photo:'' },
+      { id:'e10', name:'Member Name', position:'Head of Department', dept:'Outreach', photo:'' },
+      { id:'e11', name:'Member Name', position:'Executive Member', dept:'Science & Technology', photo:'' },
+      { id:'e12', name:'Member Name', position:'Executive Member', dept:'Events & Logistics', photo:'' }
+    ];
+
+    const DEFAULT_EXEC = {
+      year: '2025–2026',
+      heroTitle: 'MEET THE EXECUTIVES',
+      notice: 'Executive details will be updated soon. Placeholder template shown below.',
+      principal: 'Prof. Dr. Md. Abdul Khalek',
+      principalRole: 'Principal & Patron',
+      principalSub: 'Rajshahi College · Honorary Head of RCSC',
+      moderator: 'Dr. Shariful Islam',
+      moderatorRole: 'Club Moderator',
+      moderatorSub: 'Faculty Advisor · Department of Science',
+      members: DEFAULT_MEMBERS,
+      sessions: {}
+    };
+
+    let execStore = DEFAULT_EXEC;
     let selectedSession = '2025–2026';
 
-    function ensureSessions(data) {
-      if (!data) return;
-      if (!data.sessions) {
-        data.sessions = {
-          '2025–2026': JSON.parse(JSON.stringify(data)),
-          '2026–2027': {
-            year: '2026–2027',
-            heroTitle: data.heroTitle || 'MEET THE EXECUTIVES',
-            notice: 'Executive committee for the 2026–2027 session will be announced prior to the term. Placeholder template shown below.',
-            principal: data.principal || 'Prof. Dr. Md. Abdul Khalek',
-            principalRole: data.principalRole || 'Principal & Patron',
-            principalSub: data.principalSub || 'Rajshahi College · Honorary Head of RCSC',
-            moderator: data.moderator || 'Dr. Shariful Islam',
-            moderatorRole: data.moderatorRole || 'Club Moderator',
-            moderatorSub: data.moderatorSub || 'Faculty Advisor · Department of Science',
-            members: [
-              { id:'e26_1', name:'Member Name', position:'President', dept:'Administration', photo:'' },
-              { id:'e26_2', name:'Member Name', position:'Vice President', dept:'Administration', photo:'' },
-              { id:'e26_3', name:'Member Name', position:'General Secretary', dept:'Administration', photo:'' },
-              { id:'e26_4', name:'Member Name', position:'Treasurer', dept:'Finance', photo:'' },
-              { id:'e26_5', name:'Member Name', position:'Joint Secretary', dept:'Administration', photo:'' },
-              { id:'e26_6', name:'Member Name', position:'Head of Department', dept:'Science & Technology', photo:'' },
-              { id:'e26_7', name:'Member Name', position:'Head of Department', dept:'Research & Publication', photo:'' },
-              { id:'e26_8', name:'Member Name', position:'Head of Department', dept:'Events & Logistics', photo:'' },
-              { id:'e26_9', name:'Member Name', position:'Head of Department', dept:'Media & Communications', photo:'' },
-              { id:'e26_10', name:'Member Name', position:'Head of Department', dept:'Outreach', photo:'' }
-            ]
-          }
-        };
+    function buildSessionTemplate(year, base) {
+      const isUpcoming = year.includes('2026') || year.includes('2027');
+      const isPast = !isUpcoming && !year.includes('2025');
+      let notice = 'Executive details will be updated soon. Placeholder template shown below.';
+      if (isUpcoming) {
+        notice = `Executive committee for the ${year} session will be announced prior to the term. Placeholder template shown below.`;
+      } else if (isPast) {
+        notice = `Executive committee archive for the ${year} session. Historical records and alumni committee panel.`;
+      }
+      return {
+        year: year,
+        heroTitle: base.heroTitle || 'MEET THE EXECUTIVES',
+        notice: notice,
+        principal: base.principal || 'Prof. Dr. Md. Abdul Khalek',
+        principalRole: base.principalRole || 'Principal & Patron',
+        principalSub: base.principalSub || 'Rajshahi College · Honorary Head of RCSC',
+        moderator: base.moderator || 'Dr. Shariful Islam',
+        moderatorRole: base.moderatorRole || 'Club Moderator',
+        moderatorSub: base.moderatorSub || 'Faculty Advisor · Department of Science',
+        members: JSON.parse(JSON.stringify(DEFAULT_MEMBERS))
+      };
+    }
+
+    function renderDropdownMenu() {
+      const menu = document.getElementById('sessionDropdownMenu');
+      if (!menu) return;
+      const currentNorm = normYear(selectedSession);
+      menu.innerHTML = SESSIONS.map(s => {
+        const isCurrent = normYear(s.year) === currentNorm;
+        return `
+          <button type="button" onclick="selectSessionYear('${s.year}')" 
+            class="session-opt-btn w-full px-4 py-2.5 text-left text-sm font-semibold flex items-center justify-between hover:bg-blue-50 hover:text-blue-600 transition ${isCurrent ? 'bg-blue-50/70 text-blue-600' : 'text-gray-700'}" 
+            data-year="${s.year}">
+            <span class="flex items-center gap-2">
+              <span class="session-dot w-2 h-2 rounded-full ${isCurrent ? 'bg-blue-500' : 'bg-gray-300'}"></span>
+              <span>${s.year}</span>
+            </span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full font-bold ${s.badge}">${s.status}</span>
+          </button>
+        `;
+      }).join('');
+
+      const mobSelect = document.getElementById('sessionMobileSelect');
+      if (mobSelect) {
+        mobSelect.innerHTML = SESSIONS.map(s => `
+          <option value="${s.year}" ${normYear(s.year) === currentNorm ? 'selected' : ''}>${s.year} (${s.status})</option>
+        `).join('');
       }
     }
 
     function renderExec(data) {
-      if (!data) return;
+      if (!data) data = DEFAULT_EXEC;
       execStore = data;
-      ensureSessions(data);
 
-      const sessionData = (data.sessions && data.sessions[selectedSession]) ? data.sessions[selectedSession] : data;
+      const currentNorm = normYear(selectedSession);
+      let sessionData = null;
+
+      if (data.sessions) {
+        for (const k in data.sessions) {
+          if (normYear(k) === currentNorm) {
+            sessionData = data.sessions[k];
+            break;
+          }
+        }
+      }
+
+      if (!sessionData) {
+        if (normYear(data.year) === currentNorm) {
+          sessionData = data;
+        } else {
+          sessionData = buildSessionTemplate(selectedSession, data);
+        }
+      }
 
       // Update session title and badge
-      const activeYear = sessionData.year || selectedSession;
+      const displayYear = sessionData.year || selectedSession;
       const title = document.getElementById('execSessionTitle');
-      if (title) title.innerHTML = `Session <span class="text-blue-500">${activeYear}</span>`;
+      if (title) title.innerHTML = `Session <span class="text-blue-500">${displayYear}</span>`;
       const badge = document.getElementById('sessionYearBadge');
-      if (badge) badge.textContent = activeYear;
+      if (badge) badge.textContent = displayYear;
 
-      // Update dropdown option styling
-      document.querySelectorAll('.session-opt-btn').forEach(btn => {
-        const btnYear = btn.getAttribute('data-year');
-        const isCurrent = (btnYear === activeYear) || (btnYear && btnYear.replace(/[\u2013\u2014]/g, '-') === activeYear.replace(/[\u2013\u2014]/g, '-'));
-        const dot = btn.querySelector('.session-dot');
-        if (isCurrent) {
-          btn.classList.add('text-blue-600', 'bg-blue-50/50');
-          btn.classList.remove('text-gray-700');
-          if (dot) { dot.classList.remove('bg-gray-300'); dot.classList.add('bg-blue-500'); }
-        } else {
-          btn.classList.remove('text-blue-600', 'bg-blue-50/50');
-          btn.classList.add('text-gray-700');
-          if (dot) { dot.classList.remove('bg-blue-500'); dot.classList.add('bg-gray-300'); }
-        }
-      });
+      renderDropdownMenu();
 
       // Update page hero title & notice
       if (sessionData.heroTitle) {
@@ -593,7 +651,8 @@
         </div>`).join('');
     }
 
-    window.toggleSessionDropdown = function() {
+    window.toggleSessionDropdown = function(e) {
+      if (e) e.stopPropagation();
       const menu = document.getElementById('sessionDropdownMenu');
       const icon = document.getElementById('sessionDropdownIcon');
       if (menu) menu.classList.toggle('hidden');
@@ -607,10 +666,7 @@
       if (menu) menu.classList.add('hidden');
       if (icon) icon.classList.remove('rotate-180');
       
-      const badge = document.getElementById('sessionYearBadge');
-      if (badge) badge.textContent = year;
-      
-      if (execStore) renderExec(execStore);
+      renderExec(execStore);
     };
 
     document.addEventListener('click', function(e) {
@@ -622,6 +678,9 @@
         if (icon) icon.classList.remove('rotate-180');
       }
     });
+
+    // 0. Initial immediate render
+    renderExec(DEFAULT_EXEC);
 
     // 1. Instant local render
     try {
