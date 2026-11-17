@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -9,7 +10,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Nunito:wght@300;400;600;700&family=Share+Tech+Mono&family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Nunito:wght@300;400;600;700&family=Share+Tech+Mono&family=Bebas+Neue&display=swap"
+    rel="stylesheet" />
   <script>
     tailwind.config = {
       theme: {
@@ -27,15 +30,39 @@
     }
   </script>
   <style>
-    body { font-family: 'Inter', sans-serif; }
-    html { scroll-behavior: smooth; }
-    .nav-dropdown { display: none; }
-    .nav-dropdown-trigger:hover .nav-dropdown { display: block; }
-    .mobile-menu { transform: scaleY(0); transform-origin: top; pointer-events: none; transition: transform 0.2s; }
-    .mobile-menu.open { transform: scaleY(1); pointer-events: auto; }
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    .nav-dropdown {
+      display: none;
+    }
+
+    .nav-dropdown-trigger:hover .nav-dropdown {
+      display: block;
+    }
+
+    .mobile-menu {
+      transform: scaleY(0);
+      transform-origin: top;
+      pointer-events: none;
+      transition: transform 0.2s;
+    }
+
+    .mobile-menu.open {
+      transform: scaleY(1);
+      pointer-events: auto;
+    }
 
     /* Gallery items */
-    .gallery-item { transition: opacity 0.4s ease; }
+    .gallery-item {
+      transition: opacity 0.4s ease;
+    }
+
     .gallery-item img {
       transition: transform 0.5s ease;
       cursor: pointer;
@@ -44,7 +71,10 @@
       height: 100%;
       object-fit: cover;
     }
-    .gallery-item img:hover { transform: scale(1.05); }
+
+    .gallery-item img:hover {
+      transform: scale(1.05);
+    }
 
     /* Tab buttons */
     .tab-pill {
@@ -59,30 +89,104 @@
       transition: all 0.2s;
       white-space: nowrap;
     }
-    .tab-pill:hover { border-color: #93c5fd; color: #3b82f6; }
-    .tab-pill.active { background: #3b82f6; border-color: #3b82f6; color: white; }
+
+    .tab-pill:hover {
+      border-color: #93c5fd;
+      color: #3b82f6;
+    }
+
+    .tab-pill.active {
+      background: #3b82f6;
+      border-color: #3b82f6;
+      color: white;
+    }
 
     /* Lightbox */
-    #lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 9999;
-      align-items: center; justify-content: center; padding: 1rem; }
-    #lightbox.open { display: flex; }
-    #lightbox img { max-height: 90vh; max-width: 90vw; border-radius: 0.75rem; object-fit: contain;
-      box-shadow: 0 25px 60px rgba(0,0,0,0.5); }
-    #lb-close { position: absolute; top: 1.25rem; right: 1.5rem; font-size: 2.5rem; color: white;
-      cursor: pointer; line-height: 1; font-weight: 700; opacity: 0.8; }
-    #lb-close:hover { opacity: 1; color: #60a5fa; }
-    #lb-prev, #lb-next { position: absolute; top: 50%; transform: translateY(-50%);
-      background: rgba(255,255,255,0.1); border: none; color: white; font-size: 2rem;
-      width: 3rem; height: 3rem; border-radius: 50%; cursor: pointer; display: flex;
-      align-items: center; justify-content: center; transition: background 0.2s; }
-    #lb-prev:hover, #lb-next:hover { background: rgba(59,130,246,0.6); }
-    #lb-prev { left: 1rem; }
-    #lb-next { right: 1rem; }
-    #lb-caption { position: absolute; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
-      color: #94a3b8; font-family: 'Share Tech Mono', monospace; font-size: 0.8rem;
-      white-space: nowrap; }
+    #lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.92);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    #lightbox.open {
+      display: flex;
+    }
+
+    #lightbox img {
+      max-height: 90vh;
+      max-width: 90vw;
+      border-radius: 0.75rem;
+      object-fit: contain;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    #lb-close {
+      position: absolute;
+      top: 1.25rem;
+      right: 1.5rem;
+      font-size: 2.5rem;
+      color: white;
+      cursor: pointer;
+      line-height: 1;
+      font-weight: 700;
+      opacity: 0.8;
+    }
+
+    #lb-close:hover {
+      opacity: 1;
+      color: #60a5fa;
+    }
+
+    #lb-prev,
+    #lb-next {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: white;
+      font-size: 2rem;
+      width: 3rem;
+      height: 3rem;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    #lb-prev:hover,
+    #lb-next:hover {
+      background: rgba(59, 130, 246, 0.6);
+    }
+
+    #lb-prev {
+      left: 1rem;
+    }
+
+    #lb-next {
+      right: 1rem;
+    }
+
+    #lb-caption {
+      position: absolute;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #94a3b8;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.8rem;
+      white-space: nowrap;
+    }
   </style>
 </head>
+
 <body class="font-Inter bg-white text-gray-900">
 
   <!-- NAVBAR -->
@@ -99,14 +203,21 @@
           <li class="relative nav-dropdown-trigger">
             <button class="flex items-center gap-1 text-gray-900 hover:text-blue-500">
               Activities
-              <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 320 512"><path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z"/></svg>
+              <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 320 512">
+                <path
+                  d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
+              </svg>
             </button>
             <div class="nav-dropdown absolute left-0 top-full pt-2 z-50">
               <ul class="bg-white rounded-lg shadow-2xl py-2 min-w-[150px] text-sm text-gray-700">
-                <li><a class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500" href="activities.html">Events</a></li>
-                <li><a class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500" href="activities.html">Workshops</a></li>
-                <li><a class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500" href="activities.html">Publications</a></li>
-                <li><a class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500" href="activities.html">Projects</a></li>
+                <li><a class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500" href="activities.html">Events</a>
+                </li>
+                <li><a class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500"
+                    href="activities.html">Workshops</a></li>
+                <li><a class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500"
+                    href="activities.html">Publications</a></li>
+                <li><a class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500" href="activities.html">Projects</a>
+                </li>
               </ul>
             </div>
           </li>
@@ -117,21 +228,25 @@
         </ul>
       </div>
       <div class="flex items-center gap-2">
-        <a class="hidden sm:flex items-center gap-1 rounded-lg border border-black bg-[#252525] px-4 py-2 text-sm font-medium text-white shadow-lg transition hover:bg-zinc-700" href="#">
-          <svg class="w-4 h-4" fill="white" viewBox="0 0 24 24"><path d="M17 1.01 7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
-          <span>APP</span>
-        </a>
-        <a class="rounded-lg border border-blue-600 bg-blue-500 px-4 py-2 text-sm font-medium text-white shadow-md transition hover:bg-blue-600 font-ShareTechTown" href="#">Club</a>
-        <button onclick="document.getElementById('mobile-menu').classList.toggle('open')" class="lg:hidden ml-2 inline-flex h-10 w-10 items-center justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-200">
-          <svg class="w-5 h-5" fill="none" viewBox="0 0 17 14"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/></svg>
+        <a class="rounded-lg border border-blue-600 bg-blue-500 px-4 py-2 text-sm font-medium text-white shadow-md transition hover:bg-blue-600 font-ShareTechTown"
+          href="#">Club</a>
+        <button onclick="document.getElementById('mobile-menu').classList.toggle('open')"
+          class="lg:hidden ml-2 inline-flex h-10 w-10 items-center justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-200">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 17 14">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M1 1h15M1 7h15M1 13h15" />
+          </svg>
         </button>
       </div>
-      <div id="mobile-menu" class="mobile-menu lg:hidden fixed left-0 top-[68px] w-full bg-white border-b border-gray-200 pb-5 z-30">
+      <div id="mobile-menu"
+        class="mobile-menu lg:hidden fixed left-0 top-[68px] w-full bg-white border-b border-gray-200 pb-5 z-30">
         <ul class="container mt-4 flex flex-col gap-1 rounded-lg border border-gray-100 bg-gray-50 p-4 font-medium">
           <li><a class="block rounded px-3 py-2 text-gray-900 hover:bg-gray-200" href="index.html">Home</a></li>
           <li><a class="block rounded px-3 py-2 text-gray-900 hover:bg-gray-200" href="about.html">About</a></li>
-          <li><a class="block rounded px-3 py-2 text-gray-900 hover:bg-gray-200" href="activities.html">Activities</a></li>
-          <li><a class="block rounded px-3 py-2 text-gray-900 hover:bg-gray-200" href="executive.html">Executives</a></li>
+          <li><a class="block rounded px-3 py-2 text-gray-900 hover:bg-gray-200" href="activities.html">Activities</a>
+          </li>
+          <li><a class="block rounded px-3 py-2 text-gray-900 hover:bg-gray-200" href="executive.html">Executives</a>
+          </li>
           <li><a class="block rounded px-3 py-2 text-gray-900 hover:bg-gray-200" href="blog.html">Blog</a></li>
           <li><a class="block rounded px-3 py-2 bg-blue-600 text-white" href="gallery.html">Gallery</a></li>
           <li><a class="block rounded px-3 py-2 text-gray-900 hover:bg-gray-200" href="contact.html">Contact</a></li>
@@ -169,10 +284,14 @@
     <!-- Empty State -->
     <div id="galleryEmpty" class="hidden text-center py-20">
       <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center text-gray-400">
-        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
       </div>
       <h3 class="text-xl font-bold text-gray-700 mb-2">No Gallery Photos Yet</h3>
-      <p class="text-gray-500 text-sm max-w-md mx-auto">Event albums will appear here once uploaded via the <a href="dashboard.html" class="text-blue-500 underline">Admin Dashboard</a>.</p>
+      <p class="text-gray-500 text-sm max-w-md mx-auto">Event albums will appear here once uploaded via the <a
+          href="dashboard.html" class="text-blue-500 underline">Admin Dashboard</a>.</p>
     </div>
 
   </main>
@@ -188,13 +307,17 @@
 
   <!-- FOOTER -->
   <footer class="relative bg-[#1F1F1F] text-base">
-    <span class="absolute bottom-3 left-3 mt-7 text-xs text-zinc-700 sm:text-center">&copy; 2026 <a class="hover:underline" href="#">RCSC&trade;</a>. All Rights Reserved. <a href="dashboard.html" class="ml-2 opacity-40 hover:opacity-100 hover:text-blue-400 transition-opacity">Admin</a></span>
-    <div class="mx-auto flex w-full max-w-screen-xl flex-col justify-evenly gap-10 p-4 py-6 pb-12 md:flex-row md:pb-8 lg:py-8">
+    <span class="absolute bottom-3 left-3 mt-7 text-xs text-zinc-700 sm:text-center">&copy; 2026 <a
+        class="hover:underline" href="#">RCSC&trade;</a>. All Rights Reserved. <a href="dashboard.html"
+        class="ml-2 opacity-40 hover:opacity-100 hover:text-blue-400 transition-opacity">Admin</a></span>
+    <div
+      class="mx-auto flex w-full max-w-screen-xl flex-col justify-evenly gap-10 p-4 py-6 pb-12 md:flex-row md:pb-8 lg:py-8">
       <div class="order-3 flex justify-between gap-3 md:order-1 md:gap-24">
         <div class="order-2 flex flex-col items-center md:hidden">
           <div class="text-center font-ShareTechTown font-semibold text-white">A CLUB OF</div>
           <a href="https://rc.edu.bd" target="_blank">
-            <img loading="lazy" src="rc-logo.png" alt="Rajshahi College Logo" width="128" height="128" class="scale-75" />
+            <img loading="lazy" src="rc-logo.png" alt="Rajshahi College Logo" width="128" height="128"
+              class="scale-75" />
           </a>
         </div>
         <div class="flex flex-col gap-3">
@@ -207,7 +330,6 @@
           <a class="cursor-pointer font-medium text-zinc-400 hover:underline" href="#">Publication</a>
           <a class="cursor-pointer font-medium text-zinc-400 hover:underline" href="executive.html">Executives</a>
           <a class="cursor-pointer font-medium text-zinc-400 hover:underline" href="blog.html">Blog</a>
-          <a class="cursor-pointer font-medium text-zinc-400 hover:underline" href="#">App</a>
         </div>
       </div>
       <div class="order-2 hidden flex-col items-center gap-3 md:flex">
@@ -220,15 +342,17 @@
         <div class="cursor-pointer font-ShareTechTown text-xl font-semibold text-white">CONTACT US</div>
         <div class="flex items-center gap-1 font-medium text-zinc-400">
           <svg class="mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 4a4 4 0 0 1 4 4v6M5 4a4 4 0 0 0-4 4v6h8M5 4h9M9 14h10V8a3.999 3.999 0 0 0-2.066-3.5M9 14v5m0-5h4v5m-9-8h2m8-4V1h2"/>
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M5 4a4 4 0 0 1 4 4v6M5 4a4 4 0 0 0-4 4v6h8M5 4h9M9 14h10V8a3.999 3.999 0 0 0-2.066-3.5M9 14v5m0-5h4v5m-9-8h2m8-4V1h2" />
           </svg>
           <p>rcsc.official@gmail.com</p>
         </div>
         <div class="flex items-center gap-1 font-medium text-zinc-400">
           <svg class="mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 21">
             <g stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-              <path d="M8 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
-              <path d="M13.8 12.938h-.01a7 7 0 1 0-11.465.144h-.016l.141.17c.1.128.2.252.3.372L8 20l5.13-6.248c.193-.209.373-.429.54-.66l.13-.154Z"/>
+              <path d="M8 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+              <path
+                d="M13.8 12.938h-.01a7 7 0 1 0-11.465.144h-.016l.141.17c.1.128.2.252.3.372L8 20l5.13-6.248c.193-.209.373-.429.54-.66l.13-.154Z" />
             </g>
           </svg>
           <p>Rajshahi College Rd, Rajshahi 6000</p>
@@ -302,100 +426,101 @@
   <script src="firebase-config.js"></script>
 
   <script>
-  (function(){
-    const container = document.getElementById('dynamicAlbums');
-    const tabContainer = document.getElementById('gallery-tabs');
-    const emptyState = document.getElementById('galleryEmpty');
-    if (!container) return;
+    (function () {
+      const container = document.getElementById('dynamicAlbums');
+      const tabContainer = document.getElementById('gallery-tabs');
+      const emptyState = document.getElementById('galleryEmpty');
+      if (!container) return;
 
-    // Authentic RCSC initial albums
-    const DEFAULT_ALBUMS = [
-      {
-        id: 'science-fest',
-        name: 'National Science Fest',
-        photos: [
-          'activity-fest.jpg',
-          'join-projects.jpg'
-        ]
-      },
-      {
-        id: 'workshops-seminars',
-        name: 'Workshops & Seminars',
-        photos: [
-          'activity-workshop.jpg',
-          'join-learning.jpg'
-        ]
-      },
-      {
-        id: 'projects-exhibitions',
-        name: 'Projects & Mentorship',
-        photos: [
-          'activity-project.jpg',
-          'join-network.jpg',
-          'activity-quark.jpg'
-        ]
-      }
-    ];
-
-    function renderAlbums(albums) {
-      if (!albums || !albums.length) {
-        if (emptyState) emptyState.classList.remove('hidden');
-        return;
-      }
-      if (emptyState) emptyState.classList.add('hidden');
-      container.innerHTML = '';
-      document.querySelectorAll('.dynamic-album-tab').forEach(b => b.remove());
-
-      albums.forEach(album => {
-        if (!album.photos || !album.photos.length) return;
-        // Add tab button
-        if (tabContainer) {
-          const btn = document.createElement('button');
-          btn.className = 'tab-pill dynamic-album-tab';
-          btn.textContent = album.name;
-          btn.onclick = function() { filterGallery(this, album.id); };
-          tabContainer.appendChild(btn);
+      // Authentic RCSC initial albums
+      const DEFAULT_ALBUMS = [
+        {
+          id: 'science-fest',
+          name: 'National Science Fest',
+          photos: [
+            'activity-fest.jpg',
+            'join-projects.jpg'
+          ]
+        },
+        {
+          id: 'workshops-seminars',
+          name: 'Workshops & Seminars',
+          photos: [
+            'activity-workshop.jpg',
+            'join-learning.jpg'
+          ]
+        },
+        {
+          id: 'projects-exhibitions',
+          name: 'Projects & Mentorship',
+          photos: [
+            'activity-project.jpg',
+            'join-network.jpg',
+            'activity-quark.jpg'
+          ]
         }
-        // Add photos as gallery items
-        album.photos.forEach((src, i) => {
-          const div = document.createElement('div');
-          div.className = 'gallery-item overflow-hidden rounded-xl';
-          div.dataset.event = album.id;
-          const img = document.createElement('img');
-          img.src = src;
-          img.alt = album.name + ' photo ' + (i + 1);
-          img.className = 'h-56 md:h-72 w-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500';
-          img.dataset.caption = album.name + ' · ' + (i + 1);
-          img.onclick = function() { openLightbox(this); };
-          img.loading = 'lazy';
-          div.appendChild(img);
-          container.appendChild(div);
+      ];
+
+      function renderAlbums(albums) {
+        if (!albums || !albums.length) {
+          if (emptyState) emptyState.classList.remove('hidden');
+          return;
+        }
+        if (emptyState) emptyState.classList.add('hidden');
+        container.innerHTML = '';
+        document.querySelectorAll('.dynamic-album-tab').forEach(b => b.remove());
+
+        albums.forEach(album => {
+          if (!album.photos || !album.photos.length) return;
+          // Add tab button
+          if (tabContainer) {
+            const btn = document.createElement('button');
+            btn.className = 'tab-pill dynamic-album-tab';
+            btn.textContent = album.name;
+            btn.onclick = function () { filterGallery(this, album.id); };
+            tabContainer.appendChild(btn);
+          }
+          // Add photos as gallery items
+          album.photos.forEach((src, i) => {
+            const div = document.createElement('div');
+            div.className = 'gallery-item overflow-hidden rounded-xl';
+            div.dataset.event = album.id;
+            const img = document.createElement('img');
+            img.src = src;
+            img.alt = album.name + ' photo ' + (i + 1);
+            img.className = 'h-56 md:h-72 w-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500';
+            img.dataset.caption = album.name + ' · ' + (i + 1);
+            img.onclick = function () { openLightbox(this); };
+            img.loading = 'lazy';
+            div.appendChild(img);
+            container.appendChild(div);
+          });
         });
-      });
-      if (typeof buildIndex === 'function') buildIndex();
-    }
+        if (typeof buildIndex === 'function') buildIndex();
+      }
 
-    // 1. Instant local render (use cached albums or default authentic albums)
-    try {
-      const raw = localStorage.getItem('rcsc_gallery');
-      const albums = raw ? JSON.parse(raw) : DEFAULT_ALBUMS;
-      renderAlbums(albums);
-    } catch(e) {
-      renderAlbums(DEFAULT_ALBUMS);
-    }
+      // 1. Instant local render (use cached albums or default authentic albums)
+      try {
+        const raw = localStorage.getItem('rcsc_gallery');
+        const albums = raw ? JSON.parse(raw) : DEFAULT_ALBUMS;
+        renderAlbums(albums);
+      } catch (e) {
+        renderAlbums(DEFAULT_ALBUMS);
+      }
 
-    // 2. Live fetch from Firestore
-    if (db) {
-      db.collection('albums').get().then(snap => {
-        if (!snap.empty) {
-          const albums = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-          localStorage.setItem('rcsc_gallery', JSON.stringify(albums));
-          renderAlbums(albums);
-        }
-      }).catch(err => console.warn('Firestore gallery error:', err));
-    }
-  })();
+      // 2. Live fetch from Firestore
+      if (db) {
+        db.collection('albums').get().then(snap => {
+          if (!snap.empty) {
+            const albums = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            localStorage.setItem('rcsc_gallery', JSON.stringify(albums));
+            renderAlbums(albums);
+          }
+        }).catch(err => console.warn('Firestore gallery error:', err));
+      }
+    })();
   </script>
 
 </body>
+
 </html>
