@@ -215,7 +215,12 @@
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             <div>
               <label class="form-label">Session Year</label>
-              <input id="execYear" class="form-input" placeholder="e.g. 2025–2026" />
+              <div class="relative">
+                <select id="execYear" onchange="onDashboardSessionChange(this.value)" class="form-input bg-white cursor-pointer font-bold text-gray-800 pr-8">
+                  <option value="2025–2026">2025–2026</option>
+                  <option value="2026–2027">2026–2027</option>
+                </select>
+              </div>
             </div>
             <div>
               <label class="form-label">Page Hero Title</label>
@@ -683,6 +688,30 @@ const SEED_EXEC = {
   ]
 };
 
+const SEED_EXEC_2026 = {
+  year: '2026–2027',
+  heroTitle: 'MEET THE EXECUTIVES',
+  notice: 'Executive committee for the 2026–2027 session will be announced prior to the term. Placeholder template shown below.',
+  principal: 'Prof. Dr. Md. Abdul Khalek',
+  principalRole: 'Principal & Patron',
+  principalSub: 'Rajshahi College · Honorary Head of RCSC',
+  moderator: 'Dr. Shariful Islam',
+  moderatorRole: 'Club Moderator',
+  moderatorSub: 'Faculty Advisor · Department of Science',
+  members: [
+    { id:'e26_1', name:'Member Name', position:'President', dept:'Administration', photo:'' },
+    { id:'e26_2', name:'Member Name', position:'Vice President', dept:'Administration', photo:'' },
+    { id:'e26_3', name:'Member Name', position:'General Secretary', dept:'Administration', photo:'' },
+    { id:'e26_4', name:'Member Name', position:'Treasurer', dept:'Finance', photo:'' },
+    { id:'e26_5', name:'Member Name', position:'Joint Secretary', dept:'Administration', photo:'' },
+    { id:'e26_6', name:'Member Name', position:'Head of Department', dept:'Science & Technology', photo:'' },
+    { id:'e26_7', name:'Member Name', position:'Head of Department', dept:'Research & Publication', photo:'' },
+    { id:'e26_8', name:'Member Name', position:'Head of Department', dept:'Events & Logistics', photo:'' },
+    { id:'e26_9', name:'Member Name', position:'Head of Department', dept:'Media & Communications', photo:'' },
+    { id:'e26_10', name:'Member Name', position:'Head of Department', dept:'Outreach', photo:'' }
+  ]
+};
+
 const SEED_ABOUT = {
   whoTitle: 'Who We Are',
   whoP1: 'Rajshahi College Science Club (RCSC), a co-curricular club of Rajshahi College, has started its journey to promote science and technology awareness among students. <span class="font-semibold text-gray-800">"Igniting Scientific Curiosity"</span> — bearing this motto, RCSC strives to cultivate a generation of curious minds who push the boundaries of knowledge and innovation.',
@@ -797,6 +826,12 @@ async function syncWithFirestore() {
     } else {
       await db.collection('content').doc('executives').set(SEED_EXEC);
       appData.exec = JSON.parse(JSON.stringify(SEED_EXEC));
+    }
+    if (!appData.exec.sessions) {
+      appData.exec.sessions = {
+        '2025–2026': JSON.parse(JSON.stringify(appData.exec)),
+        '2026–2027': JSON.parse(JSON.stringify(SEED_EXEC_2026))
+      };
     }
     setD(KEYS.exec, appData.exec);
 
@@ -1187,21 +1222,46 @@ async function deletePhoto(idx) {
 // ══════════════════════════════════════════════════════════
 // EXECUTIVES
 // ══════════════════════════════════════════════════════════
+function ensureDashboardSessions() {
+  if (!appData.exec) appData.exec = JSON.parse(JSON.stringify(SEED_EXEC));
+  if (!appData.exec.sessions) {
+    appData.exec.sessions = {
+      '2025–2026': JSON.parse(JSON.stringify(appData.exec)),
+      '2026–2027': JSON.parse(JSON.stringify(SEED_EXEC_2026))
+    };
+  }
+  if (!appData.exec.sessions['2025–2026']) {
+    appData.exec.sessions['2025–2026'] = JSON.parse(JSON.stringify(appData.exec));
+  }
+  if (!appData.exec.sessions['2026–2027']) {
+    appData.exec.sessions['2026–2027'] = JSON.parse(JSON.stringify(SEED_EXEC_2026));
+  }
+}
+
+function getActiveExecSession() {
+  ensureDashboardSessions();
+  const select = document.getElementById('execYear');
+  let year = select ? select.value : (appData.exec.year || '2025–2026');
+  if (year.includes('2026')) year = '2026–2027';
+  else year = '2025–2026';
+  return { parent: appData.exec, session: appData.exec.sessions[year], year };
+}
+
 function renderExec() {
-  const data = appData.exec || SEED_EXEC;
+  const { parent, session, year } = getActiveExecSession();
   const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
-  setVal('execYear', data.year || '2025–2026');
-  setVal('execHeroTitle', data.heroTitle || 'MEET THE EXECUTIVES');
-  setVal('execNotice', data.notice || '');
-  setVal('principalName', data.principal || '');
-  setVal('principalRole', data.principalRole || 'Principal & Patron');
-  setVal('principalSub', data.principalSub || 'Rajshahi College · Honorary Head of RCSC');
-  setVal('moderatorName', data.moderator || '');
-  setVal('moderatorRole', data.moderatorRole || 'Club Moderator');
-  setVal('moderatorSub', data.moderatorSub || 'Faculty Advisor · Department of Science');
+  setVal('execYear', year);
+  setVal('execHeroTitle', session.heroTitle || 'MEET THE EXECUTIVES');
+  setVal('execNotice', session.notice || '');
+  setVal('principalName', session.principal || '');
+  setVal('principalRole', session.principalRole || 'Principal & Patron');
+  setVal('principalSub', session.principalSub || 'Rajshahi College · Honorary Head of RCSC');
+  setVal('moderatorName', session.moderator || '');
+  setVal('moderatorRole', session.moderatorRole || 'Club Moderator');
+  setVal('moderatorSub', session.moderatorSub || 'Faculty Advisor · Department of Science');
 
   const list = document.getElementById('execList');
-  list.innerHTML = (data.members||[]).map((m,i) => `
+  list.innerHTML = (session.members || []).map((m,i) => `
     <div class="exec-row">
       <div class="avatar-sm">${m.photo ? `<img src="${m.photo}" class="w-full h-full object-cover" />` : `<svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>`}</div>
       <span class="font-semibold text-gray-900 text-sm">${esc(m.name)}</span>
@@ -1214,25 +1274,59 @@ function renderExec() {
     </div>`).join('');
 }
 
-async function saveExecHeader() {
-  if (!appData.exec) appData.exec = JSON.parse(JSON.stringify(SEED_EXEC));
-  const getVal = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
-  appData.exec.year          = getVal('execYear') || '2025–2026';
-  appData.exec.heroTitle     = getVal('execHeroTitle') || 'MEET THE EXECUTIVES';
-  appData.exec.notice        = getVal('execNotice');
-  appData.exec.principal     = getVal('principalName');
-  appData.exec.principalRole = getVal('principalRole') || 'Principal & Patron';
-  appData.exec.principalSub  = getVal('principalSub') || 'Rajshahi College · Honorary Head of RCSC';
-  appData.exec.moderator     = getVal('moderatorName');
-  appData.exec.moderatorRole = getVal('moderatorRole') || 'Club Moderator';
-  appData.exec.moderatorSub  = getVal('moderatorSub') || 'Faculty Advisor · Department of Science';
+function onDashboardSessionChange(newYear) {
+  ensureDashboardSessions();
+  const prevYear = newYear === '2026–2027' ? '2025–2026' : '2026–2027';
+  if (appData.exec.sessions[prevYear]) {
+    const getVal = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+    const prev = appData.exec.sessions[prevYear];
+    prev.heroTitle     = getVal('execHeroTitle') || 'MEET THE EXECUTIVES';
+    prev.notice        = getVal('execNotice');
+    prev.principal     = getVal('principalName');
+    prev.principalRole = getVal('principalRole') || 'Principal & Patron';
+    prev.principalSub  = getVal('principalSub') || 'Rajshahi College · Honorary Head of RCSC';
+    prev.moderator     = getVal('moderatorName');
+    prev.moderatorRole = getVal('moderatorRole') || 'Club Moderator';
+    prev.moderatorSub  = getVal('moderatorSub') || 'Faculty Advisor · Department of Science';
+  }
 
-  setD(KEYS.exec, appData.exec);
-  showToast('Saving leadership info...', 'success');
+  appData.exec.year = newYear;
+  renderExec();
+  showToast(`Switched to Session ${newYear}`, 'info');
+}
+
+async function saveExecHeader() {
+  const { parent, session, year } = getActiveExecSession();
+  const getVal = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+
+  session.year          = year;
+  session.heroTitle     = getVal('execHeroTitle') || 'MEET THE EXECUTIVES';
+  session.notice        = getVal('execNotice');
+  session.principal     = getVal('principalName');
+  session.principalRole = getVal('principalRole') || 'Principal & Patron';
+  session.principalSub  = getVal('principalSub') || 'Rajshahi College · Honorary Head of RCSC';
+  session.moderator     = getVal('moderatorName');
+  session.moderatorRole = getVal('moderatorRole') || 'Club Moderator';
+  session.moderatorSub  = getVal('moderatorSub') || 'Faculty Advisor · Department of Science';
+
+  // Mirror to top-level for active session
+  parent.year          = year;
+  parent.heroTitle     = session.heroTitle;
+  parent.notice        = session.notice;
+  parent.principal     = session.principal;
+  parent.principalRole = session.principalRole;
+  parent.principalSub  = session.principalSub;
+  parent.moderator     = session.moderator;
+  parent.moderatorRole = session.moderatorRole;
+  parent.moderatorSub  = session.moderatorSub;
+  parent.members       = session.members || [];
+
+  setD(KEYS.exec, parent);
+  showToast(`Saving Session ${year} leadership...`, 'success');
   if (db) {
     try {
-      await db.collection('content').doc('executives').set(appData.exec);
-      showToast('Leadership saved to cloud!', 'success');
+      await db.collection('content').doc('executives').set(parent);
+      showToast(`Session ${year} leadership saved to cloud!`, 'success');
     } catch(err) {
       showToast('Saved locally.', 'orange');
     }
@@ -1240,8 +1334,8 @@ async function saveExecHeader() {
 }
 
 function openExecModal(id) {
-  const data = appData.exec || SEED_EXEC;
-  const member = id ? data.members.find(m => m.id === id) : null;
+  const { session } = getActiveExecSession();
+  const member = id ? (session.members || []).find(m => m.id === id) : null;
   document.getElementById('modalTitle').textContent = member ? 'Edit Executive Member' : 'Add Executive Member';
   document.getElementById('modalBody').innerHTML = `<div class="space-y-4">
     <div class="grid grid-cols-2 gap-4">
@@ -1280,8 +1374,8 @@ async function previewExecPhoto(input) {
 async function saveExecMember(id) {
   const name = document.getElementById('ex_name').value.trim();
   if (!name) { showToast('Name is required.', 'error'); return; }
-  if (!appData.exec) appData.exec = JSON.parse(JSON.stringify(SEED_EXEC));
-  if (!appData.exec.members) appData.exec.members = [];
+  const { parent, session, year } = getActiveExecSession();
+  if (!session.members) session.members = [];
   const memberData = {
     id: id || uid(),
     name,
@@ -1290,18 +1384,21 @@ async function saveExecMember(id) {
     photo: document.getElementById('ex_photo').value
   };
   if (id) {
-    const idx = appData.exec.members.findIndex(m => m.id === id);
-    if (idx !== -1) appData.exec.members[idx] = memberData;
+    const idx = session.members.findIndex(m => m.id === id);
+    if (idx !== -1) session.members[idx] = memberData;
   } else {
-    appData.exec.members.push(memberData);
+    session.members.push(memberData);
   }
-  setD(KEYS.exec, appData.exec);
+  if (parent.year === year) {
+    parent.members = session.members;
+  }
+  setD(KEYS.exec, parent);
   closeModal();
   renderExec();
   showToast('Saving member...', 'success');
   if (db) {
     try {
-      await db.collection('content').doc('executives').set(appData.exec);
+      await db.collection('content').doc('executives').set(parent);
       showToast(id ? 'Member updated in cloud!' : 'Member added to cloud!', 'success');
     } catch(err) {
       showToast('Saved locally.', 'orange');
@@ -1311,13 +1408,17 @@ async function saveExecMember(id) {
 
 async function deleteExecMember(id) {
   if (!confirm('Remove this executive member?')) return;
-  if (!appData.exec || !appData.exec.members) return;
-  appData.exec.members = appData.exec.members.filter(m => m.id !== id);
-  setD(KEYS.exec, appData.exec);
+  const { parent, session, year } = getActiveExecSession();
+  if (!session.members) return;
+  session.members = session.members.filter(m => m.id !== id);
+  if (parent.year === year) {
+    parent.members = session.members;
+  }
+  setD(KEYS.exec, parent);
   renderExec();
   if (db) {
     try {
-      await db.collection('content').doc('executives').set(appData.exec);
+      await db.collection('content').doc('executives').set(parent);
       showToast('Member removed from cloud.', 'success');
     } catch(err) {}
   }
