@@ -46,11 +46,47 @@
       box-shadow: 0 20px 50px rgba(59,130,246,0.12);
     }
 
-    /* Form input focus glow */
+    /* Form input focus glow (default neutral/blue when neither valid nor invalid) */
     .form-input:focus {
       outline: none;
       border-color: #3b82f6;
       box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+    }
+
+    /* Form input error state & focus (stays RED, never turns blue) */
+    .form-input.is-invalid {
+      border-color: #ef4444 !important;
+      background-color: rgba(254, 242, 242, 0.5) !important;
+    }
+    .form-input.is-invalid:focus {
+      outline: none !important;
+      border-color: #ef4444 !important;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25) !important;
+    }
+
+    /* Form input valid state & focus */
+    .form-input.is-valid {
+      border-color: #10b981 !important;
+      background-color: rgba(236, 253, 245, 0.4) !important;
+    }
+    .form-input.is-valid:focus {
+      outline: none !important;
+      border-color: #10b981 !important;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25) !important;
+    }
+
+    /* Horizontal vibration / shake animation */
+    @keyframes horizontal-shake {
+      0%, 100% { transform: translateX(0); }
+      15% { transform: translateX(-8px); }
+      30% { transform: translateX(8px); }
+      45% { transform: translateX(-6px); }
+      60% { transform: translateX(6px); }
+      75% { transform: translateX(-3px); }
+      90% { transform: translateX(3px); }
+    }
+    .shake-horizontal {
+      animation: horizontal-shake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
     }
 
     /* Animated underline on heading */
@@ -606,8 +642,8 @@
       }
 
       if (isValid) {
-        input.classList.remove('border-red-500', 'bg-red-50/20');
-        input.classList.add('border-emerald-500', 'bg-emerald-50/20');
+        input.classList.remove('is-invalid', 'border-red-500', 'bg-red-50/20');
+        input.classList.add('is-valid', 'border-emerald-500', 'bg-emerald-50/20');
         if (icon) {
           icon.innerHTML = '<span class="text-emerald-500 font-bold text-sm">✓</span>';
           icon.classList.remove('hidden');
@@ -617,8 +653,8 @@
           errEl.classList.add('hidden');
         }
       } else {
-        input.classList.remove('border-emerald-500', 'bg-emerald-50/20');
-        input.classList.add('border-red-500', 'bg-red-50/20');
+        input.classList.remove('is-valid', 'border-emerald-500', 'bg-emerald-50/20');
+        input.classList.add('is-invalid', 'border-red-500', 'bg-red-50/20');
         if (icon) {
           icon.innerHTML = '<span class="text-red-500 font-bold text-sm">✕</span>';
           icon.classList.remove('hidden');
@@ -644,10 +680,15 @@
       const v4 = validateField(msgInput, 'message');
 
       if (!v1 || !v2 || !v3 || !v4) {
-        const firstInvalid = !v1 ? nameInput : !v2 ? subjInput : !v3 ? emailInput : msgInput;
+        const invalidInputs = [nameInput, subjInput, emailInput, msgInput].filter(inp => inp.classList.contains('is-invalid'));
+        const firstInvalid = invalidInputs[0] || nameInput;
         firstInvalid.focus();
-        firstInvalid.classList.add('animate-bounce');
-        setTimeout(() => firstInvalid.classList.remove('animate-bounce'), 600);
+        invalidInputs.forEach(inp => {
+          inp.classList.remove('shake-horizontal');
+          void inp.offsetWidth;
+          inp.classList.add('shake-horizontal');
+          setTimeout(() => inp.classList.remove('shake-horizontal'), 500);
+        });
         if (window.rcscToast) {
           rcscToast('Please fill all required fields correctly.', 'error');
         }
@@ -658,7 +699,7 @@
       if (form) form.reset();
 
       [nameInput, subjInput, emailInput, msgInput].forEach(inp => {
-        inp.classList.remove('border-emerald-500', 'border-red-500', 'bg-emerald-50/20', 'bg-red-50/20');
+        inp.classList.remove('is-invalid', 'is-valid', 'border-emerald-500', 'border-red-500', 'bg-emerald-50/20', 'bg-red-50/20', 'shake-horizontal');
         const icon = (inp.closest('.relative') || inp.parentElement).querySelector('.val-icon');
         if (icon) icon.classList.add('hidden');
       });
