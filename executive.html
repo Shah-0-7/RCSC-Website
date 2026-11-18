@@ -110,6 +110,9 @@
       color: #2563EB;
       padding-left: 1.25rem;
     }
+    #execDynamicGrid {
+      transition: opacity 0.22s ease, transform 0.22s ease;
+    }
   </style>
 </head>
 <body class="font-Inter bg-[#F6F6F6] text-gray-900">
@@ -546,13 +549,25 @@
     };
 
     window.selectSessionYear = function(year) {
+      if (selectedSession === year) return;
       selectedSession = year;
       const menu = document.getElementById('sessionDropdownMenu');
       const icon = document.getElementById('sessionDropdownIcon');
       if (menu) menu.classList.add('hidden');
       if (icon) icon.classList.remove('rotate-180');
       
-      renderExec(execStore);
+      const grid = document.getElementById('execDynamicGrid');
+      if (grid) {
+        grid.style.opacity = '0';
+        grid.style.transform = 'translateY(8px)';
+        setTimeout(() => {
+          renderExec(execStore);
+          grid.style.opacity = '1';
+          grid.style.transform = 'translateY(0)';
+        }, 160);
+      } else {
+        renderExec(execStore);
+      }
     };
 
     document.addEventListener('click', function(e) {

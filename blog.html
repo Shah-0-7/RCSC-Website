@@ -428,7 +428,7 @@
               ${p.excerpt || p.content || ''}
             </p>
             <div class="text-xs text-gray-400 font-ShareTechTown mt-auto flex items-center justify-between">
-              <span>By ${p.author || 'RCSC Team'} &bull; ${p.date || ''}</span>
+              <span>By ${p.author || 'RCSC Team'} &bull; ${p.date || ''} &bull; <span class="text-blue-500 font-medium">⏱ ${computeReadTime(p.content || p.excerpt || '')}</span></span>
               <span class="text-blue-500 font-semibold hover:underline">Read full &rarr;</span>
             </div>
           </div>

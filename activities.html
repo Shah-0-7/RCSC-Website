@@ -78,6 +78,10 @@
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
     }
 
+    #events-grid {
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
     .tab-btn {
       padding: 0.6rem 1.5rem;
       border-radius: 0.5rem;
@@ -374,7 +378,18 @@
       document.querySelectorAll('#activities-filter-bar .tab-btn').forEach(b => b.classList.remove('active'));
       if (btn) btn.classList.add('active');
       currentFilter = filter;
-      renderActivitiesGrid();
+      const grid = document.getElementById('events-grid');
+      if (grid) {
+        grid.style.opacity = '0';
+        grid.style.transform = 'translateY(6px)';
+        setTimeout(() => {
+          renderActivitiesGrid();
+          grid.style.opacity = '1';
+          grid.style.transform = 'translateY(0)';
+        }, 150);
+      } else {
+        renderActivitiesGrid();
+      }
     }
 
     function renderActivitiesGrid() {
