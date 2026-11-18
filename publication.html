@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Publications | RCSC</title>
+  <meta name="description" content="RCSC Publications — Quark Science Magazine, Research Journals, and Student Papers" />
+  <link rel="icon" href="logo.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Nunito:wght@300;400;600;700&family=Share+Tech+Mono&family=Bebas+Neue&display=swap"
+    rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            Inter: ['Inter', 'sans-serif'],
+            Nunito: ['Nunito', 'sans-serif'],
+            ShareTechTown: ['Share Tech Mono', 'monospace'],
+            Bebas: ['Bebas Neue', 'sans-serif'],
+          },
+          colors: { primary: '#3b82f6' }
+        },
+        container: { center: true, padding: '1rem' }
+      }
+    }
+  </script>
+  <style>
+    html,
+    body {
+      overflow-x: hidden;
+      max-width: 100%;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    .nav-dropdown {
+      display: none;
+    }
+
+    .nav-dropdown-trigger:hover .nav-dropdown {
+      display: block;
+    }
+
+    .mobile-menu {
+      transform: scaleY(0);
+      transform-origin: top;
+      pointer-events: none;
+      transition: transform 0.2s;
+    }
+
+    .mobile-menu.open {
+      transform: scaleY(1);
+      pointer-events: auto;
+    }
+
+    .publication-card {
+      background: #2E2E2E;
+      border-radius: 1rem;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .publication-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    #publications-grid {
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .tab-btn {
+      padding: 0.6rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .tab-btn:not(.active) {
+      background: #F3F4F6;
+      color: #374151;
+    }
+
+    .tab-btn:not(.active):hover {
+      background: #E5E7EB;
+    }
+
+    .learn-more-button {
+      font-family: 'Bebas Neue', sans-serif;
+      padding: 0.5rem 1.5rem;
+      border-radius: 0.5rem;
+      border: 1px solid #555;
+      background: #252525;
+      color: white;
+      font-size: 1rem;
+      transition: all 0.3s;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    .learn-more-button:hover {
+      background: #3b82f6;
+      border-color: #3b82f6;
+    }
+
+    /* ── Page Transition ── */
+    @keyframes rcsc-fade-in  { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes rcsc-fade-out { from { opacity: 1; } to { opacity: 0; } }
+    body.page-leaving { animation: rcsc-fade-out 0.18s ease forwards; }
+    body { animation: rcsc-fade-in 0.3s ease; }
+
+    /* ── Active Nav Dot Indicator ── */
+    .rcsc-nav-active { position: relative; }
+    .rcsc-nav-active::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #3b82f6;
+    }
+
+    /* ── Universal Card Hover State ── */
+    .rcsc-card-hover {
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+    .rcsc-card-hover:hover {
+      transform: translateY(-4px) !important;
+      box-shadow: 0 16px 32px -4px rgba(0, 0, 0, 0.12) !important;
+    }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css" />
+</head>
+
+<body class="font-Inter bg-white text-gray-900">
+
+  <!-- NAVBAR -->
+  <nav class="fixed start-0 top-0 z-50 w-full border-b border-gray-200 bg-white">
+    <div class="container relative mx-auto flex flex-wrap items-center justify-between px-4 py-3">
+      <a class="z-50 flex items-center" href="index.html">
+        <img src="logo.png" class="h-12 w-12 object-contain" alt="RCSC Logo" />
+        <span class="ml-2 text-lg font-bold hidden sm:inline">RCSC</span>
+      </a>
+      <div class="hidden lg:flex items-center gap-8">
+        <ul class="flex items-center gap-6 font-medium text-sm">
+          <li><a class="text-gray-900 hover:text-blue-500" href="index.html">Home</a></li>
+          <li><a class="text-gray-900 hover:text-blue-500" href="about.html">About</a></li>
+          <li class="relative nav-dropdown-trigger">
+            <button class="flex items-center gap-1 text-blue-500 hover:text-blue-600 font-semibold rcsc-nav-active">
+              Activities
+              <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 320 512">
+                <path
+                  d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
+              </svg>
+            </button>
+            <div class="nav-dropdown absolute left-0 top-full pt-2 z-50">
+              <ul class="bg-white rounded-lg shadow-2xl py-2 min-w-[150px] text-sm text-gray-700">
+                <li><a class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500" href="activities.html">Events</a></li>
+                <li><a class="block px-4 py-2 text-blue-500 font-semibold bg-blue-50" href="publication.html">Publication</a></li>
+              </ul>
+            </div>
+          </li>
+          <li><a class="text-gray-900 hover:text-blue-500" href="executive.html">Executives</a></li>
+          <li><a class="text-gray-900 hover:text-blue-500" href="blog.html">Blog</a></li>
+          <li><a class="text-gray-900 hover:text-blue-500" href="gallery.html">Gallery</a></li>
+          <li><a class="text-gray-900 hover:text-blue-500" href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="flex items-center gap-2">
+        <a class="rounded-lg border border-blue-600 bg-blue-500 px-4 py-2 text-sm font-medium text-white shadow-md transition hover:bg-blue-600 font-ShareTechTown"
+          href="#">Club</a>
+        <button onclick="document.getElementById('mobile-menu').classList.toggle('open')"
+          class="lg:hidden ml-2 inline-flex h-10 w-10 items-center justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-200">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 17 14">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M1 1h15M1 7h15M1 13h15" />
+          </svg>
+        </button>
+      </div>
+      <div id="mobile-menu"
+        class="mobile-menu lg:hidden fixed left-0 top-[68px] w-full bg-white border-b border-gray-200 pb-5 z-30">
+        <ul class="container mt-4 flex flex-col gap-1 rounded-lg border border-gray-100 bg-gray-50 p-4 font-medium">
+          <li><a class="block rounded px-3 py-2 text-gray-900 hover:bg-gray-200" href="index.html">Home</a></li>
+          <li><a class="block rounded px-3 py-2 text-gray-900 hover:bg-gray-200" href="about.html">About</a></li>
+          <li><a class="block rounded px-3 py-2 text-gray-900 hover:bg-gray-200" href="activities.html">Activities</a></li>
+          <li><a class="block rounded px-3 py-2 bg-blue-600 text-white" href="publication.html">Publications</a></li>
+          <li><a class="block rounded px-3 py-2 text-gray-900 hover:bg-gray-200" href="executive.html">Executives</a></li>
+          <li><a class="text-gray-900 hover:text-blue-500" href="blog.html">Blog</a></li>
+          <li><a class="text-gray-900 hover:text-blue-500" href="gallery.html">Gallery</a></li>
+          <li><a class="text-gray-900 hover:text-blue-500" href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- PAGE HERO -->
+  <section class="bg-[#F6F6F6] pt-[80px]">
+    <div class="container mx-auto px-4 py-16 text-center">
+      <h1 class="font-Bebas text-5xl md:text-7xl tracking-widest text-gray-900">ALL <span
+          class="text-blue-500">PUBLICATIONS</span></h1>
+      <p class="text-gray-500 text-sm font-ShareTechTown mt-2">RCSC / PUBLICATIONS</p>
+    </div>
+  </section>
+
+  <!-- FILTER TABS & PUBLICATIONS GRID -->
+  <div class="container mx-auto px-4 py-8">
+    <div class="flex flex-wrap gap-3 mb-10 justify-center" id="publications-filter-bar">
+      <button class="tab-btn active" onclick="filterPublications(this, 'all')">All Publications</button>
+      <button class="tab-btn" onclick="filterPublications(this, 'Quark')">Quark Magazine</button>
+      <button class="tab-btn" onclick="filterPublications(this, 'Research')">Research &amp; Papers</button>
+      <button class="tab-btn" onclick="filterPublications(this, 'Souvenir')">Fest Souvenirs</button>
+    </div>
+
+    <!-- DYNAMIC PUBLICATIONS GRID -->
+    <div id="publications-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-16"></div>
+
+    <!-- Empty State -->
+    <div id="publications-empty" class="hidden text-center py-20 max-w-md mx-auto">
+      <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-zinc-800 text-blue-400 flex items-center justify-center">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+      </div>
+      <h3 class="text-xl font-bold text-gray-900 mb-2">No Publications Found</h3>
+      <p class="text-gray-500 text-sm">Publications will appear here once published from the <a href="dashboard.html"
+          class="text-blue-500 underline">Admin Dashboard</a>.</p>
+    </div>
+  </div>
+
+  <!-- PUBLICATION PREVIEW / DETAIL MODAL -->
+  <div id="pub-modal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onclick="closePubModal()">
+    <div class="relative bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
+      <div class="w-full h-1.5 bg-gray-100 flex-shrink-0">
+        <div class="h-full bg-blue-500 w-full"></div>
+      </div>
+      <button onclick="closePubModal()" class="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-gray-100/90 hover:bg-gray-200 flex items-center justify-center text-gray-600 font-bold transition shadow-sm" title="Close (Esc)">✕</button>
+      <div class="overflow-y-auto p-6 md:p-8 flex-1">
+        <div id="pub-modal-tags" class="flex gap-2 flex-wrap mb-3 pr-10"></div>
+        <h2 id="pub-modal-title" class="font-bold text-2xl md:text-3xl text-gray-900 leading-snug mb-2"></h2>
+        <div id="pub-modal-meta" class="text-xs text-gray-400 font-ShareTechTown mb-4"></div>
+        <div id="pub-modal-img-wrap" class="mb-5 rounded-xl overflow-hidden max-h-72">
+          <img id="pub-modal-img" src="" alt="" class="w-full h-full object-cover" />
+        </div>
+        <div id="pub-modal-desc" class="text-gray-700 leading-relaxed text-base whitespace-pre-line space-y-4 mb-6"></div>
+        <div class="flex flex-wrap items-center gap-3 pt-4 border-t border-gray-100">
+          <a id="pub-modal-btn" href="#" target="_blank" class="learn-more-button flex items-center gap-2">
+            <span>READ / DOWNLOAD</span>
+            <span>↗</span>
+          </a>
+          <button onclick="closePubModal()" class="px-5 py-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 text-sm font-semibold transition">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="relative bg-[#1F1F1F] text-base">
+    <span class="absolute bottom-3 left-3 mt-7 text-xs text-zinc-700 sm:text-center">&copy; 2026 <a
+        class="hover:underline" href="#">RCSC&trade;</a>. All Rights Reserved. <a href="dashboard.html"
+        class="ml-2 opacity-40 hover:opacity-100 hover:text-blue-400 transition-opacity">Admin</a></span>
+    <div
+      class="mx-auto flex w-full max-w-screen-xl flex-col justify-evenly gap-10 p-4 py-6 pb-12 md:flex-row md:pb-8 lg:py-8">
+      <div class="order-3 flex justify-between gap-3 md:order-1 md:gap-24">
+        <div class="order-2 flex flex-col items-center md:hidden">
+          <div class="text-center font-ShareTechTown font-semibold text-white">A CLUB OF</div>
+          <a href="https://rc.gov.bd/" target="_blank" rel="noopener noreferrer">
+            <img loading="lazy" src="rc-logo.png" alt="Rajshahi College Logo" width="128" height="128"
+              class="scale-75" />
+          </a>
+        </div>
+        <div class="flex flex-col gap-3">
+          <a class="cursor-pointer font-medium text-zinc-400 hover:underline" href="index.html">Home</a>
+          <a class="cursor-pointer font-medium text-zinc-400 hover:underline" href="activities.html">Activities</a>
+          <a class="cursor-pointer font-medium text-zinc-400 hover:underline" href="about.html">About</a>
+          <a class="cursor-pointer font-medium text-zinc-400 hover:underline" href="#">Policy</a>
+        </div>
+        <div class="flex flex-col gap-3">
+          <a class="cursor-pointer font-medium text-blue-400 font-semibold hover:underline" href="publication.html">Publication</a>
+          <a class="cursor-pointer font-medium text-zinc-400 hover:underline" href="executive.html">Executives</a>
+          <a class="cursor-pointer font-medium text-zinc-400 hover:underline" href="#">Developers</a>
+        </div>
+      </div>
+      <div class="order-2 hidden flex-col items-center gap-3 md:flex">
+        <div class="text-center font-ShareTechTown font-semibold text-white">A CLUB OF</div>
+        <a href="https://rc.gov.bd/" target="_blank" rel="noopener noreferrer">
+          <img loading="lazy" src="rc-logo.png" alt="Rajshahi College Logo" width="128" height="128" />
+        </a>
+      </div>
+      <div class="order-1 flex flex-col items-start gap-3 md:order-3">
+        <div class="cursor-pointer font-ShareTechTown text-xl font-semibold text-white">CONTACT US</div>
+        <div class="flex items-center gap-1 font-medium text-zinc-400">
+          <svg class="mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M5 4a4 4 0 0 1 4 4v6M5 4a4 4 0 0 0-4 4v6h8M5 4h9M9 14h10V8a3.999 3.999 0 0 0-2.066-3.5M9 14v5m0-5h4v5m-9-8h2m8-4V1h2" />
+          </svg>
+          <p>rcsc.official@gmail.com</p>
+        </div>
+        <div class="flex items-center gap-1 font-medium text-zinc-400">
+          <svg class="mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 21">
+            <g stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+              <path d="M8 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+              <path
+                d="M13.8 12.938h-.01a7 7 0 1 0-11.465.144h-.016l.141.17c.1.128.2.252.3.372L8 20l5.13-6.248c.193-.209.373-.429.54-.66l.13-.154Z" />
+            </g>
+          </svg>
+          <p>Rajshahi College Rd, Rajshahi 6000</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Firebase SDK Compat -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+
+  <script>
+    const DEFAULT_PUBLICATIONS = [
+      {
+        id: 'quark-10th-edition',
+        title: 'Quark — 10th Annual Science Magazine',
+        subtitle: 'Official Flagship Magazine of RCSC',
+        edition: '10th Edition (2026)',
+        description: 'Quark is the official flagship publication of Rajshahi College Science Club. The 10th edition features student scientific papers, olympiad problem analyses, faculty insights, breakthroughs in astronomy, and club chronicles throughout the milestone year.',
+        date: 'September 2026',
+        banner: 'activity-quark.jpg',
+        tags: 'Quark, Magazine, Flagship, 🔬 Science',
+        readLink: '#',
+        downloadLink: '#'
+      },
+      {
+        id: 'science-fest-souvenir-2026',
+        title: '10th National Science Fest Souvenir & Abstracts',
+        subtitle: 'Fest Compendium & Research Project Directory',
+        edition: 'Special Fest Issue (2026)',
+        description: 'A comprehensive collection of research project abstracts, olympiad questions and solutions, distinguished judges\' insights, and winner profiles from the 10th Rajshahi College National Science Fest.',
+        date: 'February 2026',
+        banner: 'activity-fest.jpg',
+        tags: 'Souvenir, Research, 🏆 Fest Special',
+        readLink: '#',
+        downloadLink: '#'
+      },
+      {
+        id: 'quark-9th-edition',
+        title: 'Quark — 9th Edition (2025 Archive)',
+        subtitle: 'Annual Science Magazine Archive',
+        edition: '9th Edition (2025)',
+        description: 'The 9th edition of Quark celebrating science discoveries, artificial intelligence, robotics exploration, astrophysics, and creative student research contributions across Rajshahi College.',
+        date: 'October 2025',
+        banner: 'join-learning.jpg',
+        tags: 'Quark, Magazine, Archive',
+        readLink: '#',
+        downloadLink: '#'
+      },
+      {
+        id: 'rcsc-research-bulletin-vol1',
+        title: 'RCSC Research Bulletin — Volume 1',
+        subtitle: 'Student Research & STEM Innovation Journal',
+        edition: 'Volume 1 (2024)',
+        description: 'A curated compilation of student research experiments, robotics prototypes, and STEM innovations mentored by faculty members and club seniors at Rajshahi College.',
+        date: 'December 2024',
+        banner: 'activity-project.jpg',
+        tags: 'Research, Bulletin, STEM',
+        readLink: '#',
+        downloadLink: '#'
+      }
+    ];
+
+    let currentPublications = [];
+    let currentFilter = 'all';
+
+    function filterPublications(btn, filter) {
+      document.querySelectorAll('#publications-filter-bar .tab-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      currentFilter = filter;
+      const grid = document.getElementById('publications-grid');
+      if (grid) {
+        grid.style.opacity = '0';
+        grid.style.transform = 'translateY(6px)';
+        setTimeout(() => {
+          renderPublicationsGrid();
+          grid.style.opacity = '1';
+          grid.style.transform = 'translateY(0)';
+        }, 150);
+      } else {
+        renderPublicationsGrid();
+      }
+    }
+
+    function renderPublicationsGrid() {
+      const grid = document.getElementById('publications-grid');
+      const empty = document.getElementById('publications-empty');
+      if (!grid) return;
+
+      let items = currentPublications || [];
+      if (currentFilter !== 'all') {
+        const q = currentFilter.toLowerCase();
+        items = items.filter(pub => {
+          const t = (pub.tags || '').toLowerCase();
+          const title = (pub.title || '').toLowerCase();
+          const ed = (pub.edition || '').toLowerCase();
+          return t.includes(q) || title.includes(q) || ed.includes(q);
+        });
+      }
+
+      if (!items.length) {
+        grid.innerHTML = '';
+        if (empty) empty.classList.remove('hidden');
+        return;
+      }
+      if (empty) empty.classList.add('hidden');
+
+      grid.innerHTML = items.map((pub, idx) => `
+      <div class="publication-card flex flex-col justify-between" data-aos="fade-up" data-aos-duration="600">
+        <div class="relative">
+          <img src="${pub.banner || 'activity-quark.jpg'}" alt="${pub.title}" class="w-full h-52 object-cover" onerror="this.src='activity-quark.jpg'" />
+          ${pub.edition ? `<span class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md font-ShareTechTown">${pub.edition}</span>` : ''}
+        </div>
+        <div class="p-6 flex flex-col gap-3 flex-1">
+          <div class="flex gap-2 flex-wrap">
+            ${(pub.tags || 'Publication').split(',').filter(Boolean).map(t => `<span class="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">${t.trim()}</span>`).join('')}
+          </div>
+          <h3 class="text-white font-bold text-xl leading-snug">${pub.title}</h3>
+          ${pub.subtitle ? `<p class="text-blue-400 text-xs font-semibold">${pub.subtitle}</p>` : ''}
+          <p class="text-gray-400 text-sm leading-relaxed flex-1">${pub.description || ''}</p>
+          <div class="flex items-center justify-between mt-2 pt-3 border-t border-zinc-800">
+            <div class="flex gap-2">
+              <button onclick="openPubModal(${idx})" class="learn-more-button text-xs py-1.5 px-3">PREVIEW</button>
+              ${pub.downloadLink && pub.downloadLink !== '#' ? `<a href="${pub.downloadLink}" target="_blank" class="learn-more-button text-xs py-1.5 px-3">DOWNLOAD</a>` : ''}
+            </div>
+            ${pub.date ? `<span class="text-xs text-green-400 font-ShareTechTown">${pub.date}</span>` : ''}
+          </div>
+        </div>
+      </div>
+    `).join('');
+    }
+
+    window.openPubModal = function(idx) {
+      const pub = currentPublications[idx];
+      if (!pub) return;
+      document.getElementById('pub-modal-title').textContent = pub.title || '';
+      document.getElementById('pub-modal-meta').innerHTML = `${pub.edition || ''} &bull; <span class="text-green-500 font-semibold">${pub.date || ''}</span>`;
+      const tagsContainer = document.getElementById('pub-modal-tags');
+      tagsContainer.innerHTML = (pub.tags || '').split(',').filter(Boolean).map(t =>
+        `<span class="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">${t.trim()}</span>`
+      ).join('');
+      const modalImg = document.getElementById('pub-modal-img');
+      modalImg.src = pub.banner || 'activity-quark.jpg';
+      modalImg.alt = pub.title || '';
+      document.getElementById('pub-modal-desc').textContent = pub.description || '';
+      
+      const btn = document.getElementById('pub-modal-btn');
+      if (pub.downloadLink && pub.downloadLink !== '#') {
+        btn.href = pub.downloadLink;
+        btn.style.display = 'inline-flex';
+      } else {
+        btn.href = '#';
+        btn.onclick = (e) => {
+          e.preventDefault();
+          if (window.rcscToast) rcscToast('Digital copy link will be available soon.', 'info');
+        };
+      }
+
+      const modal = document.getElementById('pub-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    };
+
+    window.closePubModal = function() {
+      const modal = document.getElementById('pub-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
+    };
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closePubModal();
+    });
+
+    (function () {
+      // 1. Instant local render
+      try {
+        const raw = localStorage.getItem('rcsc_publications');
+        currentPublications = raw ? JSON.parse(raw) : DEFAULT_PUBLICATIONS;
+      } catch (e) {
+        currentPublications = DEFAULT_PUBLICATIONS;
+      }
+      renderPublicationsGrid();
+
+      // 2. Live fetch from Firestore
+      if (typeof db !== 'undefined' && db) {
+        db.collection('publications').get().then(snap => {
+          if (!snap.empty) {
+            currentPublications = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            localStorage.setItem('rcsc_publications', JSON.stringify(currentPublications));
+            renderPublicationsGrid();
+          }
+        }).catch(err => console.warn('Firestore publications error:', err));
+      }
+    })();
+  </script>
+
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script>
+    AOS.init({ duration: 700, once: true, offset: 60, easing: 'ease-out-cubic' });
+  </script>
+
+  <script>
+    // ── Smooth Page Transitions ──
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href]').forEach(function (link) {
+        const href = link.getAttribute('href');
+        if (!href || href.startsWith('#') || href.startsWith('http') ||
+          href.startsWith('mailto') || href.startsWith('tel') ||
+          link.target === '_blank' || href.endsWith('.pdf')) return;
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          document.body.classList.add('page-leaving');
+          setTimeout(function () { window.location.href = href; }, 180);
+        });
+      });
+    });
+  </script>
+
+  <script>
+    // ── Universal RCSC Toast Notification System ──
+    window.rcscToast = function (message, type = 'success') {
+      let container = document.getElementById('rcsc-toast-container');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'rcsc-toast-container';
+        container.className = 'fixed bottom-5 right-5 z-[99999] flex flex-col gap-2.5 pointer-events-none max-w-sm w-full px-4';
+        document.body.appendChild(container);
+      }
+      const toast = document.createElement('div');
+      const isErr = type === 'error';
+      const isInfo = type === 'info';
+      const bg = isErr ? 'bg-red-600' : isInfo ? 'bg-blue-600' : 'bg-emerald-600';
+      const icon = isErr ? '✕' : isInfo ? 'ℹ' : '✓';
+      toast.className = `${bg} text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-sm font-semibold pointer-events-auto transform transition-all duration-300 translate-y-3 opacity-0`;
+      toast.innerHTML = `
+        <span class="w-5 h-5 rounded-full bg-white/20 flex-shrink-0 flex items-center justify-center text-xs font-bold">${icon}</span>
+        <span class="flex-1">${message}</span>
+        <button onclick="this.parentElement.remove()" class="text-white/70 hover:text-white text-xs font-bold ml-2">✕</button>
+      `;
+      container.appendChild(toast);
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-3', 'opacity-0');
+      });
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    };
+  </script>
+
+</body>
+</html>

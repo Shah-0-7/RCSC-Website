@@ -454,7 +454,7 @@
             <div class="nav-dropdown absolute left-0 top-full pt-2 z-50">
               <ul class="bg-white rounded-lg shadow-2xl py-2 min-w-[150px] text-sm text-gray-700">
                 <li><a class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500" href="activities.html">Events</a></li>
-                <li><a class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500" href="activities.html">Publication</a></li>
+                <li><a class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500" href="publication.html">Publication</a></li>
               </ul>
             </div>
           </li>
@@ -951,7 +951,7 @@
               </div>
             </div>
           </a>
-          <a href="activities.html" class="activity-card">
+          <a href="publication.html" class="activity-card">
             <div
               class="relative h-full min-h-[360px] cursor-pointer overflow-hidden rounded-xl bg-[#2E2E2E] shadow-lg transition duration-300">
               <img src="activity-quark.jpg" alt="Annual Publication Quark"
@@ -1109,7 +1109,7 @@
           <a class="cursor-pointer font-medium text-zinc-400 hover:underline" href="#">Policy</a>
         </div>
         <div class="flex flex-col gap-3">
-          <a class="cursor-pointer font-medium text-zinc-400 hover:underline" href="#">Publication</a>
+          <a class="cursor-pointer font-medium text-zinc-400 hover:underline" href="publication.html">Publication</a>
           <a class="cursor-pointer font-medium text-zinc-400 hover:underline" href="executive.html">Executives</a>
           <a class="cursor-pointer font-medium text-zinc-400 hover:underline" href="#">Developers</a>
         </div>
@@ -1161,27 +1161,59 @@
   </script>
 
   <script>
-    // Live countdown timers for upcoming events
-    // Set target dates here (YYYY, MM-1, DD, HH, MM, SS)
-    const events = [
-      { m: 'chess-m', d: 'chess-d', h: 'chess-h', date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 18 + 1000 * 60 * 60 * 4) },
-      { m: 'dev-m', d: 'dev-d', h: 'dev-h', date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 45) },
-      { m: 'sci-m', d: 'sci-d', h: 'sci-h', date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 82) },
-    ];
+    // Live countdown timers strictly synchronized with official event pages:
+    // 1. Chess Hub: 20 Nov 2026, 9:00 PM (chess-hub.html)
+    // 2. DevSprint: 15 Jan 2027, 9:00 AM (devsprint.html)
+    // 3. Science Fest: 10 Feb 2027, 8:00 AM (science-fest.html)
+    const TARGET_DATES = {
+      chess: new Date('2026-11-20T21:00:00+06:00'),
+      dev:   new Date('2027-01-15T09:00:00+06:00'),
+      sci:   new Date('2027-02-10T08:00:00+06:00')
+    };
+
+    function syncEventDates() {
+      try {
+        const raw = localStorage.getItem('rcsc_events');
+        if (raw) {
+          const list = JSON.parse(raw);
+          list.forEach(ev => {
+            if (ev.id === 'chess-hub-2026' && ev.date && ev.date !== 'TBA') {
+              const d = new Date(ev.date.includes('T') ? ev.date : ev.date + 'T21:00:00+06:00');
+              if (!isNaN(d.getTime())) TARGET_DATES.chess = d;
+            }
+            if (ev.id === 'devsprint-2026' && ev.date && ev.date !== 'TBA') {
+              const d = new Date(ev.date.includes('T') ? ev.date : ev.date + 'T09:00:00+06:00');
+              if (!isNaN(d.getTime())) TARGET_DATES.dev = d;
+            }
+            if (ev.id === 'science-fest-10' && ev.date && ev.date !== 'TBA') {
+              const d = new Date(ev.date.includes('T') ? ev.date : ev.date + 'T08:00:00+06:00');
+              if (!isNaN(d.getTime())) TARGET_DATES.sci = d;
+            }
+          });
+        }
+      } catch (e) {}
+    }
+    syncEventDates();
 
     function updateCountdowns() {
       const now = Date.now();
-      events.forEach(ev => {
-        const diff = ev.date.getTime() - now;
+      const eventConfigs = [
+        { m: 'chess-m', d: 'chess-d', h: 'chess-h', target: TARGET_DATES.chess },
+        { m: 'dev-m',   d: 'dev-d',   h: 'dev-h',   target: TARGET_DATES.dev },
+        { m: 'sci-m',   d: 'sci-d',   h: 'sci-h',   target: TARGET_DATES.sci },
+      ];
+
+      eventConfigs.forEach(ev => {
+        const diff = ev.target.getTime() - now;
         const elM = document.getElementById(ev.m);
         const elD = document.getElementById(ev.d);
         const elH = document.getElementById(ev.h);
         if (!elM || !elD || !elH) return;
 
         if (diff <= 0) {
-          elM.textContent = '0';
-          elD.textContent = '0';
-          elH.textContent = '0';
+          elM.textContent = '00';
+          elD.textContent = '00';
+          elH.textContent = '00';
           return;
         }
         const totalSecs = Math.floor(diff / 1000);
@@ -1189,11 +1221,11 @@
         const hours = Math.floor((totalSecs % 86400) / 3600);
         const mins = Math.floor((totalSecs % 3600) / 60);
 
-        elM.textContent = days;
-        elD.textContent = hours;
-        elH.textContent = mins;
+        elM.textContent = String(days).padStart(2, '0');
+        elD.textContent = String(hours).padStart(2, '0');
+        elH.textContent = String(mins).padStart(2, '0');
 
-        // Update labels to Days, Hours, Mins if needed
+        // Update labels to Days, Hours, Mins
         const p1 = elM.parentElement.querySelector('.word'); if (p1 && p1.textContent !== 'Days') p1.textContent = 'Days';
         const p2 = elD.parentElement.querySelector('.word'); if (p2 && p2.textContent !== 'Hours') p2.textContent = 'Hours';
         const p3 = elH.parentElement.querySelector('.word'); if (p3 && p3.textContent !== 'Mins') p3.textContent = 'Mins';
@@ -1273,6 +1305,15 @@
             renderLatestBlogs(posts);
           }
         }).catch(err => console.warn('Firestore blog note:', err));
+
+        db.collection('events').get().then(snap => {
+          if (!snap.empty) {
+            const evs = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            localStorage.setItem('rcsc_events', JSON.stringify(evs));
+            syncEventDates();
+            updateCountdowns();
+          }
+        }).catch(() => {});
       }
     })();
   </script>
