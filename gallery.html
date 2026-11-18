@@ -111,15 +111,15 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.92);
-      z-index: 9999;
+      background: rgba(0, 0, 0, 0.94);
+      z-index: 99999;
       align-items: center;
       justify-content: center;
       padding: 1rem;
     }
 
-    #lightbox.open {
-      display: flex;
+    #lightbox.open, #lightbox.flex:not(.hidden), #lightbox[style*="display: flex"] {
+      display: flex !important;
     }
 
     #lightbox img {
@@ -427,47 +427,72 @@
     let visibleImgs = [];
     let currentIdx = 0;
 
-    function buildIndex() {
+    window.buildIndex = function() {
       visibleImgs = [...document.querySelectorAll('.gallery-item')]
         .filter(el => el.style.display !== 'none')
         .flatMap(el => [...el.querySelectorAll('img')]);
-    }
+    };
     buildIndex();
 
-    function openLightbox(img) {
+    window.openLightbox = function(img) {
       buildIndex();
-      currentIdx = visibleImgs.indexOf(img);
-      showAtIndex(currentIdx);
-      const lb = document.getElementById('lightbox'); lb.classList.remove('hidden'); lb.classList.add('flex');
-      document.body.style.overflow = 'hidden';
-    }
+      let idx = -1;
+      if (typeof img === 'number') {
+        idx = img;
+      } else if (img && img.src) {
+        idx = visibleImgs.findIndex(el => el === img || el.src === img.src);
+      }
+      if (idx === -1) idx = 0;
+      currentIdx = idx;
 
-    function showAtIndex(i) {
-      if (i < 0 || i >= visibleImgs.length) return;
+      showAtIndex(currentIdx);
+
+      const lb = document.getElementById('lightbox');
+      if (lb) {
+        lb.classList.remove('hidden');
+        lb.classList.add('open', 'flex');
+        lb.style.display = 'flex';
+      }
+      document.body.style.overflow = 'hidden';
+    };
+
+    window.showAtIndex = function(i) {
+      if (!visibleImgs.length) buildIndex();
+      if (!visibleImgs.length) return;
+      if (i < 0) i = visibleImgs.length - 1;
+      if (i >= visibleImgs.length) i = 0;
       currentIdx = i;
-      const img = visibleImgs[i];
+
+      const img = visibleImgs[currentIdx];
       const lbImg = document.getElementById('lb-img');
-      lbImg.style.opacity = '0.5';
-      lbImg.src = img.src;
-      lbImg.onload = () => { lbImg.style.opacity = '1'; };
-      lbImg.alt = img.alt;
+      if (lbImg && img) {
+        lbImg.style.opacity = '0.5';
+        lbImg.src = img.src;
+        lbImg.onload = () => { lbImg.style.opacity = '1'; };
+        lbImg.alt = img.alt || 'Gallery Photo';
+      }
 
       const captionEl = document.getElementById('lb-caption');
-      if (captionEl) captionEl.textContent = img.dataset.caption || img.alt;
+      if (captionEl && img) captionEl.textContent = img.dataset.caption || img.alt || '';
       const albumEl = document.getElementById('lb-album');
-      if (albumEl) albumEl.textContent = img.dataset.album || 'Gallery';
+      if (albumEl && img) albumEl.textContent = img.dataset.album || 'Gallery';
       const counterEl = document.getElementById('lb-counter');
       if (counterEl) counterEl.textContent = (currentIdx + 1) + ' / ' + visibleImgs.length;
-    }
+    };
 
-    function shiftLightbox(dir) {
+    window.shiftLightbox = function(dir) {
       showAtIndex(currentIdx + dir);
-    }
+    };
 
-    function closeLightbox() {
-      const lb = document.getElementById('lightbox'); lb.classList.add('hidden'); lb.classList.remove('flex');
+    window.closeLightbox = function() {
+      const lb = document.getElementById('lightbox');
+      if (lb) {
+        lb.classList.add('hidden');
+        lb.classList.remove('open', 'flex');
+        lb.style.display = 'none';
+      }
       document.body.style.overflow = '';
-    }
+    };
 
     document.addEventListener('keydown', e => {
       const lb = document.getElementById('lightbox');
@@ -565,6 +590,7 @@
             div.appendChild(img);
             div.appendChild(overlay);
             div.onclick = function () { openLightbox(img); };
+            img.onclick = function (e) { e.stopPropagation(); openLightbox(img); };
             container.appendChild(div);
           });
         });

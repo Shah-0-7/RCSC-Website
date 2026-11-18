@@ -326,7 +326,12 @@
   <script>
     let currentBlogs = [];
 
-    
+    function computeReadTime(content) {
+      const words = (content || '').trim().split(/\s+/).filter(Boolean).length;
+      const mins = Math.max(1, Math.ceil(words / 180));
+      return `${mins} min read`;
+    }
+
     // Reading Progress Bar handler
     document.addEventListener('DOMContentLoaded', function () {
       const modalCard = document.getElementById('blogModalCard');
@@ -340,11 +345,11 @@
       }
     });
 
-    function openBlogModal(idx) {
+    window.openBlogModal = function(idx) {
       const p = currentBlogs[idx];
       if (!p) return;
       document.getElementById('modal-title').textContent = p.title || '';
-      document.getElementById('modal-meta').innerHTML = `By ${p.author || 'RCSC Team'} &bull; ${p.date || ''} &bull; <span class="text-blue-500 font-semibold">⏱ ${computeReadTime(p.content || '')}</span>`;
+      document.getElementById('modal-meta').innerHTML = `By ${p.author || 'RCSC Team'} &bull; ${p.date || ''} &bull; <span class="text-blue-500 font-semibold">⏱ ${computeReadTime(p.content || p.excerpt || '')}</span>`;
       const tagsContainer = document.getElementById('modal-tags');
       tagsContainer.innerHTML = (p.tags || '').split(',').filter(Boolean).map(t =>
         `<span class="bg-blue-100 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full">${t.trim()}</span>`
@@ -359,16 +364,26 @@
         imgWrap.classList.add('hidden');
       }
       document.getElementById('modal-content').textContent = p.content || p.excerpt || '';
-      document.getElementById('blog-modal').classList.remove('hidden');
-      const pBar = document.getElementById('readingProgressBar'); if (pBar) pBar.style.width = '0%';
-      const mCard = document.getElementById('blogModalCard'); if (mCard) mCard.scrollTop = 0;
-      document.body.style.overflow = 'hidden';
-    }
+      
+      const modal = document.getElementById('blog-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      modal.style.display = 'flex';
 
-    function closeBlogModal() {
-      document.getElementById('blog-modal').classList.add('hidden');
+      const pBar = document.getElementById('readingProgressBar'); 
+      if (pBar) pBar.style.width = '0%';
+      const mCard = document.getElementById('blogModalCard'); 
+      if (mCard) mCard.scrollTop = 0;
+      document.body.style.overflow = 'hidden';
+    };
+
+    window.closeBlogModal = function() {
+      const modal = document.getElementById('blog-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      modal.style.display = 'none';
       document.body.style.overflow = '';
-    }
+    };
 
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape') closeBlogModal();
@@ -411,11 +426,27 @@
         </article>`).join('');
       }
 
+      const DEFAULT_BLOGS = [
+        {
+          id: 'b3',
+          title: 'Introducing Our Very Own Blog Site',
+          excerpt: 'After months of development, the RCSC blog is officially live. This platform will serve as a space for student voices, science articles, and club announcements.',
+          content: 'After months of development, the RCSC blog is officially live. This platform will serve as a space for student voices, science articles, and club announcements.\n\nHere at Rajshahi College Science Club, our aim is to foster curiosity and provide students with opportunities to engage in scientific writing, research discussions, and technology explorations. Stay tuned for insightful articles, competition highlights, and stories from our club members.',
+          author: 'RCSC Team',
+          date: '2026-09-19',
+          thumbnail: 'logo.png',
+          tags: 'Announcement, RCSC'
+        }
+      ];
+
       // 1. Instant local render
       try {
         const raw = localStorage.getItem('rcsc_blog');
-        if (raw) renderBlog(JSON.parse(raw));
-      } catch (e) { }
+        const parsed = raw ? JSON.parse(raw) : null;
+        renderBlog(parsed && parsed.length ? parsed : DEFAULT_BLOGS);
+      } catch (e) {
+        renderBlog(DEFAULT_BLOGS);
+      }
 
       // 2. Live fetch from Firestore
       if (typeof db !== 'undefined' && db) {
