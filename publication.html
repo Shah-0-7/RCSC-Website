@@ -70,12 +70,12 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      transition: transform 0.3s, box-shadow 0.3s;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
     }
 
     .publication-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      transform: translateY(-6px) !important;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35) !important;
     }
 
     #publications-grid {
@@ -220,9 +220,9 @@
   <!-- PAGE HERO -->
   <section class="bg-[#F6F6F6] pt-[80px]">
     <div class="container mx-auto px-4 py-16 text-center">
-      <h1 class="font-Bebas text-5xl md:text-7xl tracking-widest text-gray-900">ALL <span
+      <h1 id="pubHeroTitleDisplay" class="font-Bebas text-5xl md:text-7xl tracking-widest text-gray-900">ALL <span
           class="text-blue-500">PUBLICATIONS</span></h1>
-      <p class="text-gray-500 text-sm font-ShareTechTown mt-2">RCSC / PUBLICATIONS</p>
+      <p id="pubHeroSubtitleDisplay" class="text-gray-500 text-sm font-ShareTechTown mt-2">RCSC / PUBLICATIONS</p>
     </div>
   </section>
 
@@ -268,10 +268,17 @@
         </div>
         <div id="pub-modal-desc" class="text-gray-700 leading-relaxed text-base whitespace-pre-line space-y-4 mb-6"></div>
         <div class="flex flex-wrap items-center gap-3 pt-4 border-t border-gray-100">
-          <a id="pub-modal-btn" href="#" target="_blank" class="learn-more-button flex items-center gap-2">
-            <span>READ / DOWNLOAD</span>
+          <a id="pub-modal-read-btn" href="#" target="_blank" class="learn-more-button flex items-center gap-2">
+            <span>READ ONLINE</span>
             <span>↗</span>
           </a>
+          <a id="pub-modal-download-btn" href="#" target="_blank" class="px-5 py-2.5 rounded-lg bg-green-600 text-white font-semibold text-sm hover:bg-green-700 transition flex items-center gap-2">
+            <span>DOWNLOAD PDF</span>
+            <span>↓</span>
+          </a>
+          <button id="pub-modal-fallback-btn" class="learn-more-button flex items-center gap-2 opacity-60 cursor-not-allowed">
+            <span>DIGITAL COPY COMING SOON</span>
+          </button>
           <button onclick="closePubModal()" class="px-5 py-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 text-sm font-semibold transition">Close</button>
         </div>
       </div>
@@ -436,10 +443,9 @@
       if (empty) empty.classList.add('hidden');
 
       grid.innerHTML = items.map((pub, idx) => `
-      <div class="publication-card flex flex-col justify-between" data-aos="fade-up" data-aos-duration="600">
-        <div class="relative">
-          <img src="${pub.banner || 'activity-quark.jpg'}" alt="${pub.title}" class="w-full h-52 object-cover" onerror="this.src='activity-quark.jpg'" />
-          ${pub.edition ? `<span class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md font-ShareTechTown">${pub.edition}</span>` : ''}
+      <div class="publication-card group flex flex-col justify-between">
+        <div class="relative overflow-hidden">
+          <img src="${pub.banner || 'activity-quark.jpg'}" alt="${pub.title}" class="w-full h-52 object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.src='activity-quark.jpg'" />
         </div>
         <div class="p-6 flex flex-col gap-3 flex-1">
           <div class="flex gap-2 flex-wrap">
@@ -460,6 +466,18 @@
     `).join('');
     }
 
+    function renderPublicationsMeta(meta) {
+      if (!meta) return;
+      if (meta.heroTitle) {
+        const el = document.getElementById('pubHeroTitleDisplay');
+        if (el) el.innerHTML = meta.heroTitle;
+      }
+      if (meta.heroSubtitle) {
+        const el = document.getElementById('pubHeroSubtitleDisplay');
+        if (el) el.textContent = meta.heroSubtitle;
+      }
+    }
+
     window.openPubModal = function(idx) {
       const pub = currentPublications[idx];
       if (!pub) return;
@@ -474,16 +492,43 @@
       modalImg.alt = pub.title || '';
       document.getElementById('pub-modal-desc').textContent = pub.description || '';
       
-      const btn = document.getElementById('pub-modal-btn');
-      if (pub.downloadLink && pub.downloadLink !== '#') {
-        btn.href = pub.downloadLink;
-        btn.style.display = 'inline-flex';
-      } else {
-        btn.href = '#';
-        btn.onclick = (e) => {
-          e.preventDefault();
-          if (window.rcscToast) rcscToast('Digital copy link will be available soon.', 'info');
-        };
+      const readBtn = document.getElementById('pub-modal-read-btn');
+      const dlBtn = document.getElementById('pub-modal-download-btn');
+      const fbBtn = document.getElementById('pub-modal-fallback-btn');
+      let hasAnyLink = false;
+
+      if (readBtn) {
+        if (pub.readLink && pub.readLink !== '#' && pub.readLink.trim() !== '') {
+          readBtn.href = pub.readLink;
+          readBtn.classList.remove('hidden');
+          readBtn.style.display = 'inline-flex';
+          hasAnyLink = true;
+        } else {
+          readBtn.classList.add('hidden');
+          readBtn.style.display = 'none';
+        }
+      }
+
+      if (dlBtn) {
+        if (pub.downloadLink && pub.downloadLink !== '#' && pub.downloadLink.trim() !== '') {
+          dlBtn.href = pub.downloadLink;
+          dlBtn.classList.remove('hidden');
+          dlBtn.style.display = 'inline-flex';
+          hasAnyLink = true;
+        } else {
+          dlBtn.classList.add('hidden');
+          dlBtn.style.display = 'none';
+        }
+      }
+
+      if (fbBtn) {
+        if (!hasAnyLink) {
+          fbBtn.classList.remove('hidden');
+          fbBtn.style.display = 'inline-flex';
+        } else {
+          fbBtn.classList.add('hidden');
+          fbBtn.style.display = 'none';
+        }
       }
 
       const modal = document.getElementById('pub-modal');
@@ -510,6 +555,8 @@
       try {
         const raw = localStorage.getItem('rcsc_publications');
         currentPublications = raw ? JSON.parse(raw) : DEFAULT_PUBLICATIONS;
+        const metaRaw = localStorage.getItem('rcsc_publications_meta');
+        if (metaRaw) renderPublicationsMeta(JSON.parse(metaRaw));
       } catch (e) {
         currentPublications = DEFAULT_PUBLICATIONS;
       }
@@ -524,6 +571,14 @@
             renderPublicationsGrid();
           }
         }).catch(err => console.warn('Firestore publications error:', err));
+
+        db.collection('content').doc('publications_meta').get().then(doc => {
+          if (doc.exists) {
+            const meta = doc.data();
+            localStorage.setItem('rcsc_publications_meta', JSON.stringify(meta));
+            renderPublicationsMeta(meta);
+          }
+        }).catch(err => console.warn('Firestore publications_meta error:', err));
       }
     })();
   </script>
