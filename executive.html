@@ -194,6 +194,8 @@
           <div class="text-blue-500 font-medium text-sm" id="moderatorRoleDisplay">Club Moderator</div>
           <div class="text-gray-400 text-xs mt-1" id="moderatorSubDisplay">Faculty Advisor · Department of Science</div>
         </div>
+        <!-- Extra Teachers (dynamically injected) -->
+        <div id="extraTeachersDisplay" class="contents"></div>
       </div>
     </div>
   </section>
@@ -504,6 +506,7 @@
       moderatorRole: 'Club Moderator',
       moderatorSub: 'Faculty Advisor · Department of Science',
       members: DEFAULT_MEMBERS,
+      extraTeachers: [],
       sessions: {}
     };
 
@@ -529,7 +532,8 @@
         moderator: base.moderator || 'Dr. Shariful Islam',
         moderatorRole: base.moderatorRole || 'Club Moderator',
         moderatorSub: base.moderatorSub || 'Faculty Advisor · Department of Science',
-        members: JSON.parse(JSON.stringify(DEFAULT_MEMBERS))
+        members: JSON.parse(JSON.stringify(DEFAULT_MEMBERS)),
+        extraTeachers: base.extraTeachers ? JSON.parse(JSON.stringify(base.extraTeachers)) : []
       };
     }
 
@@ -630,6 +634,27 @@
       if (sessionData.moderatorSub) {
         const msEl = document.getElementById('moderatorSubDisplay');
         if (msEl) msEl.textContent = sessionData.moderatorSub;
+      }
+
+      // Extra teachers
+      const extraContainer = document.getElementById('extraTeachersDisplay');
+      if (extraContainer) {
+        const teachers = sessionData.extraTeachers || [];
+        if (teachers.length === 0) {
+          extraContainer.innerHTML = '';
+        } else {
+          extraContainer.innerHTML = teachers.map(t => `
+            <div class="flex flex-col items-center text-center">
+              <div class="avatar-placeholder-lg">
+                <svg class="w-20 h-20 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+                </svg>
+              </div>
+              <div class="font-bold text-lg text-gray-800">${t.name || ''}</div>
+              <div class="text-blue-500 font-medium text-sm">${t.role || ''}</div>
+              <div class="text-gray-400 text-xs mt-1">${t.dept || ''}</div>
+            </div>`).join('');
+        }
       }
 
       // Render member grid

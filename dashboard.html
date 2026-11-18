@@ -270,6 +270,22 @@
               </div>
             </div>
           </div>
+
+          <!-- Extra Teachers -->
+          <div class="mt-4 border-t border-gray-100 pt-4">
+            <div class="flex items-center justify-between mb-3">
+              <div>
+                <div class="font-bold text-sm text-gray-800">Additional Teachers / Advisors</div>
+                <p class="text-xs text-gray-400 mt-0.5">More faculty members shown in the Faculty Leadership section on the Executives page</p>
+              </div>
+              <button type="button" onclick="addExtraTeacherRow()" class="btn-secondary text-xs flex items-center gap-1">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                Add Teacher
+              </button>
+            </div>
+            <div id="extraTeachersList" class="space-y-3"></div>
+            <p id="extraTeachersEmpty" class="text-xs text-gray-400 italic text-center py-2">No additional teachers added yet.</p>
+          </div>
         </div>
         <div class="card">
           <div class="flex items-center justify-between mb-4">
@@ -1309,6 +1325,7 @@ function renderExec() {
   setVal('moderatorName', session.moderator || '');
   setVal('moderatorRole', session.moderatorRole || 'Club Moderator');
   setVal('moderatorSub', session.moderatorSub || 'Faculty Advisor · Department of Science');
+  renderExtraTeachersList(session.extraTeachers || []);
 
   const list = document.getElementById('execList');
   const members = session.members || [];
@@ -1342,6 +1359,7 @@ function onDashboardSessionChange(newYear) {
   prevSession.moderator     = getVal('moderatorName');
   prevSession.moderatorRole = getVal('moderatorRole') || 'Club Moderator';
   prevSession.moderatorSub  = getVal('moderatorSub') || 'Faculty Advisor · Department of Science';
+  prevSession.extraTeachers = readExtraTeachersFromDOM();
 
   currentDashboardSession = newYear;
   renderExec();
@@ -1362,6 +1380,7 @@ async function saveExecHeader() {
   session.moderator     = getVal('moderatorName');
   session.moderatorRole = getVal('moderatorRole') || 'Club Moderator';
   session.moderatorSub  = getVal('moderatorSub') || 'Faculty Advisor · Department of Science';
+  session.extraTeachers = readExtraTeachersFromDOM();
 
   // If this is the active session, also sync top-level fields for backwards compatibility
   if (normYear(currentDashboardSession) === normYear(appData.exec.year || '2025–2026')) {
@@ -1374,6 +1393,7 @@ async function saveExecHeader() {
     appData.exec.moderator     = session.moderator;
     appData.exec.moderatorRole = session.moderatorRole;
     appData.exec.moderatorSub  = session.moderatorSub;
+    appData.exec.extraTeachers = session.extraTeachers || [];
     appData.exec.members       = session.members || [];
   }
 
@@ -1387,6 +1407,68 @@ async function saveExecHeader() {
       showToast('Saved locally.', 'orange');
     }
   }
+}
+
+function renderExtraTeachersList(teachers) {
+  const container = document.getElementById('extraTeachersList');
+  const empty = document.getElementById('extraTeachersEmpty');
+  if (!container) return;
+  if (!teachers || teachers.length === 0) {
+    container.innerHTML = '';
+    if (empty) empty.style.display = 'block';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+  container.innerHTML = teachers.map((t, i) => `
+    <div class="extra-teacher-row bg-gray-50 border border-gray-100 rounded-xl p-3 grid grid-cols-1 md:grid-cols-3 gap-3 relative" data-idx="${i}">
+      <div>
+        <label class="form-label">Name</label>
+        <input class="form-input bg-white et-name" value="${esc(t.name || '')}" placeholder="e.g. Dr. Rahman" />
+      </div>
+      <div>
+        <label class="form-label">Role / Title</label>
+        <input class="form-input bg-white et-role" value="${esc(t.role || '')}" placeholder="e.g. Assistant Professor" />
+      </div>
+      <div>
+        <label class="form-label">Department</label>
+        <div class="flex gap-2">
+          <input class="form-input bg-white et-dept" value="${esc(t.dept || '')}" placeholder="e.g. Department of Physics" />
+          <button type="button" onclick="removeExtraTeacherRow(${i})" class="flex-shrink-0 w-9 h-9 mt-0 flex items-center justify-center rounded-lg bg-red-50 hover:bg-red-100 text-red-500 border border-red-100 transition" title="Remove">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function readExtraTeachersFromDOM() {
+  const rows = document.querySelectorAll('.extra-teacher-row');
+  const result = [];
+  rows.forEach(row => {
+    const name = (row.querySelector('.et-name')?.value || '').trim();
+    const role = (row.querySelector('.et-role')?.value || '').trim();
+    const dept = (row.querySelector('.et-dept')?.value || '').trim();
+    if (name || role || dept) result.push({ name, role, dept });
+  });
+  return result;
+}
+
+function addExtraTeacherRow() {
+  const session = getSessionObject(currentDashboardSession);
+  if (!session.extraTeachers) session.extraTeachers = [];
+  session.extraTeachers.push({ name: '', role: '', dept: '' });
+  renderExtraTeachersList(session.extraTeachers);
+  // Scroll to new row
+  const container = document.getElementById('extraTeachersList');
+  if (container) container.lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function removeExtraTeacherRow(idx) {
+  const current = readExtraTeachersFromDOM();
+  current.splice(idx, 1);
+  const session = getSessionObject(currentDashboardSession);
+  session.extraTeachers = current;
+  renderExtraTeachersList(current);
 }
 
 function openExecModal(id) {
