@@ -189,7 +189,37 @@
       font-size: 0.8rem;
       white-space: nowrap;
     }
+  
+    /* ── Page Transition ── */
+    @keyframes rcsc-fade-in  { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes rcsc-fade-out { from { opacity: 1; } to { opacity: 0; } }
+    body.page-leaving { animation: rcsc-fade-out 0.18s ease forwards; }
+    body { animation: rcsc-fade-in 0.3s ease; }
+
+    /* ── Active Nav Dot Indicator ── */
+    .rcsc-nav-active { position: relative; }
+    .rcsc-nav-active::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #3b82f6;
+    }
+  
+    /* ── Universal Card Hover State ── */
+    .rcsc-card-hover {
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+    .rcsc-card-hover:hover {
+      transform: translateY(-4px) !important;
+      box-shadow: 0 16px 32px -4px rgba(0, 0, 0, 0.12) !important;
+    }
   </style>
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css" />
 </head>
 
 <body class="font-Inter bg-white text-gray-900">
@@ -284,7 +314,7 @@
   <main class="container mx-auto px-4 pb-20">
 
     <!-- DYNAMIC ALBUMS (from Dashboard & Cloud) -->
-    <div id="dynamicAlbums" class="grid grid-cols-2 md:grid-cols-4 gap-3"></div>
+    <div id="dynamicAlbums" class="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 space-y-4"></div>
 
     <!-- Empty State -->
     <div id="galleryEmpty" class="hidden text-center py-20">
@@ -301,13 +331,27 @@
 
   </main>
 
-  <!-- LIGHTBOX -->
-  <div id="lightbox" onclick="closeLightbox()">
-    <span id="lb-close" onclick="closeLightbox()">&times;</span>
-    <button id="lb-prev" onclick="event.stopPropagation(); shiftLightbox(-1)">&#8249;</button>
-    <img id="lb-img" src="" alt="" onclick="event.stopPropagation()" />
-    <button id="lb-next" onclick="event.stopPropagation(); shiftLightbox(1)">&#8250;</button>
-    <div id="lb-caption"></div>
+  <!-- LIGHTBOX (Upgraded) -->
+  <div id="lightbox" class="fixed inset-0 bg-black/95 z-[9999] hidden items-center justify-center p-4 backdrop-blur-md select-none" onclick="closeLightbox()">
+    <!-- Top Bar -->
+    <div class="absolute top-0 left-0 right-0 p-4 md:px-8 flex items-center justify-between text-white z-10 bg-gradient-to-b from-black/60 to-transparent" onclick="event.stopPropagation()">
+      <div class="flex items-center gap-3">
+        <span id="lb-album" class="text-xs uppercase tracking-wider text-blue-400 font-ShareTechTown font-semibold">Album</span>
+        <span class="text-gray-500">•</span>
+        <span id="lb-counter" class="text-xs text-gray-300 font-mono">1 / 1</span>
+      </div>
+      <button onclick="closeLightbox()" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white text-xl transition cursor-pointer" title="Close (Esc)">✕</button>
+    </div>
+
+    <!-- Nav Arrows -->
+    <button id="lb-prev" onclick="event.stopPropagation(); shiftLightbox(-1)" class="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-blue-600 flex items-center justify-center text-white text-2xl transition z-10 cursor-pointer shadow-lg" title="Previous (←)">‹</button>
+    <button id="lb-next" onclick="event.stopPropagation(); shiftLightbox(1)" class="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-blue-600 flex items-center justify-center text-white text-2xl transition z-10 cursor-pointer shadow-lg" title="Next (→)">›</button>
+
+    <!-- Main Image -->
+    <div class="relative max-h-[85vh] max-w-[92vw] flex flex-col items-center justify-center" onclick="event.stopPropagation()">
+      <img id="lb-img" src="" alt="" class="max-h-[82vh] max-w-[90vw] object-contain rounded-xl shadow-2xl transition-all duration-200" />
+      <div id="lb-caption" class="mt-3 text-center text-sm text-gray-300 font-medium"></div>
+    </div>
   </div>
 
   <!-- FOOTER -->
@@ -394,7 +438,7 @@
       buildIndex();
       currentIdx = visibleImgs.indexOf(img);
       showAtIndex(currentIdx);
-      document.getElementById('lightbox').classList.add('open');
+      const lb = document.getElementById('lightbox'); lb.classList.remove('hidden'); lb.classList.add('flex');
       document.body.style.overflow = 'hidden';
     }
 
@@ -402,9 +446,18 @@
       if (i < 0 || i >= visibleImgs.length) return;
       currentIdx = i;
       const img = visibleImgs[i];
-      document.getElementById('lb-img').src = img.src;
-      document.getElementById('lb-img').alt = img.alt;
-      document.getElementById('lb-caption').textContent = img.dataset.caption || img.alt;
+      const lbImg = document.getElementById('lb-img');
+      lbImg.style.opacity = '0.5';
+      lbImg.src = img.src;
+      lbImg.onload = () => { lbImg.style.opacity = '1'; };
+      lbImg.alt = img.alt;
+
+      const captionEl = document.getElementById('lb-caption');
+      if (captionEl) captionEl.textContent = img.dataset.caption || img.alt;
+      const albumEl = document.getElementById('lb-album');
+      if (albumEl) albumEl.textContent = img.dataset.album || 'Gallery';
+      const counterEl = document.getElementById('lb-counter');
+      if (counterEl) counterEl.textContent = (currentIdx + 1) + ' / ' + visibleImgs.length;
     }
 
     function shiftLightbox(dir) {
@@ -412,13 +465,13 @@
     }
 
     function closeLightbox() {
-      document.getElementById('lightbox').classList.remove('open');
+      const lb = document.getElementById('lightbox'); lb.classList.add('hidden'); lb.classList.remove('flex');
       document.body.style.overflow = '';
     }
 
     document.addEventListener('keydown', e => {
       const lb = document.getElementById('lightbox');
-      if (!lb.classList.contains('open')) return;
+      if (lb.classList.contains('hidden')) return;
       if (e.key === 'Escape') closeLightbox();
       if (e.key === 'ArrowRight') shiftLightbox(1);
       if (e.key === 'ArrowLeft') shiftLightbox(-1);
@@ -485,19 +538,33 @@
             btn.onclick = function () { filterGallery(this, album.id); };
             tabContainer.appendChild(btn);
           }
-          // Add photos as gallery items
+          // Add photos as masonry gallery items
           album.photos.forEach((src, i) => {
             const div = document.createElement('div');
-            div.className = 'gallery-item overflow-hidden rounded-xl';
+            div.className = 'gallery-item break-inside-avoid mb-4 overflow-hidden rounded-2xl group relative cursor-pointer shadow-md hover:shadow-2xl transition-all duration-300 rcsc-card-hover';
             div.dataset.event = album.id;
+            div.dataset.albumName = album.name;
+
             const img = document.createElement('img');
             img.src = src;
             img.alt = album.name + ' photo ' + (i + 1);
-            img.className = 'h-56 md:h-72 w-full object-cover cursor-pointer hover:scale-105 transition-transform duration-500';
-            img.dataset.caption = album.name + ' · ' + (i + 1);
-            img.onclick = function () { openLightbox(this); };
+            img.className = 'w-full h-auto object-cover rounded-2xl group-hover:scale-105 transition-transform duration-500 block';
+            img.dataset.caption = album.name + ' · Photo ' + (i + 1);
+            img.dataset.album = album.name;
             img.loading = 'lazy';
+
+            // Hover overlay (album name only)
+            const overlay = document.createElement('div');
+            overlay.className = 'absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl p-4 flex flex-col justify-end text-white pointer-events-none';
+            overlay.innerHTML = `
+              <div class="text-sm font-bold text-white tracking-wide font-medium">
+                ${album.name}
+              </div>
+            `;
+
             div.appendChild(img);
+            div.appendChild(overlay);
+            div.onclick = function () { openLightbox(img); };
             container.appendChild(div);
           });
         });
@@ -524,6 +591,76 @@
         }).catch(err => console.warn('Firestore gallery error:', err));
       }
     })();
+  </script>
+
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script>
+    // AOS Scroll Animations
+    AOS.init({ duration: 700, once: true, offset: 60, easing: 'ease-out-cubic' });
+  </script>
+
+  <script>
+    // ── Smooth Page Transitions ──
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href]').forEach(function (link) {
+        const href = link.getAttribute('href');
+        if (!href || href.startsWith('#') || href.startsWith('http') ||
+            href.startsWith('mailto') || href.startsWith('tel') ||
+            link.target === '_blank' || href.endsWith('.pdf')) return;
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          document.body.classList.add('page-leaving');
+          setTimeout(function () { window.location.href = href; }, 180);
+        });
+      });
+    });
+  </script>
+
+  <script>
+    // ── Active Nav Highlighting ──
+    (function () {
+      const page = location.pathname.split('/').pop() || 'index.html';
+      document.querySelectorAll('nav a[href], #mobile-menu a[href]').forEach(function (a) {
+        const target = (a.getAttribute('href') || '').split('/').pop();
+        const isActive = target === page || (page === '' && target === 'index.html');
+        if (isActive) {
+          a.classList.remove('text-gray-900', 'text-gray-700');
+          a.classList.add('text-blue-500', 'font-semibold', 'rcsc-nav-active');
+        }
+      });
+    })();
+  </script>
+
+  <script>
+    // ── Universal RCSC Toast Notification System ──
+    window.rcscToast = function (message, type = 'success') {
+      let container = document.getElementById('rcsc-toast-container');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'rcsc-toast-container';
+        container.className = 'fixed bottom-5 right-5 z-[99999] flex flex-col gap-2.5 pointer-events-none max-w-sm w-full px-4';
+        document.body.appendChild(container);
+      }
+      const toast = document.createElement('div');
+      const isErr = type === 'error';
+      const isInfo = type === 'info';
+      const bg = isErr ? 'bg-red-600' : isInfo ? 'bg-blue-600' : 'bg-emerald-600';
+      const icon = isErr ? '✕' : isInfo ? 'ℹ' : '✓';
+      toast.className = `${bg} text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-sm font-semibold pointer-events-auto transform transition-all duration-300 translate-y-3 opacity-0`;
+      toast.innerHTML = `
+        <span class="w-5 h-5 rounded-full bg-white/20 flex-shrink-0 flex items-center justify-center text-xs font-bold">${icon}</span>
+        <span class="flex-1">${message}</span>
+        <button onclick="this.parentElement.remove()" class="text-white/70 hover:text-white text-xs font-bold ml-2">✕</button>
+      `;
+      container.appendChild(toast);
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-3', 'opacity-0');
+      });
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    };
   </script>
 
 </body>

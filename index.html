@@ -395,7 +395,39 @@
       transform: scaleY(1);
       pointer-events: auto;
     }
+  
+    /* ── Page Transition ── */
+    @keyframes rcsc-fade-in  { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes rcsc-fade-out { from { opacity: 1; } to { opacity: 0; } }
+    body.page-leaving { animation: rcsc-fade-out 0.18s ease forwards; }
+    body { animation: rcsc-fade-in 0.3s ease; }
+
+    /* ── Active Nav Dot Indicator ── */
+    .rcsc-nav-active { position: relative; }
+    .rcsc-nav-active::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #3b82f6;
+    }
+  
+    /* ── Universal Card Hover State ── */
+    .rcsc-card-hover {
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+    .rcsc-card-hover:hover {
+      transform: translateY(-4px) !important;
+      box-shadow: 0 16px 32px -4px rgba(0, 0, 0, 0.12) !important;
+    }
   </style>
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css" />
+  <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
+  <script src="https://unpkg.com/vanilla-tilt@1.8.1/dist/vanilla-tilt.min.js"></script>
 </head>
 
 <body class="font-Inter bg-white text-gray-900">
@@ -530,7 +562,7 @@
     <section
       class="relative flex w-full flex-col items-center justify-between pt-20 pb-2 md:pt-28 md:pb-3 md:flex-row overflow-hidden">
       <div
-        class="order-2 flex flex-col items-center md:order-1 md:max-w-[48vw] md:items-start md:gap-1 lg:max-w-[45vw] px-2 sm:px-0">
+        data-aos="fade-right" data-aos-duration="800" class="order-2 flex flex-col items-center md:order-1 md:max-w-[48vw] md:items-start md:gap-1 lg:max-w-[45vw] px-2 sm:px-0">
         <h1
           class="w-full text-center text-3xl sm:text-4xl md:text-5xl font-bold tracking-wide md:text-left lg:tracking-widest 2xl:text-6xl text-gray-900">
           RAJSHAHI COLLEGE</h1>
@@ -538,15 +570,15 @@
           class="w-full text-center text-3xl sm:text-4xl md:text-5xl font-bold tracking-wide text-blue-500 md:text-left lg:tracking-widest 2xl:text-6xl">
           SCIENCE CLUB</h1>
         <p
-          class="mt-3 w-full max-w-md break-words text-center text-base sm:text-lg md:max-w-none md:text-left 2xl:text-[1.375rem] 2xl:leading-8 text-gray-600 leading-relaxed">
-          Where curious minds meet to learn, build, and explore science, technology, and innovation together.</p>
+          class="mt-3 w-full max-w-md break-words text-center text-base sm:text-lg md:max-w-none md:text-left 2xl:text-[1.375rem] 2xl:leading-8 text-gray-600 leading-relaxed min-h-[4.5rem] sm:min-h-[3.75rem]">
+          <span id="rcsc-typewriter">Where curious minds meet to learn, build, and explore science, technology, and innovation together.</span></p>
         <a class="relative mb-2 me-2 mt-5 flex items-center justify-center overflow-hidden rounded-lg border border-gray-600 bg-black px-7 py-2 font-Bebas text-xl font-medium text-white shadow-2xl transition-all hover:border-blue-500 hover:bg-zinc-700 hover:shadow-blue-500"
           href="#about">
           <span class="relative z-10">LEARN MORE</span>
         </a>
       </div>
       <img src="logo.png" alt="RCSC Hero"
-        class="relative order-1 aspect-square max-h-[50vh] max-w-[85vw] object-contain sm:max-w-[50vw] md:order-2 md:max-w-[40vw] md:max-h-[440px] lg:mt-0 xl:ml-0 2xl:max-h-[480px]" />
+        data-aos="zoom-in" data-aos-duration="800" data-aos-delay="150" class="relative order-1 aspect-square max-h-[50vh] max-w-[85vw] object-contain sm:max-w-[50vw] md:order-2 md:max-w-[40vw] md:max-h-[440px] lg:mt-0 xl:ml-0 2xl:max-h-[480px]" />
       <img src="rcsc-watermark-text.svg"
         class="absolute bottom-0 right-0 -z-10 max-h-[75%] max-w-[50vw] object-contain select-none pointer-events-none opacity-80"
         alt="Rajshahi College Science Club" />
@@ -554,7 +586,7 @@
 
     <!-- DEPARTMENTS -->
     <div class="mt-2 md:mt-3 h-fit w-full pb-10 text-center overflow-hidden">
-      <h1 class="mx-auto mb-5 md:mb-8">
+      <h1 data-aos="fade-up" class="mx-auto mb-5 md:mb-8">
         <span class="text-center text-3xl sm:text-4xl md:text-5xl">WE HAVE </span>
         <br class="inline md:hidden" />
         <span class="text-center text-3xl sm:text-4xl text-blue-500 md:text-5xl">DEPARTMENTS </span>
@@ -563,8 +595,7 @@
       <div class="container flex flex-wrap items-stretch justify-between gap-4 md:gap-6">
 
         <!-- MATH -->
-        <div
-          class="dept-card group relative z-10 flex min-w-[160px] flex-1 cursor-pointer flex-col items-center justify-center gap-3 overflow-hidden rounded-xl border border-gray-200 bg-gray-100 p-6 transition-all">
+        <div data-aos="fade-up" data-aos-delay="0" class="dept-card group relative z-10 flex min-w-[160px] flex-1 cursor-pointer flex-col items-center justify-center gap-3 overflow-hidden rounded-xl border border-gray-200 bg-gray-100 p-6 transition-all">
           <div class="z-10 flex flex-1 flex-col items-center justify-center gap-3">
             <svg class="w-[80px] md:w-[100px] transition-all text-blue-500" viewBox="0 0 100 100" fill="none"
               xmlns="http://www.w3.org/2000/svg" style="color:#3b82f6;transition:filter 0.3s;">
@@ -583,8 +614,7 @@
         </div>
 
         <!-- PHYSICS -->
-        <div
-          class="dept-card group relative z-10 flex min-w-[160px] flex-1 cursor-pointer flex-col items-center justify-center gap-3 overflow-hidden rounded-xl border border-gray-200 bg-gray-100 p-6 transition-all">
+        <div data-aos="fade-up" data-aos-delay="60" class="dept-card group relative z-10 flex min-w-[160px] flex-1 cursor-pointer flex-col items-center justify-center gap-3 overflow-hidden rounded-xl border border-gray-200 bg-gray-100 p-6 transition-all">
           <div class="z-10 flex flex-1 flex-col items-center justify-center gap-3">
             <svg class="w-[80px] md:w-[100px] transition-all" viewBox="0 0 100 100" fill="none"
               xmlns="http://www.w3.org/2000/svg" style="color:#3b82f6;transition:filter 0.3s;">
@@ -608,8 +638,7 @@
         </div>
 
         <!-- CHEMISTRY -->
-        <div
-          class="dept-card group relative z-10 flex min-w-[160px] flex-1 cursor-pointer flex-col items-center justify-center gap-3 overflow-hidden rounded-xl border border-gray-200 bg-gray-100 p-6 transition-all">
+        <div data-aos="fade-up" data-aos-delay="120" class="dept-card group relative z-10 flex min-w-[160px] flex-1 cursor-pointer flex-col items-center justify-center gap-3 overflow-hidden rounded-xl border border-gray-200 bg-gray-100 p-6 transition-all">
           <div class="z-10 flex flex-1 flex-col items-center justify-center gap-3">
             <svg class="w-[80px] md:w-[100px] transition-all" viewBox="0 0 100 100" fill="none"
               xmlns="http://www.w3.org/2000/svg" style="color:#3b82f6;transition:filter 0.3s;">
@@ -631,8 +660,7 @@
         </div>
 
         <!-- BIOLOGY -->
-        <div
-          class="dept-card group relative z-10 flex min-w-[160px] flex-1 cursor-pointer flex-col items-center justify-center gap-3 overflow-hidden rounded-xl border border-gray-200 bg-gray-100 p-6 transition-all">
+        <div data-aos="fade-up" data-aos-delay="180" class="dept-card group relative z-10 flex min-w-[160px] flex-1 cursor-pointer flex-col items-center justify-center gap-3 overflow-hidden rounded-xl border border-gray-200 bg-gray-100 p-6 transition-all">
           <div class="z-10 flex flex-1 flex-col items-center justify-center gap-3">
             <svg class="w-[80px] md:w-[100px] transition-all" viewBox="0 0 100 100" fill="none"
               xmlns="http://www.w3.org/2000/svg" style="color:#3b82f6;transition:filter 0.3s;">
@@ -688,8 +716,7 @@
         </div>
 
         <!-- ASTRONOMY -->
-        <div
-          class="dept-card group relative z-10 flex min-w-[160px] flex-1 cursor-pointer flex-col items-center justify-center gap-3 overflow-hidden rounded-xl border border-gray-200 bg-gray-100 p-6 transition-all">
+        <div data-aos="fade-up" data-aos-delay="240" class="dept-card group relative z-10 flex min-w-[160px] flex-1 cursor-pointer flex-col items-center justify-center gap-3 overflow-hidden rounded-xl border border-gray-200 bg-gray-100 p-6 transition-all">
           <div class="z-10 flex flex-1 flex-col items-center justify-center gap-3">
             <svg class="w-[80px] md:w-[100px] transition-all" viewBox="0 0 100 100" fill="none"
               xmlns="http://www.w3.org/2000/svg" style="color:#3b82f6;transition:filter 0.3s;">
@@ -723,7 +750,7 @@
           <span class="text-[2.55rem] md:text-5xl font-bold tracking-wide text-blue-400 ml-2">LATEST POST</span>
         </div>
         <div
-          class="flex h-fit w-full max-w-4xl flex-col sm:flex-row items-stretch overflow-hidden rounded-2xl border border-blue-500/30 bg-white/10 shadow-2xl shadow-black/50 backdrop-blur-md">
+          data-aos="fade-up" data-aos-duration="750" class="flex h-fit w-full max-w-4xl flex-col sm:flex-row items-stretch overflow-hidden rounded-2xl border border-blue-500/30 bg-white/10 shadow-2xl shadow-black/50 backdrop-blur-md">
           <!-- Post Picture -->
           <div id="latest-banner-img-wrap"
             class="w-full sm:w-72 md:w-80 h-56 sm:h-auto min-h-[220px] flex-shrink-0 relative overflow-hidden bg-black/20">
@@ -761,7 +788,8 @@
 
     <!-- UPCOMING EVENTS -->
     <div id="events" class="mt-16 w-full">
-      <div class="mb-4 flex items-end justify-center gap-3 self-start md:justify-start">
+      <div data-aos="fade-up" class="mb-4 flex items-end justify-center gap-3 self-start md:justify-start">
+
         <h1 class="pb-1 text-3xl md:text-5xl">UPCOMING</h1>
         <h1 class="text-5xl text-blue-500 md:text-7xl">EVENTS</h1>
       </div>
@@ -769,7 +797,7 @@
 
         <!-- Event 1: Chess Hub -->
         <div>
-          <div class="blog-section shadow-[0px_13px_40px_10px_#00000024]">
+          <div data-aos="fade-up" data-aos-duration="700" class="blog-section shadow-[0px_13px_40px_10px_#00000024]">
             <div class="absolute right-0 -z-10 h-full w-full bg-gray-900">
               <img src="banner-chess.jpg" alt="Chess Tournament"
                 class="w-full h-full object-cover object-right opacity-90 gradient-mask-b-30 md-gradient-mask-l-0" />
@@ -805,7 +833,7 @@
 
         <!-- Event 2: DevSprint -->
         <div>
-          <div class="blog-section shadow-[0px_13px_40px_10px_#00000024]">
+          <div data-aos="fade-up" data-aos-duration="700" class="blog-section shadow-[0px_13px_40px_10px_#00000024]">
             <div class="absolute right-0 -z-10 h-full w-full bg-gray-900">
               <img src="banner-devsprint.jpg" alt="DevSprint"
                 class="w-full h-full object-cover object-right opacity-90 gradient-mask-b-30 md-gradient-mask-l-0" />
@@ -841,7 +869,7 @@
 
         <!-- Event 3: National Science Fest -->
         <div>
-          <div class="blog-section shadow-[0px_13px_40px_10px_#00000024]">
+          <div data-aos="fade-up" data-aos-duration="700" class="blog-section shadow-[0px_13px_40px_10px_#00000024]">
             <div class="absolute right-0 -z-10 h-full w-full bg-gray-900">
               <img
                 src="https://res.cloudinary.com/dqnhzfqbu/image/upload/v1790440561/content/4eadcaf4-7843-4bdd-a0e7-18de4c4c0e3c.jpg"
@@ -1013,7 +1041,7 @@
 
     <!-- NEWSLETTER -->
     <div class="container mb-12">
-      <div id="nwslttr_crd" class="max-w-2xl mx-auto shadow-xl">
+      <div id="nwslttr_crd" data-aos="fade-up" class="max-w-2xl mx-auto shadow-xl">
         <h3 id="hdr">Subscribe to our <span>Newsletter</span></h3>
         <p id="abt">Quark is our official club publication. Subscribe now for the latest updates on Science Fest,
           workshops, student research, and innovation!</p>
@@ -1143,33 +1171,44 @@
     // Live countdown timers for upcoming events
     // Set target dates here (YYYY, MM-1, DD, HH, MM, SS)
     const events = [
-      { m: 'chess-m', d: 'chess-d', h: 'chess-h', date: new Date('2026-11-20T21:00:00+06:00') },
-      { m: 'dev-m', d: 'dev-d', h: 'dev-h', date: new Date('2027-01-15T09:00:00') },
-      { m: 'sci-m', d: 'sci-d', h: 'sci-h', date: new Date('2027-02-10T08:00:00') },
+      { m: 'chess-m', d: 'chess-d', h: 'chess-h', date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 18 + 1000 * 60 * 60 * 4) },
+      { m: 'dev-m', d: 'dev-d', h: 'dev-h', date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 45) },
+      { m: 'sci-m', d: 'sci-d', h: 'sci-h', date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 82) },
     ];
 
     function updateCountdowns() {
-      const now = new Date();
+      const now = Date.now();
       events.forEach(ev => {
-        const diff = ev.date - now;
+        const diff = ev.date.getTime() - now;
+        const elM = document.getElementById(ev.m);
+        const elD = document.getElementById(ev.d);
+        const elH = document.getElementById(ev.h);
+        if (!elM || !elD || !elH) return;
+
         if (diff <= 0) {
-          document.getElementById(ev.m).textContent = '0';
-          document.getElementById(ev.d).textContent = '0';
-          document.getElementById(ev.h).textContent = '0';
+          elM.textContent = '0';
+          elD.textContent = '0';
+          elH.textContent = '0';
           return;
         }
-        const totalHours = Math.floor(diff / (1000 * 60 * 60));
-        const months = Math.floor(totalHours / (24 * 30));
-        const days = Math.floor((totalHours % (24 * 30)) / 24);
-        const hours = totalHours % 24;
-        document.getElementById(ev.m).textContent = months;
-        document.getElementById(ev.d).textContent = days;
-        document.getElementById(ev.h).textContent = hours;
+        const totalSecs = Math.floor(diff / 1000);
+        const days = Math.floor(totalSecs / 86400);
+        const hours = Math.floor((totalSecs % 86400) / 3600);
+        const mins = Math.floor((totalSecs % 3600) / 60);
+
+        elM.textContent = days;
+        elD.textContent = hours;
+        elH.textContent = mins;
+
+        // Update labels to Days, Hours, Mins if needed
+        const p1 = elM.parentElement.querySelector('.word'); if (p1 && p1.textContent !== 'Days') p1.textContent = 'Days';
+        const p2 = elD.parentElement.querySelector('.word'); if (p2 && p2.textContent !== 'Hours') p2.textContent = 'Hours';
+        const p3 = elH.parentElement.querySelector('.word'); if (p3 && p3.textContent !== 'Mins') p3.textContent = 'Mins';
       });
     }
 
     updateCountdowns();
-    setInterval(updateCountdowns, 60000);
+    setInterval(updateCountdowns, 1000); // 1-second live ticking
   </script>
 
   <!-- Firebase SDK Compat -->
@@ -1244,6 +1283,112 @@
       }
     })();
   </script>
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script>
+    // AOS Scroll Animations
+    AOS.init({ duration: 700, once: true, offset: 60, easing: 'ease-out-cubic' });
+  </script>
+
+  <script>
+    // ── Smooth Page Transitions ──
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href]').forEach(function (link) {
+        const href = link.getAttribute('href');
+        if (!href || href.startsWith('#') || href.startsWith('http') ||
+            href.startsWith('mailto') || href.startsWith('tel') ||
+            link.target === '_blank' || href.endsWith('.pdf')) return;
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          document.body.classList.add('page-leaving');
+          setTimeout(function () { window.location.href = href; }, 180);
+        });
+      });
+    });
+  </script>
+
+  <script>
+    // ── Active Nav Highlighting ──
+    (function () {
+      const page = location.pathname.split('/').pop() || 'index.html';
+      document.querySelectorAll('nav a[href], #mobile-menu a[href]').forEach(function (a) {
+        const target = (a.getAttribute('href') || '').split('/').pop();
+        const isActive = target === page || (page === '' && target === 'index.html');
+        if (isActive) {
+          a.classList.remove('text-gray-900', 'text-gray-700');
+          a.classList.add('text-blue-500', 'font-semibold', 'rcsc-nav-active');
+        }
+      });
+    })();
+  </script>
+
+  <script>
+    // ── Typewriter Effect ──
+    document.addEventListener('DOMContentLoaded', function () {
+      const el = document.getElementById('rcsc-typewriter');
+      if (el && window.Typed) {
+        new Typed('#rcsc-typewriter', {
+          strings: [
+            'Where curious minds meet to learn, build, and explore science, technology, and innovation together.',
+            'Igniting Scientific Curiosity — one experiment at a time.',
+            'Explore · Discover · Innovate with Rajshahi College Science Club.',
+            'Connecting students through science, technology and innovation.'
+          ],
+          typeSpeed: 30,
+          backSpeed: 15,
+          backDelay: 2800,
+          loop: true,
+          showCursor: true,
+          cursorChar: '|',
+        });
+      }
+    });
+  </script>
+
+  <script>
+    // ── VanillaTilt on Department Cards ──
+    document.addEventListener('DOMContentLoaded', function () {
+      VanillaTilt.init(document.querySelectorAll('.dept-card'), {
+        max: 10,
+        speed: 400,
+        glare: true,
+        'max-glare': 0.15,
+        scale: 1.03,
+      });
+    });
+  </script>
+
+  <script>
+    // ── Universal RCSC Toast Notification System ──
+    window.rcscToast = function (message, type = 'success') {
+      let container = document.getElementById('rcsc-toast-container');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'rcsc-toast-container';
+        container.className = 'fixed bottom-5 right-5 z-[99999] flex flex-col gap-2.5 pointer-events-none max-w-sm w-full px-4';
+        document.body.appendChild(container);
+      }
+      const toast = document.createElement('div');
+      const isErr = type === 'error';
+      const isInfo = type === 'info';
+      const bg = isErr ? 'bg-red-600' : isInfo ? 'bg-blue-600' : 'bg-emerald-600';
+      const icon = isErr ? '✕' : isInfo ? 'ℹ' : '✓';
+      toast.className = `${bg} text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-sm font-semibold pointer-events-auto transform transition-all duration-300 translate-y-3 opacity-0`;
+      toast.innerHTML = `
+        <span class="w-5 h-5 rounded-full bg-white/20 flex-shrink-0 flex items-center justify-center text-xs font-bold">${icon}</span>
+        <span class="flex-1">${message}</span>
+        <button onclick="this.parentElement.remove()" class="text-white/70 hover:text-white text-xs font-bold ml-2">✕</button>
+      `;
+      container.appendChild(toast);
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-3', 'opacity-0');
+      });
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    };
+  </script>
+
 </body>
 
 </html>

@@ -102,7 +102,37 @@
     /* Scroll-reveal */
     .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
     .reveal.visible { opacity: 1; transform: translateY(0); }
+  
+    /* ── Page Transition ── */
+    @keyframes rcsc-fade-in  { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes rcsc-fade-out { from { opacity: 1; } to { opacity: 0; } }
+    body.page-leaving { animation: rcsc-fade-out 0.18s ease forwards; }
+    body { animation: rcsc-fade-in 0.3s ease; }
+
+    /* ── Active Nav Dot Indicator ── */
+    .rcsc-nav-active { position: relative; }
+    .rcsc-nav-active::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #3b82f6;
+    }
+  
+    /* ── Universal Card Hover State ── */
+    .rcsc-card-hover {
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+    .rcsc-card-hover:hover {
+      transform: translateY(-4px) !important;
+      box-shadow: 0 16px 32px -4px rgba(0, 0, 0, 0.12) !important;
+    }
   </style>
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css" />
 </head>
 
 <body class="bg-[#F6F6F6] text-gray-900">
@@ -601,6 +631,76 @@
     }
     tick();
     setInterval(tick, 1000);
+  </script>
+
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script>
+    // AOS Scroll Animations
+    AOS.init({ duration: 700, once: true, offset: 60, easing: 'ease-out-cubic' });
+  </script>
+
+  <script>
+    // ── Smooth Page Transitions ──
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href]').forEach(function (link) {
+        const href = link.getAttribute('href');
+        if (!href || href.startsWith('#') || href.startsWith('http') ||
+            href.startsWith('mailto') || href.startsWith('tel') ||
+            link.target === '_blank' || href.endsWith('.pdf')) return;
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          document.body.classList.add('page-leaving');
+          setTimeout(function () { window.location.href = href; }, 180);
+        });
+      });
+    });
+  </script>
+
+  <script>
+    // ── Active Nav Highlighting ──
+    (function () {
+      const page = location.pathname.split('/').pop() || 'index.html';
+      document.querySelectorAll('nav a[href], #mobile-menu a[href]').forEach(function (a) {
+        const target = (a.getAttribute('href') || '').split('/').pop();
+        const isActive = target === page || (page === '' && target === 'index.html');
+        if (isActive) {
+          a.classList.remove('text-gray-900', 'text-gray-700');
+          a.classList.add('text-blue-500', 'font-semibold', 'rcsc-nav-active');
+        }
+      });
+    })();
+  </script>
+
+  <script>
+    // ── Universal RCSC Toast Notification System ──
+    window.rcscToast = function (message, type = 'success') {
+      let container = document.getElementById('rcsc-toast-container');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'rcsc-toast-container';
+        container.className = 'fixed bottom-5 right-5 z-[99999] flex flex-col gap-2.5 pointer-events-none max-w-sm w-full px-4';
+        document.body.appendChild(container);
+      }
+      const toast = document.createElement('div');
+      const isErr = type === 'error';
+      const isInfo = type === 'info';
+      const bg = isErr ? 'bg-red-600' : isInfo ? 'bg-blue-600' : 'bg-emerald-600';
+      const icon = isErr ? '✕' : isInfo ? 'ℹ' : '✓';
+      toast.className = `${bg} text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-sm font-semibold pointer-events-auto transform transition-all duration-300 translate-y-3 opacity-0`;
+      toast.innerHTML = `
+        <span class="w-5 h-5 rounded-full bg-white/20 flex-shrink-0 flex items-center justify-center text-xs font-bold">${icon}</span>
+        <span class="flex-1">${message}</span>
+        <button onclick="this.parentElement.remove()" class="text-white/70 hover:text-white text-xs font-bold ml-2">✕</button>
+      `;
+      container.appendChild(toast);
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-3', 'opacity-0');
+      });
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    };
   </script>
 
 </body>
