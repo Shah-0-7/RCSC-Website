@@ -331,26 +331,20 @@
 
   </main>
 
-  <!-- LIGHTBOX (Upgraded) -->
-  <div id="lightbox" class="fixed inset-0 bg-black/95 z-[9999] hidden items-center justify-center p-4 backdrop-blur-md select-none" onclick="closeLightbox()">
-    <!-- Top Bar -->
-    <div class="absolute top-0 left-0 right-0 p-4 md:px-8 flex items-center justify-between text-white z-10 bg-gradient-to-b from-black/60 to-transparent" onclick="event.stopPropagation()">
-      <div class="flex items-center gap-3">
-        <span id="lb-album" class="text-xs uppercase tracking-wider text-blue-400 font-ShareTechTown font-semibold">Album</span>
-        <span class="text-gray-500">•</span>
-        <span id="lb-counter" class="text-xs text-gray-300 font-mono">1 / 1</span>
-      </div>
-      <button onclick="closeLightbox()" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white text-xl transition cursor-pointer" title="Close (Esc)">✕</button>
+  <!-- LIGHTBOX (Clean Fullscreen) -->
+  <div id="lightbox" class="fixed inset-0 bg-black/95 z-[99999] hidden items-center justify-center p-4 backdrop-blur-md select-none" onclick="closeLightbox()">
+    <!-- Top Bar with Close Button only -->
+    <div class="absolute top-0 left-0 right-0 p-4 md:px-8 flex items-center justify-end z-10" onclick="event.stopPropagation()">
+      <button onclick="closeLightbox()" class="w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 flex items-center justify-center text-white text-xl transition cursor-pointer shadow-lg" title="Close (Esc)">✕</button>
     </div>
 
     <!-- Nav Arrows -->
     <button id="lb-prev" onclick="event.stopPropagation(); shiftLightbox(-1)" class="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-blue-600 flex items-center justify-center text-white text-2xl transition z-10 cursor-pointer shadow-lg" title="Previous (←)">‹</button>
     <button id="lb-next" onclick="event.stopPropagation(); shiftLightbox(1)" class="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-blue-600 flex items-center justify-center text-white text-2xl transition z-10 cursor-pointer shadow-lg" title="Next (→)">›</button>
 
-    <!-- Main Image -->
-    <div class="relative max-h-[85vh] max-w-[92vw] flex flex-col items-center justify-center" onclick="event.stopPropagation()">
-      <img id="lb-img" src="" alt="" class="max-h-[82vh] max-w-[90vw] object-contain rounded-xl shadow-2xl transition-all duration-200" />
-      <div id="lb-caption" class="mt-3 text-center text-sm text-gray-300 font-medium"></div>
+    <!-- Main Image (Clean fullscreen, no text overlays) -->
+    <div class="relative max-h-[92vh] max-w-[94vw] flex items-center justify-center" onclick="event.stopPropagation()">
+      <img id="lb-img" src="" alt="" class="max-h-[90vh] max-w-[92vw] object-contain rounded-xl shadow-2xl transition-all duration-200" />
     </div>
   </div>
 
@@ -471,13 +465,6 @@
         lbImg.onload = () => { lbImg.style.opacity = '1'; };
         lbImg.alt = img.alt || 'Gallery Photo';
       }
-
-      const captionEl = document.getElementById('lb-caption');
-      if (captionEl && img) captionEl.textContent = img.dataset.caption || img.alt || '';
-      const albumEl = document.getElementById('lb-album');
-      if (albumEl && img) albumEl.textContent = img.dataset.album || 'Gallery';
-      const counterEl = document.getElementById('lb-counter');
-      if (counterEl) counterEl.textContent = (currentIdx + 1) + ' / ' + visibleImgs.length;
     };
 
     window.shiftLightbox = function(dir) {
