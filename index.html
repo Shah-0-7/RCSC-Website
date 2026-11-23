@@ -553,9 +553,11 @@
 
     <!-- HERO -->
     <section
-      class="relative flex w-full flex-col items-center justify-between pt-20 pb-2 md:pt-28 md:pb-3 md:flex-row overflow-hidden">
+      class="relative flex w-full flex-col items-center justify-between pt-20 pb-2 md:pt-28 md:pb-3 md:flex-row overflow-hidden" id="hero-section">
+      <!-- ContourLines background -->
+      <contour-lines id="hero-contour" style="position:absolute;inset:0;width:100%;height:100%;z-index:0;border-radius:1.5rem;"></contour-lines>
       <div
-        data-aos="fade-right" data-aos-duration="800" class="order-2 flex flex-col items-center md:order-1 md:max-w-[48vw] md:items-start md:gap-1 lg:max-w-[45vw] px-2 sm:px-0">
+        data-aos="fade-right" data-aos-duration="800" class="order-2 flex flex-col items-center md:order-1 md:max-w-[48vw] md:items-start md:gap-1 lg:max-w-[45vw] px-2 sm:px-0 relative z-10">
         <h1
           class="w-full text-center text-3xl sm:text-4xl md:text-5xl font-bold tracking-wide md:text-left lg:tracking-widest 2xl:text-6xl text-gray-900">
           RAJSHAHI COLLEGE</h1>
@@ -571,7 +573,7 @@
         </a>
       </div>
       <img src="logo.png" alt="RCSC Hero"
-        data-aos="zoom-in" data-aos-duration="800" data-aos-delay="150" class="relative order-1 aspect-square max-h-[50vh] max-w-[85vw] object-contain sm:max-w-[50vw] md:order-2 md:max-w-[40vw] md:max-h-[440px] lg:mt-0 xl:ml-0 2xl:max-h-[480px]" />
+        data-aos="zoom-in" data-aos-duration="800" data-aos-delay="150" class="relative z-10 order-1 aspect-square max-h-[50vh] max-w-[85vw] object-contain sm:max-w-[50vw] md:order-2 md:max-w-[40vw] md:max-h-[440px] lg:mt-0 xl:ml-0 2xl:max-h-[480px]" />
       <img src="rcsc-watermark-text.svg"
         class="absolute bottom-0 right-0 -z-10 max-h-[75%] max-w-[50vw] object-contain select-none pointer-events-none opacity-80"
         alt="Rajshahi College Science Club" />
@@ -1422,6 +1424,7 @@
       }, 3500);
     };
   </script>
+  <script src="contour-lines.js"></script>
 
 </body>
 
