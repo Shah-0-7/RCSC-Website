@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ContourLines Demo — RCSC</title>
+  <link rel="icon" href="logo.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Allow contour-lines custom element to lay out like a block */
+    contour-lines {
+      display: block;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body class="font-sans bg-gray-50 min-h-screen p-8">
+
+  <h1 class="text-3xl font-bold text-gray-900 mb-2 tracking-tight">ContourLines Demo</h1>
+  <p class="text-gray-500 mb-8 text-sm">
+    Hover to warp terrain · Click to send a ripple wave · Move away to trigger auto-wave
+  </p>
+
+  <!-- ── Example 1: Web Component (matches React prop API) ─────────────── -->
+  <!-- Equivalent to: <ContourLines className="h-[480px] rounded-3xl bg-white" /> -->
+  <contour-lines class="h-[480px] rounded-3xl bg-white shadow-xl mb-8">
+    <div class="flex flex-col items-center justify-center h-full gap-4 select-none pointer-events-none">
+      <img src="logo.png" class="h-20 w-20 object-contain opacity-70" alt="RCSC Logo" />
+      <h2 class="text-2xl font-bold text-gray-700 tracking-widest font-sans">RAJSHAHI COLLEGE SCIENCE CLUB</h2>
+      <p class="text-sm text-gray-400">Hover over this card · Click to send a wave</p>
+    </div>
+  </contour-lines>
+
+  <!-- ── Example 2: Smaller dark-themed card ───────────────────────────── -->
+  <contour-lines class="h-64 rounded-2xl bg-slate-900 shadow-2xl mb-8">
+    <div class="flex items-center justify-center h-full select-none pointer-events-none">
+      <span class="text-white/80 text-lg font-bold tracking-widest">EXPLORE · DISCOVER · INNOVATE</span>
+    </div>
+  </contour-lines>
+
+  <!-- ── Example 3: Mount API on a plain div ───────────────────────────── -->
+  <div id="plain-div" class="h-56 rounded-2xl bg-indigo-50 shadow mb-8 flex items-center justify-center overflow-hidden" style="position:relative">
+    <span class="text-indigo-700 font-semibold text-sm z-10 relative select-none pointer-events-none">
+      Mounted via ContourLines.mount()
+    </span>
+  </div>
+
+  <script src="contour-lines.js"></script>
+  <script>
+    // Mount API usage (non-web-component)
+    const el = document.getElementById('plain-div');
+    ContourLines.mount(el);
+  </script>
+</body>
+</html>
