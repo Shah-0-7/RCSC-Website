@@ -1,383 +1,294 @@
 /**
- * ContourLines — vanilla JS Web Component + mount() helper
- * Full Motion Brew spec implementation — no Shadow DOM (better compatibility).
+ * ContourLines — vanilla JS port of the official Motion Brew component
+ * Source: https://motion-brew.com/components/contour-lines
+ * Ported from contour-lines.tsx (React/motion) to a plain JS mount() function.
  *
- * Usage as custom element (register once via script tag):
- *   <contour-lines style="position:absolute;inset:0;width:100%;height:100%"></contour-lines>
+ * MIT License, Copyright (c) 2026 Md Eftakher.
  *
- * Usage via JS API:
- *   ContourLines.mount(document.getElementById('my-div'));
+ * Usage:
+ *   ContourLines.mount(element, { color, lines, scale, speed, lift, interactive })
+ *   Returns { destroy() } to clean up.
  */
 (function () {
   'use strict';
 
-  // ─────────────────────────── NOISE ───────────────────────────────────────
-  const P = new Uint8Array(512);
-  (function buildPerm() {
-    const src = Array.from({ length: 256 }, (_, i) => i);
-    for (let i = 255; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [src[i], src[j]] = [src[j], src[i]];
+  const REVEAL = 1.5; // seconds for the lines to spread across the card
+  const CELL = 10;    // px per marching squares cell
+
+  // ── Noise (exact port from the .tsx source) ───────────────────────────────
+  function hash(x, y) {
+    let h = Math.imul(x, 374761393) + Math.imul(y, 668265263);
+    h = Math.imul(h ^ (h >>> 13), 1274126177);
+    return ((h ^ (h >>> 16)) >>> 0) / 4294967295;
+  }
+  const smooth = t => t * t * (3 - 2 * t);
+  function noise(x, y) {
+    const ix = Math.floor(x), iy = Math.floor(y);
+    const fx = smooth(x - ix), fy = smooth(y - iy);
+    const a = hash(ix,     iy),     b = hash(ix + 1, iy);
+    const c = hash(ix,     iy + 1), d = hash(ix + 1, iy + 1);
+    return a + (b - a) * fx + (c - a) * fy + (a - b - c + d) * fx * fy;
+  }
+
+  // ── Mount ─────────────────────────────────────────────────────────────────
+  function mount(container, opts) {
+    opts = Object.assign({ color: '#242423', lines: 14, scale: 1, speed: 1, lift: 1, interactive: true }, opts);
+
+    // Ensure container is a positioned box
+    const cs = getComputedStyle(container);
+    if (cs.position === 'static') container.style.position = 'relative';
+    container.style.overflow = 'hidden';
+
+    // Canvas — behind all existing children
+    const el = document.createElement('canvas');
+    el.setAttribute('aria-hidden', 'true');
+    el.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;z-index:0;';
+    container.insertBefore(el, container.firstChild);
+
+    const ctx = el.getContext('2d');
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const still = reduced;
+
+    let w = 0, h = 0, cols = 0, rows = 0;
+    let field = new Float32Array(0);
+    let raf = 0;
+    let visible = true;
+    let last = performance.now();
+    let time = 0;
+    let idle = 0;
+
+    // Reveal state: -1=not yet, -2=next frame start, N=clock when started
+    let reveal = -1;
+
+    // Glow (smoothed pointer position + alpha)
+    const glow = { x: 0, y: 0, a: 0 };
+
+    // Pointer ref
+    const pointer = { x: -999, y: -999, on: false };
+
+    // Waves: { x, y, t }   t<0 means "stamp on next frame"
+    let waves = [];
+
+    // ── Sizing ──────────────────────────────────────────────────────────────
+    function size() {
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      w = el.clientWidth;
+      h = el.clientHeight;
+      el.width  = Math.round(w * dpr);
+      el.height = Math.round(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      cols = Math.ceil(w / CELL) + 1;
+      rows = Math.ceil(h / CELL) + 1;
+      field = new Float32Array(cols * rows);
     }
-    for (let i = 0; i < 512; i++) P[i] = src[i & 255];
-  })();
 
-  function fade(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
-  function lerp(a, b, t) { return a + (b - a) * t; }
-
-  function vnoise(x, y) {
-    const ix = Math.floor(x) & 255, iy = Math.floor(y) & 255;
-    const fx = x - Math.floor(x), fy = y - Math.floor(y);
-    const u = fade(fx), v = fade(fy);
-    const a = (P[ix] + iy) & 255, b = (P[ix + 1] + iy) & 255;
-    const v00 = (P[a] & 255) / 255, v10 = (P[b] & 255) / 255;
-    const v01 = (P[(a + 1) & 255] & 255) / 255, v11 = (P[(b + 1) & 255] & 255) / 255;
-    return lerp(lerp(v00, v10, u), lerp(v01, v11, u), v);
-  }
-
-  function fbm(x, y) {
-    return (vnoise(x, y) + 0.5 * vnoise(x * 2, y * 2)) / 1.5;
-  }
-
-  // ────────────────────── MARCHING SQUARES ─────────────────────────────────
-  function marchingSquares(grid, cols, rows, step, level) {
-    const path = new Path2D();
-    for (let r = 0; r < rows - 1; r++) {
-      for (let c = 0; c < cols - 1; c++) {
-        const tl = grid[r * cols + c];
-        const tr = grid[r * cols + c + 1];
-        const bl = grid[(r + 1) * cols + c];
-        const br = grid[(r + 1) * cols + c + 1];
-
-        const a = +(tl >= level), b = +(tr >= level);
-        const d = +(bl >= level), e = +(br >= level);
-        const idx = (a << 3) | (b << 2) | (e << 1) | d;
-
-        if (idx === 0 || idx === 15) continue;
-
-        const x = c * step, y = r * step;
-        // Interpolated edge positions
-        const top = x + step * (level - tl) / (tr - tl || 1e-9);
-        const bot = x + step * (level - bl) / (br - bl || 1e-9);
-        const lft = y + step * (level - tl) / (bl - tl || 1e-9);
-        const rgt = y + step * (level - tr) / (br - tr || 1e-9);
-
-        const L = (x1, y1, x2, y2) => { path.moveTo(x1, y1); path.lineTo(x2, y2); };
-
-        switch (idx) {
-          case 1: case 14: L(x, lft, top, y); break;
-          case 2: case 13: L(x + step, rgt, top, y); break;
-          case 3: case 12: L(x, lft, x + step, rgt); break;
-          case 4: case 11: L(bot, y + step, x + step, rgt); break;
-          case 5:
-            L(x, lft, top, y);
-            L(bot, y + step, x + step, rgt); break;
-          case 6: case 9: L(top, y, bot, y + step); break;
-          case 7: case 8: L(x, lft, bot, y + step); break;
-          case 10:
-            L(x + step, rgt, top, y);
-            L(x, lft, bot, y + step); break;
+    // ── Sample terrain ──────────────────────────────────────────────────────
+    function sample() {
+      const t = time * opts.speed;
+      const z = 0.0045 / opts.scale;
+      for (let j = 0; j < rows; j++) {
+        for (let i = 0; i < cols; i++) {
+          const x = i * CELL, y = j * CELL;
+          let v =
+            noise(x * z + t * 0.04,       y * z - t * 0.025) * 0.65 +
+            noise(x * z * 2.2 - t * 0.03, y * z * 2.2 + 3.1) * 0.35;
+          if (glow.a > 0.01) {
+            const dx = x - glow.x, dy = y - glow.y;
+            v += glow.a * 0.28 * opts.lift * Math.exp(-(dx * dx + dy * dy) / (2 * 70 * 70));
+          }
+          for (const wv of waves) {
+            const age = time - wv.t;
+            const d = Math.hypot(x - wv.x, y - wv.y) - age * 220;
+            v += 0.12 * Math.max(0, 1 - age / 1.8) * Math.exp(-(d * d) / (2 * 22 * 22));
+          }
+          field[j * cols + i] = v;
         }
       }
     }
-    return path;
-  }
 
-  // ─────────────────────── CONTOUR ENGINE ──────────────────────────────────
-  class ContourEngine {
-    constructor(canvas, host) {
-      this.canvas = canvas;
-      this.ctx = canvas.getContext('2d');
-      this.host = host;   // element to listen for pointer events
-      this.w = 1; this.h = 1;
+    // ── Draw ────────────────────────────────────────────────────────────────
+    function draw() {
+      ctx.clearRect(0, 0, w, h);
+      const pr = still
+        ? 1
+        : (reveal === -1 || reveal === -2)
+          ? 0
+          : Math.min(1, (time - reveal) / REVEAL);
+      if (pr === 0) return;
+      sample();
 
-      this.t = 0;
-      this.mouse = { x: -9999, y: -9999, active: false };
-      this.wave = { active: false, x: 0, y: 0, r: 0, maxR: 0, speed: 0 };
-      this.introProgress = 0;
-      this.introActive = true;
-      this.autoWaveTimer = 0;
-      this.raf = null;
-      this.paused = false;
-      this.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      this.STEP = 10;
-      this.LEVELS = 14;
-      this.field = null;
-      this._lastNow = null;
+      const step = 1 / (opts.lines + 1);
+      const path  = new Path2D();
+      const major = new Path2D();
 
-      this._onMove = (e) => {
-        const rect = this.canvas.getBoundingClientRect();
-        this.mouse.x = e.clientX - rect.left;
-        this.mouse.y = e.clientY - rect.top;
-        this.mouse.active = true;
-      };
-      this._onLeave = () => { this.mouse.active = false; };
-      this._onDown = (e) => {
-        const rect = this.canvas.getBoundingClientRect();
-        this._fireWave(e.clientX - rect.left, e.clientY - rect.top);
-      };
+      const at = (i, j) => field[j * cols + i];
 
-      host.addEventListener('pointermove', this._onMove);
-      host.addEventListener('pointerleave', this._onLeave);
-      host.addEventListener('pointerdown', this._onDown);
-    }
+      for (let l = 1; l <= opts.lines; l++) {
+        const lv = 0.14 + l * step * 0.78;
+        const p = (l % 4 === 0) ? major : path;
 
-    destroy() {
-      this.stop();
-      this.host.removeEventListener('pointermove', this._onMove);
-      this.host.removeEventListener('pointerleave', this._onLeave);
-      this.host.removeEventListener('pointerdown', this._onDown);
-    }
+        for (let j = 0; j < rows - 1; j++) {
+          for (let i = 0; i < cols - 1; i++) {
+            const a = at(i,     j);
+            const b = at(i + 1, j);
+            const c = at(i + 1, j + 1);
+            const d = at(i,     j + 1);
+            const k =
+              (a > lv ? 8 : 0) |
+              (b > lv ? 4 : 0) |
+              (c > lv ? 2 : 0) |
+              (d > lv ? 1 : 0);
+            if (k === 0 || k === 15) continue;
 
-    resize(w, h) {
-      this.w = w; this.h = h;
-      this.canvas.width = w;
-      this.canvas.height = h;
-    }
+            const x = i * CELL, y = j * CELL;
+            const top    = () => [x + ((lv - a) / (b - a)) * CELL, y];
+            const right  = () => [x + CELL, y + ((lv - b) / (c - b)) * CELL];
+            const bottom = () => [x + ((lv - d) / (c - d)) * CELL, y + CELL];
+            const left   = () => [x, y + ((lv - a) / (d - a)) * CELL];
 
-    _fireWave(x, y) {
-      this.wave.active = true;
-      this.wave.x = x; this.wave.y = y;
-      this.wave.r = 0;
-      this.wave.maxR = Math.hypot(this.w, this.h);
-      this.wave.speed = this.wave.maxR / 1.4;
-    }
+            const seg = (p1, p2) => { p.moveTo(p1[0], p1[1]); p.lineTo(p2[0], p2[1]); };
 
-    _buildField(dt) {
-      this.t += dt * 0.08;
-      const { w, h, STEP, t } = this;
-      const cols = Math.ceil(w / STEP) + 2;
-      const rows = Math.ceil(h / STEP) + 2;
-      const grid = new Float32Array(cols * rows);
-
-      let wave = null;
-      if (this.wave.active) {
-        this.wave.r += this.wave.speed * dt;
-        if (this.wave.r > this.wave.maxR) this.wave.active = false;
-        else wave = this.wave;
-      }
-
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-          const wx = c * STEP, wy = r * STEP;
-          let v = fbm(wx * 0.004 + t, wy * 0.004 + t * 0.6);
-
-          if (this.mouse.active) {
-            const dx = wx - this.mouse.x, dy = wy - this.mouse.y;
-            v += 0.35 * Math.exp(-(dx * dx + dy * dy) / (2 * 90 * 90));
-          }
-
-          if (wave) {
-            const dx = wx - wave.x, dy = wy - wave.y;
-            const d = Math.sqrt(dx * dx + dy * dy);
-            const diff = d - wave.r;
-            if (Math.abs(diff) < 40) {
-              const env = 1 - Math.abs(diff) / 40;
-              v += 0.22 * env * Math.exp(-diff * diff / 450);
+            switch (k) {
+              case 1: case 14: seg(left(),   bottom()); break;
+              case 2: case 13: seg(bottom(),  right());  break;
+              case 3: case 12: seg(left(),    right());  break;
+              case 4: case 11: seg(top(),     right());  break;
+              case 5:  seg(left(), top()); seg(bottom(), right()); break;
+              case 6: case 9:  seg(top(),    bottom()); break;
+              case 7: case 8:  seg(left(),   top());    break;
+              case 10: seg(left(), bottom()); seg(top(), right()); break;
             }
           }
-
-          grid[r * cols + c] = Math.min(1, Math.max(0, v));
         }
       }
-      return grid;
-    }
 
-    _draw() {
-      const { ctx, w, h, STEP, LEVELS } = this;
-      ctx.clearRect(0, 0, w, h);
-
-      if (this.introActive) {
-        const maxR = Math.hypot(w / 2, h / 2) * 1.05;
-        ctx.save();
+      // Circular clip for entrance reveal
+      ctx.save();
+      if (pr < 1) {
+        const e = 1 - Math.pow(1 - pr, 3);
+        const reach = (Math.hypot(w, h) / 2 + 40) * e;
         ctx.beginPath();
-        ctx.arc(w / 2, h / 2, this.introProgress * maxR, 0, Math.PI * 2);
+        ctx.arc(w / 2, h / 2, Math.max(0.1, reach), 0, Math.PI * 2);
         ctx.clip();
       }
 
-      const cols = Math.ceil(w / STEP) + 2;
-      const rows = Math.ceil(h / STEP) + 2;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = opts.color;
+      ctx.globalAlpha = 0.16;
+      ctx.lineWidth = 1;
+      ctx.stroke(path);
+      ctx.globalAlpha = 0.28;
+      ctx.lineWidth = 1.4;
+      ctx.stroke(major);
 
-      let radGrad = null;
-      if (this.mouse.active) {
-        radGrad = ctx.createRadialGradient(
-          this.mouse.x, this.mouse.y, 0,
-          this.mouse.x, this.mouse.y, 150
-        );
-        radGrad.addColorStop(0, 'rgba(80,120,255,0.95)');
-        radGrad.addColorStop(0.5, 'rgba(80,100,220,0.5)');
-        radGrad.addColorStop(1, 'rgba(80,100,200,0)');
+      // Pointer glow
+      if (glow.a > 0.01) {
+        const g = ctx.createRadialGradient(glow.x, glow.y, 0, glow.x, glow.y, 150);
+        g.addColorStop(0, opts.color);
+        g.addColorStop(1, 'transparent');
+        ctx.strokeStyle = g;
+        ctx.globalAlpha = 0.6 * glow.a;
+        ctx.lineWidth = 1.2;
+        ctx.stroke(path);
+        ctx.stroke(major);
       }
 
-      for (let i = 0; i < LEVELS; i++) {
-        const level = (i + 1) / (LEVELS + 1);
-        const isIndex = i % 4 === 3;
-        const path = marchingSquares(this.field, cols, rows, STEP, level);
+      ctx.restore();
+    }
 
-        ctx.save();
-        if (radGrad) {
-          ctx.strokeStyle = 'rgba(60,80,120,0.2)';
-          ctx.lineWidth = isIndex ? 1.5 : 0.75;
-          ctx.stroke(path);
-          ctx.strokeStyle = radGrad;
-          ctx.lineWidth = isIndex ? 2.0 : 1.0;
-          ctx.globalAlpha = 0.9;
-          ctx.stroke(path);
-        } else {
-          ctx.strokeStyle = isIndex ? 'rgba(50,70,110,0.30)' : 'rgba(60,85,130,0.16)';
-          ctx.lineWidth = isIndex ? 1.5 : 0.75;
-          ctx.stroke(path);
-        }
-        ctx.restore();
+    // ── RAF loop ─────────────────────────────────────────────────────────────
+    function frame(now) {
+      raf = requestAnimationFrame(frame);
+      const dt = Math.min(0.05, Math.max(0, (now - last) / 1000));
+      last = now;
+      if (!visible) return;
+      time += dt;
+      if (reveal === -2) reveal = time;
+
+      const k = 1 - Math.pow(0.002, dt);
+      glow.x += (pointer.x - glow.x) * k;
+      glow.y += (pointer.y - glow.y) * k;
+      glow.a += ((pointer.on ? 1 : 0) - glow.a) * (1 - Math.pow(0.03, dt));
+
+      idle = pointer.on ? 0 : idle + dt;
+      if (idle > 3.6) {
+        idle = 0;
+        waves.push({
+          x: w * (0.15 + Math.random() * 0.7),
+          y: h * (0.15 + Math.random() * 0.5),
+          t: time,
+        });
       }
 
-      if (this.introActive) ctx.restore();
+      // Stamp waves that were queued before the clock started
+      waves = waves
+        .map(wv => (wv.t < 0 ? { ...wv, t: time } : wv))
+        .filter(wv => time - wv.t < 1.8);
+
+      draw();
     }
 
-    _tick(now) {
-      if (this.paused) { this.raf = null; return; }
-      const dt = Math.min(((this._lastNow != null) ? (now - this._lastNow) : 16) / 1000, 0.1);
-      this._lastNow = now;
-
-      if (this.introActive) {
-        this.introProgress = Math.min(1, this.introProgress + dt * 0.9);
-        if (this.introProgress >= 1) this.introActive = false;
-      }
-
-      if (!this.mouse.active && !this.wave.active) {
-        this.autoWaveTimer += dt;
-        if (this.autoWaveTimer > 5) {
-          this.autoWaveTimer = 0;
-          this._fireWave(
-            this.w * (0.2 + Math.random() * 0.6),
-            this.h * (0.2 + Math.random() * 0.6)
-          );
-        }
-      } else {
-        this.autoWaveTimer = 0;
-      }
-
-      this.field = this._buildField(dt);
-      this._draw();
-
-      if (this.reducedMotion) { this.raf = null; return; }
-      this.raf = requestAnimationFrame(ts => this._tick(ts));
+    // ── Pointer events ───────────────────────────────────────────────────────
+    function localCoords(e) {
+      const r = container.getBoundingClientRect();
+      return { x: e.clientX - r.left, y: e.clientY - r.top };
     }
 
-    start() {
-      if (this.raf) return;
-      this.paused = false;
-      this.raf = requestAnimationFrame(ts => this._tick(ts));
+    function onMove(e) {
+      const p = localCoords(e);
+      pointer.x = p.x; pointer.y = p.y; pointer.on = true;
+    }
+    function onLeave() { pointer.on = false; }
+    function onDown(e) {
+      const p = localCoords(e);
+      waves.push({ x: p.x, y: p.y, t: -1 });
     }
 
-    stop() {
-      this.paused = true;
-      if (this.raf) { cancelAnimationFrame(this.raf); this.raf = null; }
+    if (opts.interactive) {
+      container.addEventListener('pointermove',  onMove);
+      container.addEventListener('pointerleave', onLeave);
+      container.addEventListener('pointerdown',  onDown);
     }
 
-    resume() {
-      if (this.paused) { this.paused = false; this.start(); }
-    }
-  }
-
-  // ─────────────── MOUNT FUNCTION ──────────────────────────────────────────
-  // Inserts a canvas into `container` as the background.
-  // The container must be position:relative (or absolute/fixed) and have a size.
-  function mount(container, options = {}) {
-    const cs = getComputedStyle(container);
-    if (cs.position === 'static') container.style.position = 'relative';
-
-    const canvas = document.createElement('canvas');
-    canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;z-index:0;';
-    container.insertBefore(canvas, container.firstChild);
-
-    // The host for pointer events is the container itself
-    const engine = new ContourEngine(canvas, container);
-
-    const ro = new ResizeObserver(entries => {
-      const cr = entries[0].contentRect;
-      const w = Math.round(cr.width), h = Math.round(cr.height);
-      if (w > 0 && h > 0) { engine.resize(w, h); }
+    // ── Observers ────────────────────────────────────────────────────────────
+    const ro = new ResizeObserver(() => {
+      size();
+      if (still) draw();
     });
-    ro.observe(container);
+    ro.observe(el);
 
-    const io = new IntersectionObserver(entries => {
-      entries[0].isIntersecting ? engine.resume() : engine.stop();
-    }, { threshold: 0.01 });
-    io.observe(container);
+    const io = new IntersectionObserver(([entry]) => {
+      visible = !!entry?.isIntersecting;
+      // Trigger reveal on first becoming visible
+      if (visible && reveal === -1) reveal = -2;
+    });
+    io.observe(el);
 
-    // Kick off with current size
-    const rect = container.getBoundingClientRect();
-    if (rect.width > 0 && rect.height > 0) engine.resize(rect.width, rect.height);
-    engine.start();
+    // ── Start ────────────────────────────────────────────────────────────────
+    size();
+    if (still) {
+      time = 4;
+      reveal = 0; // show immediately for reduced motion
+      draw();
+    } else {
+      reveal = -2; // start reveal on next frame
+      raf = requestAnimationFrame(frame);
+    }
 
     return {
       destroy() {
-        engine.destroy();
+        cancelAnimationFrame(raf);
         ro.disconnect();
         io.disconnect();
-        canvas.remove();
+        if (opts.interactive) {
+          container.removeEventListener('pointermove',  onMove);
+          container.removeEventListener('pointerleave', onLeave);
+          container.removeEventListener('pointerdown',  onDown);
+        }
+        el.remove();
       }
     };
   }
 
-  // ──────────────────────── WEB COMPONENT ──────────────────────────────────
-  // No Shadow DOM — the host IS the container. Children are slotted via
-  // normal DOM order (canvas inserted as firstChild, existing children follow).
-  if (!customElements.get('contour-lines')) {
-    class ContourLinesElement extends HTMLElement {
-      connectedCallback() {
-        // Apply host styles needed for canvas overlay
-        if (!this.style.position || this.style.position === 'static') {
-          this.style.position = 'relative';
-        }
-        this.style.overflow = 'hidden';
-        this.style.display = this.style.display || 'block';
-
-        // Create canvas overlay
-        this._canvas = document.createElement('canvas');
-        this._canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;z-index:0;';
-        this.insertBefore(this._canvas, this.firstChild);
-
-        // Bump existing children above canvas
-        for (const child of this.children) {
-          if (child !== this._canvas && !child.style.zIndex) {
-            child.style.position = child.style.position || 'relative';
-            child.style.zIndex = '1';
-          }
-        }
-
-        this._engine = new ContourEngine(this._canvas, this);
-
-        this._ro = new ResizeObserver(entries => {
-          const cr = entries[0].contentRect;
-          const w = Math.round(cr.width), h = Math.round(cr.height);
-          if (w > 0 && h > 0) this._engine.resize(w, h);
-        });
-        this._ro.observe(this);
-
-        this._io = new IntersectionObserver(entries => {
-          entries[0].isIntersecting ? this._engine.resume() : this._engine.stop();
-        }, { threshold: 0.01 });
-        this._io.observe(this);
-
-        const rect = this.getBoundingClientRect();
-        if (rect.width > 0 && rect.height > 0) this._engine.resize(rect.width, rect.height);
-        this._engine.start();
-      }
-
-      disconnectedCallback() {
-        if (this._engine) this._engine.destroy();
-        if (this._ro) this._ro.disconnect();
-        if (this._io) this._io.disconnect();
-        if (this._canvas) this._canvas.remove();
-      }
-    }
-
-    customElements.define('contour-lines', ContourLinesElement);
-  }
-
-  // Expose mount API
   window.ContourLines = { mount };
-
 })();
