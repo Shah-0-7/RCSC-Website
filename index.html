@@ -1424,12 +1424,8 @@
   </script>
   <script src="contour-lines.js"></script>
   <script>
-    // Mount ContourLines on the hero section as an animated topographic background
     window.addEventListener('DOMContentLoaded', function () {
-      var hero = document.getElementById('hero-section');
-      if (hero && window.ContourLines) {
-        ContourLines.mount(hero);
-      }
+      ContourLines.mountFixed({ color: '#242423', lines: 14, scale: 1, speed: 0.8 });
     });
   </script>
 
