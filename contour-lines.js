@@ -215,7 +215,7 @@
           grid[r * cols + c] = Math.min(1, Math.max(0, v));
         }
       }
-      return { grid, cols, rows };
+      return grid;
     }
 
     _draw(now) {
@@ -235,7 +235,7 @@
       const cols = Math.ceil(w / STEP) + 2;
       const rows = Math.ceil(h / STEP) + 2;
 
-      // Build contour paths
+      // Build contour paths — this.field is the raw Float32Array from _buildField
       const paths = [];
       for (let i = 0; i < LEVELS; i++) {
         const level = (i + 1) / (LEVELS + 1);
