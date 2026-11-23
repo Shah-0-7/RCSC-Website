@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-page="publication">
 
 <head>
   <meta charset="utf-8" />
@@ -44,25 +44,7 @@
       scroll-behavior: smooth;
     }
 
-    .nav-dropdown {
-      display: none;
-    }
-
-    .nav-dropdown-trigger:hover .nav-dropdown {
-      display: block;
-    }
-
-    .mobile-menu {
-      transform: scaleY(0);
-      transform-origin: top;
-      pointer-events: none;
-      transition: transform 0.2s;
-    }
-
-    .mobile-menu.open {
-      transform: scaleY(1);
-      pointer-events: auto;
-    }
+    .nav-dropdown-trigger:hover
 
     .publication-card {
       background: #2E2E2E;
@@ -157,65 +139,329 @@
 </head>
 
 <body class="font-Inter bg-white text-gray-900">
+<!-- ═══════════════════════════════════════════════════════════════════════
+     FLOATING PILL NAVBAR — Dribbble "Navbar Interaction" style
+     Replace PAGE_KEY with: index|about|activities|executive|blog|gallery|contact|publication
+     ═══════════════════════════════════════════════════════════════════════ -->
+<style>
+  /* ── Floating pill container ── */
+  #rcsc-nav {
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 6px 6px 10px;
+    background: rgba(15, 17, 22, 0.88);
+    backdrop-filter: blur(14px) saturate(180%);
+    -webkit-backdrop-filter: blur(14px) saturate(180%);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 9999px;
+    box-shadow: 0 8px 32px -4px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.08);
+    transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), opacity 0.4s ease, top 0.4s cubic-bezier(0.16,1,0.3,1);
+    white-space: nowrap;
+  }
+  #rcsc-nav.nav-hidden {
+    transform: translateX(-50%) translateY(-110%);
+    opacity: 0;
+    pointer-events: none;
+  }
 
-  <!-- NAVBAR -->
-  <nav class="fixed start-0 top-0 z-50 w-full border-b border-gray-200 bg-white">
-    <div class="container relative mx-auto flex flex-wrap items-center justify-between px-4 py-2 md:py-2.5">
-      <a class="z-50 flex items-center gap-2.5" href="index.html">
-        <img src="logo.png" class="h-14 w-14 object-contain transition-transform hover:scale-105" alt="RCSC Logo" />
-        <span class="text-xl md:text-2xl font-bold tracking-tight text-gray-900 hidden sm:inline">RCSC</span>
-      </a>
-      <div class="hidden lg:flex items-center gap-8">
-        <ul class="flex items-center gap-6 font-medium text-sm">
-          <li><a class="text-gray-900 hover:text-blue-500" href="index.html">Home</a></li>
-          <li><a class="text-gray-900 hover:text-blue-500" href="about.html">About</a></li>
-          <li class="relative nav-dropdown-trigger">
-            <button class="flex items-center gap-1 text-blue-500 hover:text-blue-600 font-semibold rcsc-nav-active">
-              Activities
-              <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 320 512">
-                <path
-                  d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
-              </svg>
-            </button>
-            <div class="nav-dropdown absolute left-0 top-full pt-2 z-50">
-              <ul class="bg-white rounded-lg shadow-2xl py-2 min-w-[150px] text-sm text-gray-700">
-                <li><a class="block px-4 py-2 hover:bg-gray-100 hover:text-blue-500" href="activities.html">Events</a></li>
-                <li><a class="block px-4 py-2 text-blue-500 font-semibold bg-blue-50" href="publication.html">Publication</a></li>
-              </ul>
-            </div>
-          </li>
-          <li><a class="text-gray-900 hover:text-blue-500" href="executive.html">Executives</a></li>
-          <li><a class="text-gray-900 hover:text-blue-500" href="blog.html">Blog</a></li>
-          <li><a class="text-gray-900 hover:text-blue-500" href="gallery.html">Gallery</a></li>
-          <li><a class="text-gray-900 hover:text-blue-500" href="contact.html">Contact</a></li>
-        </ul>
-      </div>
-      <div class="flex items-center gap-2">
-        <a class="rounded-lg border border-blue-600 bg-blue-500 px-4 py-2 text-sm font-medium text-white shadow-md transition hover:bg-blue-600 font-ShareTechTown"
-          href="#">Club</a>
-        <button onclick="document.getElementById('mobile-menu').classList.toggle('open')"
-          class="lg:hidden ml-2 inline-flex h-10 w-10 items-center justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-200">
-          <svg class="w-5 h-5" fill="none" viewBox="0 0 17 14">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M1 1h15M1 7h15M1 13h15" />
-          </svg>
-        </button>
-      </div>
-      <div id="mobile-menu"
-        class="mobile-menu lg:hidden fixed left-0 top-[68px] w-full bg-white border-b border-gray-200 pb-5 z-30">
-        <ul class="container mt-4 flex flex-col gap-1 rounded-lg border border-gray-100 bg-gray-50 p-4 font-medium">
-          <li><a class="block rounded px-3 py-2 text-gray-900 hover:bg-gray-200" href="index.html">Home</a></li>
-          <li><a class="block rounded px-3 py-2 text-gray-900 hover:bg-gray-200" href="about.html">About</a></li>
-          <li><a class="block rounded px-3 py-2 text-gray-900 hover:bg-gray-200" href="activities.html">Activities</a></li>
-          <li><a class="block rounded px-3 py-2 bg-blue-600 text-white" href="publication.html">Publications</a></li>
-          <li><a class="block rounded px-3 py-2 text-gray-900 hover:bg-gray-200" href="executive.html">Executives</a></li>
-          <li><a class="text-gray-900 hover:text-blue-500" href="blog.html">Blog</a></li>
-          <li><a class="text-gray-900 hover:text-blue-500" href="gallery.html">Gallery</a></li>
-          <li><a class="text-gray-900 hover:text-blue-500" href="contact.html">Contact</a></li>
-        </ul>
+  /* ── Logo ── */
+  #rcsc-nav .n-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    padding-right: 4px;
+    flex-shrink: 0;
+  }
+  #rcsc-nav .n-logo img {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+  }
+  #rcsc-nav .n-logo span {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.03em;
+  }
+
+  /* ── Pill links group ── */
+  #rcsc-nav .n-links {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.05);
+    border-radius: 9999px;
+    padding: 4px;
+  }
+
+  /* ── Sliding highlight ── */
+  #rcsc-nav .n-pill {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    height: calc(100% - 8px);
+    background: rgba(255,255,255,0.13);
+    border-radius: 9999px;
+    pointer-events: none;
+    transition: transform 0.42s cubic-bezier(0.16,1,0.3,1), width 0.42s cubic-bezier(0.16,1,0.3,1);
+    will-change: transform, width;
+  }
+
+  /* ── Nav links ── */
+  #rcsc-nav .n-link {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 7px 14px;
+    border-radius: 9999px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.55);
+    text-decoration: none;
+    transition: color 0.2s ease;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: inherit;
+  }
+  #rcsc-nav .n-link:hover,
+  #rcsc-nav .n-link.n-active { color: #fff; }
+
+  /* ── Dropdown ── */
+  #rcsc-nav .n-drop-wrap {
+    position: relative;
+  }
+  #rcsc-nav .n-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15,17,22,0.95);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    padding: 6px;
+    min-width: 150px;
+    box-shadow: 0 12px 32px -4px rgba(0,0,0,0.5);
+    backdrop-filter: blur(14px);
+  }
+  #rcsc-nav .n-drop-wrap:hover .n-dropdown,
+  #rcsc-nav .n-drop-wrap:focus-within .n-dropdown { display: block; }
+  #rcsc-nav .n-dropdown a {
+    display: block;
+    padding: 8px 14px;
+    border-radius: 8px;
+    color: rgba(255,255,255,0.65);
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+  }
+  #rcsc-nav .n-dropdown a:hover { background: rgba(255,255,255,0.08); color: #fff; }
+  #rcsc-nav .n-chevron {
+    width: 10px; height: 10px; opacity: 0.6;
+    transition: transform 0.2s;
+  }
+  #rcsc-nav .n-drop-wrap:hover .n-chevron { transform: rotate(180deg); }
+
+  /* ── Club CTA button ── */
+  #rcsc-nav .n-cta {
+    flex-shrink: 0;
+    padding: 7px 16px;
+    border-radius: 9999px;
+    background: #3b82f6;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.2s;
+    letter-spacing: 0.02em;
+  }
+  #rcsc-nav .n-cta:hover { background: #2563eb; transform: scale(1.04); }
+
+  /* ── Mobile hamburger ── */
+  #rcsc-nav .n-burger {
+    display: none;
+    background: rgba(255,255,255,0.08);
+    border: none;
+    border-radius: 9999px;
+    padding: 7px 10px;
+    cursor: pointer;
+    color: #fff;
+    align-items: center;
+    justify-content: center;
+  }
+  #rcsc-mobile-menu {
+    display: none;
+    position: fixed;
+    top: 72px;
+    left: 12px; right: 12px;
+    background: rgba(15,17,22,0.96);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 20px;
+    padding: 10px;
+    z-index: 9998;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+    backdrop-filter: blur(16px);
+  }
+  #rcsc-mobile-menu.open { display: block; }
+  #rcsc-mobile-menu a {
+    display: block;
+    padding: 11px 16px;
+    border-radius: 12px;
+    color: rgba(255,255,255,0.7);
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+  }
+  #rcsc-mobile-menu a:hover,
+  #rcsc-mobile-menu a.m-active { background: rgba(255,255,255,0.09); color: #fff; }
+
+  @media (max-width: 767px) {
+    #rcsc-nav .n-links { display: none; }
+    #rcsc-nav .n-burger { display: flex; }
+    #rcsc-nav { padding: 6px 6px 6px 10px; gap: 6px; }
+  }
+  /* On tablet hide some items */
+  @media (max-width: 1023px) and (min-width: 768px) {
+    #rcsc-nav .n-link { padding: 7px 10px; font-size: 12.5px; }
+  }
+
+  /* Page body top padding — push content below the floating nav */
+  body { padding-top: 0 !important; }
+</style>
+
+<nav id="rcsc-nav">
+  <!-- Logo -->
+  <a class="n-logo" href="index.html">
+    <img src="logo.png" alt="RCSC" />
+    <span>RCSC</span>
+  </a>
+
+  <!-- Desktop pill links -->
+  <div class="n-links" id="n-links">
+    <div class="n-pill" id="n-pill"></div>
+    <a class="n-link" href="index.html" data-page="index">Home</a>
+    <a class="n-link" href="about.html" data-page="about">About</a>
+    <div class="n-drop-wrap">
+      <button class="n-link" data-page="activities">
+        Activities
+        <svg class="n-chevron" fill="currentColor" viewBox="0 0 320 512"><path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z"/></svg>
+      </button>
+      <div class="n-dropdown">
+        <a href="activities.html">Events</a>
+        <a href="publication.html">Publication</a>
       </div>
     </div>
-  </nav>
+    <a class="n-link" href="executive.html" data-page="executive">Executives</a>
+    <a class="n-link" href="blog.html" data-page="blog">Blog</a>
+    <a class="n-link" href="gallery.html" data-page="gallery">Gallery</a>
+    <a class="n-link" href="contact.html" data-page="contact">Contact</a>
+  </div>
+
+  <!-- CTA + Burger -->
+  <a class="n-cta" href="#">Club</a>
+  <button class="n-burger" onclick="document.getElementById('rcsc-mobile-menu').classList.toggle('open')" aria-label="Menu">
+    <svg width="18" height="14" fill="none" viewBox="0 0 18 14"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M1 1h16M1 7h16M1 13h16"/></svg>
+  </button>
+</nav>
+
+<!-- Mobile menu -->
+<div id="rcsc-mobile-menu">
+  <a href="index.html" data-page="index">Home</a>
+  <a href="about.html" data-page="about">About</a>
+  <a href="activities.html" data-page="activities">Events</a>
+  <a href="publication.html" data-page="publication">Publication</a>
+  <a href="executive.html" data-page="executive">Executives</a>
+  <a href="blog.html" data-page="blog">Blog</a>
+  <a href="gallery.html" data-page="gallery">Gallery</a>
+  <a href="contact.html" data-page="contact">Contact</a>
+</div>
+
+<script>
+(function () {
+  // ── Active page detection ──
+  const page = document.documentElement.dataset.page || '';
+  document.querySelectorAll('[data-page]').forEach(el => {
+    if (el.dataset.page === page) el.classList.add('n-active', 'm-active');
+  });
+
+  // ── Sliding pill ──
+  const linksEl = document.getElementById('n-links');
+  const pill = document.getElementById('n-pill');
+  let activeLink = linksEl ? linksEl.querySelector('.n-active') : null;
+
+  function movePill(el, instant) {
+    if (!el || !pill || !linksEl) return;
+    const lRect = linksEl.getBoundingClientRect();
+    const eRect = el.getBoundingClientRect();
+    const left = eRect.left - lRect.left - 4; // offset by padding
+    if (instant) {
+      pill.style.transition = 'none';
+      pill.style.transform = `translateX(${left}px)`;
+      pill.style.width = eRect.width + 'px';
+      pill.getBoundingClientRect(); // force reflow
+      pill.style.transition = '';
+    } else {
+      pill.style.transform = `translateX(${left}px)`;
+      pill.style.width = eRect.width + 'px';
+    }
+  }
+
+  // Position on load
+  if (activeLink) movePill(activeLink, true);
+  else if (linksEl) {
+    // hide pill if no active
+    pill.style.width = '0';
+    pill.style.opacity = '0';
+  }
+
+  // Hover — slide to hovered item
+  if (linksEl) {
+    linksEl.querySelectorAll('.n-link').forEach(link => {
+      link.addEventListener('mouseenter', () => movePill(link));
+    });
+    linksEl.addEventListener('mouseleave', () => {
+      if (activeLink) movePill(activeLink);
+      else { pill.style.width = '0'; pill.style.opacity = '0'; }
+    });
+  }
+
+  // ── Scroll hide/show ──
+  let lastY = window.scrollY;
+  let ticking = false;
+  const nav = document.getElementById('rcsc-nav');
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      const y = window.scrollY;
+      if (y > lastY && y > 80) nav.classList.add('nav-hidden');
+      else nav.classList.remove('nav-hidden');
+      lastY = y;
+      ticking = false;
+    });
+  }, { passive: true });
+
+  // ── Resize: reposition pill ──
+  window.addEventListener('resize', () => {
+    if (activeLink) movePill(activeLink, true);
+  });
+})();
+</script>
+
 
   <!-- PAGE HERO -->
   <section class="bg-[#F6F6F6] pt-[80px]">
