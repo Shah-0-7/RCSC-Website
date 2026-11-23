@@ -1,0 +1,169 @@
+/* ══ RCSC Theme System ═══════════════════════════════════════════════════════
+   Load this BEFORE Tailwind on every page.
+   Light mode = default. Dark mode = html[data-theme="dark"].
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Transition for smooth theme switch ──────────────────────────────────── */
+*, *::before, *::after {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease,
+              box-shadow 0.3s ease;
+}
+
+/* ── Light mode base (default) ───────────────────────────────────────────── */
+:root {
+  --rcsc-bg:          #ffffff;
+  --rcsc-bg-alt:      #f9fafb;
+  --rcsc-bg-card:     #ffffff;
+  --rcsc-text:        #111827;
+  --rcsc-text-muted:  #6b7280;
+  --rcsc-text-light:  #9ca3af;
+  --rcsc-border:      #e5e7eb;
+  --rcsc-border-dark: #d1d5db;
+  --rcsc-shadow:      rgba(0,0,0,0.08);
+  --rcsc-primary:     #3b82f6;
+  --rcsc-contour-color: #333333;
+  --rcsc-contour-bg:  #ffffff;
+}
+
+/* ── Dark mode ───────────────────────────────────────────────────────────── */
+html[data-theme="dark"] {
+  --rcsc-bg:          #000000;
+  --rcsc-bg-alt:      #0a0a0a;
+  --rcsc-bg-card:     #111111;
+  --rcsc-text:        #f9fafb;
+  --rcsc-text-muted:  #9ca3af;
+  --rcsc-text-light:  #6b7280;
+  --rcsc-border:      #1f1f1f;
+  --rcsc-border-dark: #2d2d2d;
+  --rcsc-shadow:      rgba(0,0,0,0.5);
+  --rcsc-primary:     #60a5fa;
+  --rcsc-contour-color: #ffffff;
+  --rcsc-contour-bg:  #000000;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   GLOBAL OVERRIDES — applied to Tailwind utility classes
+   ══════════════════════════════════════════════════════════════════════════ */
+
+html[data-theme="dark"] body {
+  background-color: var(--rcsc-bg) !important;
+  color: var(--rcsc-text) !important;
+}
+
+/* ── Background colours ──────────────────────────────────────────────────── */
+html[data-theme="dark"] .bg-white          { background-color: var(--rcsc-bg-card)  !important; }
+html[data-theme="dark"] .bg-gray-50        { background-color: var(--rcsc-bg-alt)   !important; }
+html[data-theme="dark"] .bg-gray-100       { background-color: #1a1a1a              !important; }
+html[data-theme="dark"] .bg-gray-200       { background-color: #222222              !important; }
+html[data-theme="dark"] .bg-gray-800       { background-color: #1a1a1a              !important; }
+html[data-theme="dark"] .bg-gray-900       { background-color: #0d0d0d              !important; }
+html[data-theme="dark"] .bg-black          { background-color: #000000              !important; }
+html[data-theme="dark"] .bg-zinc-700       { background-color: #2a2a2a              !important; }
+
+/* ── Text colours ────────────────────────────────────────────────────────── */
+html[data-theme="dark"] .text-gray-900     { color: var(--rcsc-text)       !important; }
+html[data-theme="dark"] .text-gray-800     { color: #e5e7eb                !important; }
+html[data-theme="dark"] .text-gray-700     { color: #d1d5db                !important; }
+html[data-theme="dark"] .text-gray-600     { color: var(--rcsc-text-muted) !important; }
+html[data-theme="dark"] .text-gray-500     { color: #6b7280                !important; }
+html[data-theme="dark"] .text-gray-400     { color: #9ca3af                !important; }
+html[data-theme="dark"] .text-black        { color: var(--rcsc-text)       !important; }
+
+/* ── Border colours ──────────────────────────────────────────────────────── */
+html[data-theme="dark"] .border-gray-200   { border-color: var(--rcsc-border)      !important; }
+html[data-theme="dark"] .border-gray-300   { border-color: var(--rcsc-border-dark) !important; }
+html[data-theme="dark"] .border-gray-100   { border-color: #1a1a1a                 !important; }
+
+/* ── Shadows ─────────────────────────────────────────────────────────────── */
+html[data-theme="dark"] .shadow-md         { box-shadow: 0 4px 16px rgba(0,0,0,0.6)   !important; }
+html[data-theme="dark"] .shadow-lg         { box-shadow: 0 8px 24px rgba(0,0,0,0.7)   !important; }
+html[data-theme="dark"] .shadow-xl         { box-shadow: 0 12px 32px rgba(0,0,0,0.75) !important; }
+html[data-theme="dark"] .shadow-2xl        { box-shadow: 0 16px 48px rgba(0,0,0,0.8)  !important; }
+
+/* ── White-background floating elements (social buttons, logo circles etc.) */
+html[data-theme="dark"] .rounded-full.bg-white.shadow-\[5px_5px_20px_15px_\#00000024\] {
+  background-color: #1a1a1a !important;
+  box-shadow: 0 0 20px rgba(255,255,255,0.05) !important;
+}
+html[data-theme="dark"] .bg-white\/10      { background-color: rgba(255,255,255,0.08) !important; }
+html[data-theme="dark"] .bg-white\/20      { background-color: rgba(255,255,255,0.12) !important; }
+html[data-theme="dark"] .bg-black\/20      { background-color: rgba(255,255,255,0.05) !important; }
+
+/* ── Cards / sections ────────────────────────────────────────────────────── */
+html[data-theme="dark"] .dept-card {
+  background-color: #111111 !important;
+  border-color: #222222    !important;
+}
+html[data-theme="dark"] .dept-card:hover {
+  background-color: #1a1a1a !important;
+  border-color: var(--rcsc-primary) !important;
+}
+
+/* ── Newsletter card ─────────────────────────────────────────────────────── */
+html[data-theme="dark"] #nwslttr_crd {
+  background: linear-gradient(135deg, #0a1628 0%, #000000 100%) !important;
+}
+
+/* ── Hover: learn more button ────────────────────────────────────────────── */
+html[data-theme="dark"] .learn-more-button:hover {
+  background: #1a1a1a !important;
+  border-color: #1a1a1a !important;
+}
+
+/* ── Input fields ────────────────────────────────────────────────────────── */
+html[data-theme="dark"] input,
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] select {
+  background-color: #111111 !important;
+  color: var(--rcsc-text)   !important;
+  border-color: #2d2d2d     !important;
+}
+html[data-theme="dark"] input::placeholder,
+html[data-theme="dark"] textarea::placeholder {
+  color: #4b5563 !important;
+}
+
+/* ── Generic white-bg rounded cards / panels ─────────────────────────────── */
+html[data-theme="dark"] [class*="rounded"][class*="bg-white"]:not(.n-logo):not(#rcsc-nav):not(img) {
+  background-color: #111111 !important;
+}
+html[data-theme="dark"] [class*="rounded-2xl"][class*="bg-white"],
+html[data-theme="dark"] [class*="rounded-xl"][class*="bg-white"],
+html[data-theme="dark"] [class*="rounded-lg"][class*="bg-white"] {
+  background-color: #111111 !important;
+}
+
+/* ── Misc text overrides ─────────────────────────────────────────────────── */
+html[data-theme="dark"] .text-gray-800 { color: #e5e7eb !important; }
+
+/* ── Executive page cards ────────────────────────────────────────────────── */
+html[data-theme="dark"] .exec-card,
+html[data-theme="dark"] [class*="card"] {
+  background-color: #111111 !important;
+  border-color: #222222    !important;
+}
+
+/* ── Tables ──────────────────────────────────────────────────────────────── */
+html[data-theme="dark"] table th { background-color: #1a1a1a !important; color: #f9fafb !important; }
+html[data-theme="dark"] table td { border-color: #222222    !important; color: #d1d5db !important; }
+html[data-theme="dark"] table tr:nth-child(even) { background-color: #0d0d0d !important; }
+
+/* ── Dark mode: logo circles on floating panel stay visible ─────────────── */
+html[data-theme="dark"] .grid.place-items-center.rounded-full.bg-white {
+  background-color: #1a1a1a !important;
+}
+
+/* ── Section backgrounds ─────────────────────────────────────────────────── */
+html[data-theme="dark"] section,
+html[data-theme="dark"] main   { background-color: transparent !important; }
+
+/* ── Link colours in content ─────────────────────────────────────────────── */
+html[data-theme="dark"] a.group:hover h2,
+html[data-theme="dark"] a.group:hover .group-hover\:text-blue-600 {
+  color: var(--rcsc-primary) !important;
+}
+
+/* ── Contour lines canvas ────────────────────────────────────────────────── */
+html[data-theme="dark"] #rcsc-contour-canvas {
+  background: #000000;
+}

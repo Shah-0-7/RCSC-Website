@@ -31,8 +31,17 @@
   }
 
   // ── Mount ─────────────────────────────────────────────────────────────────
+  function getThemeColor(opts) {
+    // If opts.color is 'auto' (or no explicit color), read from CSS variable
+    if (!opts.color || opts.color === 'auto') {
+      var v = getComputedStyle(document.documentElement).getPropertyValue('--rcsc-contour-color').trim();
+      return v || '#242423';
+    }
+    return opts.color;
+  }
+
   function mount(container, opts) {
-    opts = Object.assign({ color: '#242423', lines: 14, scale: 1, speed: 1, lift: 1, interactive: true }, opts);
+    opts = Object.assign({ color: 'auto', lines: 14, scale: 1, speed: 1, lift: 1, interactive: true }, opts);
 
     // Ensure container is a positioned box
     const cs = getComputedStyle(container);
@@ -173,7 +182,8 @@
       }
 
       ctx.lineCap = 'round';
-      ctx.strokeStyle = opts.color;
+      const drawColor = getThemeColor(opts);
+      ctx.strokeStyle = drawColor;
       ctx.globalAlpha = 0.16;
       ctx.lineWidth = 1;
       ctx.stroke(path);
@@ -184,7 +194,7 @@
       // Pointer glow
       if (glow.a > 0.01) {
         const g = ctx.createRadialGradient(glow.x, glow.y, 0, glow.x, glow.y, 150);
-        g.addColorStop(0, opts.color);
+        g.addColorStop(0, drawColor);
         g.addColorStop(1, 'transparent');
         ctx.strokeStyle = g;
         ctx.globalAlpha = 0.6 * glow.a;
@@ -295,7 +305,7 @@
    * The canvas sits at z-index:-1 behind all page content.
    */
   function mountFixed(opts) {
-    opts = Object.assign({ color: '#242423', lines: 14, scale: 1, speed: 1, lift: 1, interactive: true }, opts);
+    opts = Object.assign({ color: 'auto', lines: 14, scale: 1, speed: 1, lift: 1, interactive: true }, opts);
 
     const el = document.createElement('canvas');
     el.setAttribute('aria-hidden', 'true');
@@ -402,7 +412,8 @@
         ctx.clip();
       }
       ctx.lineCap = 'round';
-      ctx.strokeStyle = opts.color;
+      const drawColor = getThemeColor(opts);
+      ctx.strokeStyle = drawColor;
       ctx.globalAlpha = 0.16;
       ctx.lineWidth = 1;
       ctx.stroke(path);
@@ -411,7 +422,7 @@
       ctx.stroke(major);
       if (glow.a > 0.01) {
         const g = ctx.createRadialGradient(glow.x, glow.y, 0, glow.x, glow.y, 150);
-        g.addColorStop(0, opts.color);
+        g.addColorStop(0, drawColor);
         g.addColorStop(1, 'transparent');
         ctx.strokeStyle = g;
         ctx.globalAlpha = 0.6 * glow.a;
@@ -452,6 +463,8 @@
     }
 
     window.addEventListener('resize', () => { size(); if (still) draw(); });
+    // Re-draw immediately when theme changes so line colour updates
+    window.addEventListener('rcsc-theme-change', draw);
 
     size();
     if (still) { time = 4; draw(); }
@@ -465,6 +478,7 @@
           window.removeEventListener('pointerleave', onLeave);
         }
         window.removeEventListener('resize', size);
+        window.removeEventListener('rcsc-theme-change', draw);
         el.remove();
       }
     };

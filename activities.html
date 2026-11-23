@@ -7,6 +7,7 @@
   <title>Activities | RCSC</title>
   <meta name="description" content="RCSC Activities — Events, Workshops, Projects, Publications" />
   <link rel="icon" href="logo.png" />
+  <link rel="stylesheet" href="theme.css" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -136,6 +137,13 @@
 
 <body class="font-Inter bg-white text-gray-900">
 <!-- [RCSC-NAV-START] -->
+<!-- Theme: apply before render to prevent FOUC -->
+<script>
+  (function(){
+    var t = localStorage.getItem('rcsc-theme') || 'light';
+    document.documentElement.dataset.theme = t;
+  })();
+</script>
 <style id="rcsc-nav-styles">
   /* ══ RCSC Floating Pill Navbar ══════════════════════════════════════════ */
 
@@ -243,6 +251,22 @@
   /* ── Items only shown on mobile ───────────────────────────────────────── */
   .n-mobile-only { display: none; }
 
+  /* ── Theme toggle button ─────────────────────────────────────────────── */
+  #n-theme-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px; flex-shrink: 0;
+    background: rgba(255,255,255,0.08); border-radius: 9999px;
+    border: none; cursor: pointer;
+    color: rgba(255,255,255,0.75);
+    transition: background 0.2s, color 0.2s, transform 0.4s;
+  }
+  #n-theme-btn:hover { background: rgba(255,255,255,0.15); color: #fff; }
+  #n-theme-btn svg  { width: 16px; height: 16px; }
+  #n-theme-btn .icon-sun  { display: none; }
+  #n-theme-btn .icon-moon { display: block; }
+  html[data-theme="dark"] #n-theme-btn .icon-sun  { display: block; }
+  html[data-theme="dark"] #n-theme-btn .icon-moon { display: none; }
+
   /* ── Hamburger / overflow menu ────────────────────────────────────────── */
   .n-menu-wrap {
     display: none; /* desktop: hidden */
@@ -300,7 +324,7 @@
       left: 10px;
       right: 10px;
       transform: none;
-      padding: 8px 6px;
+      padding: 8px 10px 8px 6px; /* extra right so hamburger isn't clipped */
       gap: 4px;
     }
 
@@ -495,6 +519,22 @@
       </a>
     </div>
   </div>
+
+  <!-- ── Theme toggle (always visible) ── -->
+  <button id="n-theme-btn" aria-label="Toggle dark mode">
+    <!-- Moon: shown in light mode -->
+    <svg class="icon-moon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+    <!-- Sun: shown in dark mode -->
+    <svg class="icon-sun" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="5"/>
+      <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+      <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+    </svg>
+  </button>
 </nav>
 
 <script id="rcsc-nav-script">
@@ -575,6 +615,26 @@
 
     window.addEventListener('resize', function() {
       if (topActive) movePill(topActive, true);
+    });
+  }
+
+  /* ── Theme toggle ────────────────────────────────────────────────────── */
+  var themeBtn = document.getElementById('n-theme-btn');
+  if (themeBtn) {
+    // Apply saved theme before first paint
+    var savedTheme = localStorage.getItem('rcsc-theme') || 'light';
+    document.documentElement.dataset.theme = savedTheme;
+
+    themeBtn.addEventListener('click', function() {
+      var next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+      document.documentElement.dataset.theme = next;
+      localStorage.setItem('rcsc-theme', next);
+      // Notify contour lines to repaint with new colour
+      if (window.ContourLines && ContourLines._instances) {
+        ContourLines._instances.forEach(function(inst) { inst.themeChanged && inst.themeChanged(); });
+      }
+      // Dispatch custom event for any page-specific listeners
+      window.dispatchEvent(new CustomEvent('rcsc-theme-change', { detail: { theme: next } }));
     });
   }
 
@@ -926,7 +986,7 @@
 
 
   <script src="contour-lines.js"></script>
-  <script>window.addEventListener('DOMContentLoaded',function(){ContourLines.mountFixed({color:'#242423',lines:14,scale:1,speed:0.8});});</script>
+  <script>window.addEventListener('DOMContentLoaded',function(){ContourLines.mountFixed({color: 'auto',lines:14,scale:1,speed:0.8});});</script>
 </body>
 
 </html>
