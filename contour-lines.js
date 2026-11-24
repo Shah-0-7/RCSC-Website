@@ -55,13 +55,8 @@
     container.insertBefore(el, container.firstChild);
 
     const ctx = el.getContext('2d');
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const still = reduced;
-
-    let w = 0, h = 0, cols = 0, rows = 0;
-    let field = new Float32Array(0);
-    let raf = 0;
-    let visible = true;
+    // Always animate — decorative background, reduced-motion preference not applied
+    const still = false;
     let last = performance.now();
     let time = 0;
     let idle = 0;
@@ -313,8 +308,8 @@
     document.body.insertBefore(el, document.body.firstChild);
 
     const ctx = el.getContext('2d');
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const still = reduced;
+    // Always animate — decorative background, reduced-motion preference not applied
+    const still = false;
 
     let w = 0, h = 0, cols = 0, rows = 0;
     let field = new Float32Array(0);
