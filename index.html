@@ -391,6 +391,22 @@
       transform: translateY(-4px) !important;
       box-shadow: 0 16px 32px -4px rgba(0, 0, 0, 0.12) !important;
     }
+
+    /* ── Frosted Blog Cards ── */
+    .frosted-blog-card {
+      background-color: rgba(246, 246, 246, 0.6) !important;
+      backdrop-filter: blur(16px) !important;
+      -webkit-backdrop-filter: blur(16px) !important;
+      border: 1px solid rgba(255, 255, 255, 0.8) !important;
+      box-shadow: 0 10px 32px -4px rgba(0, 0, 0, 0.06) !important;
+    }
+    html[data-theme="dark"] .frosted-blog-card {
+      background-color: rgba(18, 18, 18, 0.6) !important;
+      backdrop-filter: blur(16px) !important;
+      -webkit-backdrop-filter: blur(16px) !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      box-shadow: 0 10px 32px -4px rgba(0, 0, 0, 0.45) !important;
+    }
   </style>
   <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css" />
   <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
@@ -1834,15 +1850,15 @@
       const grid = document.getElementById('latest-blogs-container');
       if (grid) {
         grid.innerHTML = top3.map(p => `
-          <a class="group flex flex-col rounded-2xl bg-white p-5 shadow-md transition-all hover:-translate-y-0.5 hover:shadow-lg" href="blog.html">
+          <a class="group frosted-blog-card flex flex-col rounded-2xl p-5 transition-all hover:-translate-y-1 hover:shadow-xl" href="blog.html">
             <img src="${p.thumbnail || 'logo.png'}" alt="${p.title}" class="mb-4 h-40 w-full rounded-xl object-cover" onerror="this.src='logo.png'" />
             <div class="flex flex-wrap items-center gap-2">
-              ${(p.tags || 'Club').split(',').filter(Boolean).map(t => `<span class="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-600">${t.trim()}</span>`).join('')}
+              ${(p.tags || 'Club').split(',').filter(Boolean).map(t => `<span class="rounded-full bg-blue-50 dark:bg-blue-950/50 px-2.5 py-0.5 text-xs font-medium text-blue-600 dark:text-blue-400">${t.trim()}</span>`).join('')}
             </div>
-            <h2 class="mt-2 font-sans text-xl font-bold leading-snug text-gray-900 transition-colors group-hover:text-blue-600">
+            <h2 class="mt-2 font-sans text-xl font-bold leading-snug text-gray-900 dark:text-white transition-colors group-hover:text-blue-600">
               ${p.title}
             </h2>
-            <p class="mt-1 line-clamp-3 text-sm text-gray-600">
+            <p class="mt-1 line-clamp-3 text-sm text-gray-600 dark:text-gray-400">
               ${p.excerpt || p.content || ''}
             </p>
             <div class="mt-auto flex items-center gap-2 pt-3 text-xs text-gray-400">
