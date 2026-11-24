@@ -228,3 +228,28 @@ html[data-theme="dark"] .fixed a[target="_blank"] svg { fill: #ffffff !important
   .fixed.right-0.top-\[50\%\] .gap-3 { gap: 0.4rem !important; }
   .fixed.right-0.top-\[50\%\] .mr-2  { margin-right: 0.25rem !important; }
 }
+
+/* ── Page Transitions (excludes navbar and theme toggle from fade) ────────── */
+@keyframes rcsc-fade-in  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes rcsc-fade-out { from { opacity: 1; } to { opacity: 0; } }
+
+body.page-leaving {
+  pointer-events: none;
+}
+
+body > *:not(#rcsc-nav):not(#rcsc-theme-fab):not(#rcsc-pixelblast-canvas):not(#rcsc-contour-canvas):not(script):not(style) {
+  animation: rcsc-fade-in 0.25s ease;
+}
+
+body.page-leaving > *:not(#rcsc-nav):not(#rcsc-theme-fab):not(#rcsc-pixelblast-canvas):not(#rcsc-contour-canvas):not(script):not(style) {
+  opacity: 0 !important;
+  transition: opacity 0.18s ease !important;
+}
+
+#rcsc-nav,
+#rcsc-theme-fab,
+#rcsc-pixelblast-canvas,
+#rcsc-contour-canvas {
+  opacity: 1 !important;
+  animation: none !important;
+}

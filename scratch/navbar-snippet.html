@@ -58,9 +58,11 @@
     position: absolute; top: 4px; left: 0; height: calc(100% - 8px);
     background: rgba(255,255,255,0.14); border-radius: 9999px;
     pointer-events: none;
-    transition: transform 0.42s cubic-bezier(0.16,1,0.3,1),
-                width   0.42s cubic-bezier(0.16,1,0.3,1);
-    will-change: transform, width;
+    opacity: 0;
+    transition: transform 0.38s cubic-bezier(0.16,1,0.3,1),
+                width   0.38s cubic-bezier(0.16,1,0.3,1),
+                opacity 0.15s ease;
+    will-change: transform, width, opacity;
   }
 
   /* ── Desktop link ─────────────────────────────────────────────────────── */
@@ -429,61 +431,112 @@
   /* ── Sliding pill ────────────────────────────────────────────────────── */
   const topLinks = document.getElementById('n-links');
   const topPill  = document.getElementById('n-pill');
+  let topActive  = null;
+  let isNavigating = false;
+
+  function movePill(el, instant) {
+    if (!el || !topPill || !topLinks) return;
+    const lRect = topLinks.getBoundingClientRect();
+    const eRect = el.getBoundingClientRect();
+    const left  = eRect.left - lRect.left;
+    if (instant) {
+      topPill.style.transition = 'none';
+      topPill.style.transform  = 'translateX(' + left + 'px)';
+      topPill.style.width      = eRect.width + 'px';
+      topPill.style.opacity    = '1';
+      topPill.getBoundingClientRect(); /* force reflow */
+      topPill.style.transition = '';
+    } else {
+      topPill.style.transform = 'translateX(' + left + 'px)';
+      topPill.style.width     = eRect.width + 'px';
+      topPill.style.opacity   = '1';
+    }
+  }
+
+  function activateNav(targetEl, animate) {
+    if (!targetEl) return;
+    isNavigating = true; /* Permanently lock so hover/mouseleave cannot revert */
+
+    /* Find corresponding topLink if target is from dropdown or menu */
+    let topLink = targetEl;
+    const pageKey = targetEl.dataset.page;
+    if (topLinks && !topLink.classList.contains('n-link') && pageKey) {
+      topLink = topLinks.querySelector(`.n-link[data-page="${pageKey}"]`) || targetEl;
+    }
+
+    /* Remove n-active from all items */
+    if (topLinks) {
+      topLinks.querySelectorAll('.n-link').forEach(l => l.classList.remove('n-active'));
+    }
+    const menuBtn  = document.getElementById('n-menu-btn');
+    const menuDrop = document.getElementById('n-menu-dropdown');
+    if (menuBtn) menuBtn.classList.remove('n-active');
+    if (menuDrop) menuDrop.querySelectorAll('a').forEach(a => a.classList.remove('n-active'));
+
+    /* Apply active class */
+    targetEl.classList.add('n-active');
+    if (topLink !== targetEl) topLink.classList.add('n-active');
+
+    /* Update topActive reference */
+    topActive = topLinks ? topLinks.querySelector('.n-link.n-active') : null;
+
+    /* Hamburger-specific items (About / Blog) */
+    if (pageKey === 'about' || pageKey === 'blog') {
+      if (menuBtn) menuBtn.classList.add('n-active');
+      if (topPill) {
+        topPill.style.width   = '0';
+        topPill.style.opacity = '0';
+      }
+      return;
+    }
+
+    /* Move pill to target link immediately and stay there */
+    if (topActive && topPill) {
+      movePill(topActive, !animate);
+    }
+  }
+
+  /* Expose globally for page-level scripts */
+  window.__rcscActivateNav = activateNav;
 
   if (topLinks && topPill) {
     topLinks.querySelectorAll('[data-page]').forEach(el => {
       if (matchesPage(el.dataset.page)) el.classList.add('n-active');
     });
 
-    const topActive = topLinks.querySelector('.n-active');
-
-    function movePill(el, instant) {
-      if (!el || !topPill || !topLinks) return;
-      const lRect = topLinks.getBoundingClientRect();
-      const eRect = el.getBoundingClientRect();
-      const left  = eRect.left - lRect.left;
-      if (instant) {
-        topPill.style.transition = 'none';
-        topPill.style.transform  = 'translateX(' + left + 'px)';
-        topPill.style.width      = eRect.width + 'px';
-        topPill.getBoundingClientRect(); /* force reflow */
-        topPill.style.transition = '';
-      } else {
-        topPill.style.transform = 'translateX(' + left + 'px)';
-        topPill.style.width     = eRect.width + 'px';
-      }
-    }
+    topActive = topLinks.querySelector('.n-active');
 
     if (topActive) {
-      /* On mobile: briefly disable text transition so pill measures expanded width */
+      /* Position synchronously on load before paint */
       var isMobile = window.innerWidth <= 767;
       if (isMobile) {
         topLinks.querySelectorAll('.n-text').forEach(function(t) {
           t.style.transition = 'none';
         });
+        topLinks.getBoundingClientRect();
       }
-      requestAnimationFrame(function () {
-        movePill(topActive, true);
-        requestAnimationFrame(function () {
-          if (isMobile) {
-            topLinks.querySelectorAll('.n-text').forEach(function(t) {
-              t.style.transition = '';
-            });
-          }
-        });
-      });
+      movePill(topActive, true);
+      if (isMobile) {
+        setTimeout(function() {
+          topLinks.querySelectorAll('.n-text').forEach(function(t) {
+            t.style.transition = '';
+          });
+        }, 50);
+      }
     } else {
       topPill.style.width   = '0';
       topPill.style.opacity = '0';
     }
 
-    /* Desktop: hover slides the pill */
+    /* Desktop: hover slides the pill (only while not navigating) */
     topLinks.querySelectorAll('.n-link').forEach(function(link) {
       link.addEventListener('mouseenter', function() {
+        if (isNavigating) return;
         if (window.innerWidth >= 768) movePill(link, false);
       });
     });
     topLinks.addEventListener('mouseleave', function() {
+      if (isNavigating) return;
       if (window.innerWidth >= 768) {
         if (topActive) movePill(topActive, false);
         else { topPill.style.width = '0'; topPill.style.opacity = '0'; }
@@ -494,6 +547,16 @@
       if (topActive) movePill(topActive, true);
     });
   }
+
+  /* Attach click listeners to all navbar links to activate immediately */
+  document.querySelectorAll('#rcsc-nav a[href], #rcsc-nav button.n-link').forEach(function(el) {
+    el.addEventListener('click', function() {
+      if (el.tagName === 'BUTTON' && el.nextElementSibling && el.nextElementSibling.classList.contains('n-dropdown')) {
+        return;
+      }
+      activateNav(el, true);
+    });
+  });
 
   /* ── Theme toggle (FAB on desktop, hamburger row on mobile) ─────────── */
   var themeBtn = document.getElementById('n-theme-btn'); // legacy — remove if exists
