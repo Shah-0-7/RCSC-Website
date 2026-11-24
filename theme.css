@@ -167,3 +167,64 @@ html[data-theme="dark"] a.group:hover .group-hover\:text-blue-600 {
 html[data-theme="dark"] #rcsc-contour-canvas {
   background: #000000;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   BELL ICON & FLOATING SIDEBAR — dark mode
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* Bell anchor and SVG fill */
+html[data-theme="dark"] a.text-black,
+html[data-theme="dark"] .bell-part,
+html[data-theme="dark"] .bellSVG { color: #ffffff !important; fill: #ffffff !important; }
+
+/* Floating sidebar circles */
+html[data-theme="dark"] .fixed .rounded-full.bg-white.p-1,
+html[data-theme="dark"] .fixed .rounded-full.bg-white {
+  background-color: #1a1a1a !important;
+  box-shadow: 0 0 20px rgba(255,255,255,0.04) !important;
+}
+
+/* Social icons inside sidebar */
+html[data-theme="dark"] .fixed a svg,
+html[data-theme="dark"] .fixed a[target="_blank"] svg { fill: #ffffff !important; color: #ffffff !important; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MOBILE SIZING — reduce fonts and spacing
+   Only applies at max-width: 767px
+   ══════════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 767px) {
+  /* Scale down hero headline */
+  .text-3xl { font-size: 1.5rem !important; }   /* 24px instead of 30px */
+  .text-4xl { font-size: 1.75rem !important; }  /* 28px instead of 36px */
+  .text-5xl { font-size: 2rem !important; }     /* 32px instead of 48px */
+  .text-6xl { font-size: 2.25rem !important; }  /* 36px instead of 60px */
+  .text-7xl { font-size: 2.5rem !important; }   /* 40px instead of 72px */
+  .text-2xl { font-size: 1.25rem !important; }  /* 20px instead of 24px */
+
+  /* Tighten container padding */
+  .container { padding-left: 1rem !important; padding-right: 1rem !important; }
+  .px-6  { padding-left: 1rem !important; padding-right: 1rem !important; }
+  .px-8  { padding-left: 1rem !important; padding-right: 1rem !important; }
+  .px-10 { padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
+
+  /* Reduce top padding that pushes content below nav */
+  .pt-24, .pt-28, .pt-32 { padding-top: 5rem !important; }
+  .mt-24, .mt-28, .mt-32 { margin-top: 5rem !important; }
+
+  /* Scale down department/feature cards */
+  .dept-card { padding: 1rem !important; }
+  .dept-card .text-lg { font-size: 0.95rem !important; }
+
+  /* Tighten section vertical padding */
+  .py-16 { padding-top: 2.5rem !important; padding-bottom: 2.5rem !important; }
+  .py-20 { padding-top: 3rem !important;   padding-bottom: 3rem !important; }
+  .py-24 { padding-top: 3rem !important;   padding-bottom: 3rem !important; }
+
+  /* Floating sidebar: smaller on mobile */
+  .fixed.right-0.top-\[50\%\] .w-8 { width: 1.5rem !important; }
+  .fixed.right-0.top-\[50\%\] svg  { width: 1rem !important; height: 1rem !important; }
+  .fixed.right-0.top-\[50\%\] .p-1 { padding: 0.15rem !important; }
+  .fixed.right-0.top-\[50\%\] .gap-3 { gap: 0.4rem !important; }
+  .fixed.right-0.top-\[50\%\] .mr-2  { margin-right: 0.25rem !important; }
+}

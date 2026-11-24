@@ -7,7 +7,7 @@
   <title>Gallery | RCSC</title>
   <meta name="description" content="RCSC Event Gallery — Moments from our events and workshops" />
   <link rel="icon" href="logo.png" />
-  <link rel="stylesheet" href="theme.css" />
+    <link rel="stylesheet" href="theme.css" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -309,21 +309,34 @@
   /* ── Items only shown on mobile ───────────────────────────────────────── */
   .n-mobile-only { display: none; }
 
-  /* ── Theme toggle button ─────────────────────────────────────────────── */
-  #n-theme-btn {
+  /* ── Floating theme toggle (outside nav) ─────────────────────────────── */
+  #rcsc-theme-fab {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 9999;
     display: flex; align-items: center; justify-content: center;
-    width: 36px; height: 36px; flex-shrink: 0;
-    background: rgba(255,255,255,0.08); border-radius: 9999px;
-    border: none; cursor: pointer;
+    width: 50px; height: 50px;
+    background: rgba(10, 11, 13, 0.96);
+    backdrop-filter: blur(14px) saturate(180%);
+    -webkit-backdrop-filter: blur(14px) saturate(180%);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 9999px;
+    box-shadow: 0 8px 32px -4px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.08);
+    cursor: pointer;
     color: rgba(255,255,255,0.75);
-    transition: background 0.2s, color 0.2s, transform 0.4s;
+    transition: color 0.2s, background 0.2s, transform 0.4s cubic-bezier(0.16,1,0.3,1), opacity 0.4s;
   }
-  #n-theme-btn:hover { background: rgba(255,255,255,0.15); color: #fff; }
-  #n-theme-btn svg  { width: 16px; height: 16px; }
-  #n-theme-btn .icon-sun  { display: none; }
-  #n-theme-btn .icon-moon { display: block; }
-  html[data-theme="dark"] #n-theme-btn .icon-sun  { display: block; }
-  html[data-theme="dark"] #n-theme-btn .icon-moon { display: none; }
+  #rcsc-theme-fab:hover { color: #fff; background: rgba(30,32,36,0.98); }
+  #rcsc-theme-fab svg { width: 18px; height: 18px; }
+  #rcsc-theme-fab .icon-sun  { display: none; }
+  #rcsc-theme-fab .icon-moon { display: block; }
+  html[data-theme="dark"] #rcsc-theme-fab .icon-sun  { display: block; }
+  html[data-theme="dark"] #rcsc-theme-fab .icon-moon { display: none; }
+  /* On mobile: hide FAB (toggle lives in hamburger instead) */
+  @media (max-width: 767px) {
+    #rcsc-theme-fab { display: none; }
+  }
 
   /* ── Hamburger / overflow menu ────────────────────────────────────────── */
   .n-menu-wrap {
@@ -575,24 +588,26 @@
         </svg>
         Blog
       </a>
+      <!-- Theme toggle row (mobile only) -->
+      <button id="n-theme-row" style="width:100%;display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:9px;background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.65);font-size:14px;font-weight:500;font-family:inherit;transition:background 0.15s,color 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.08)';this.style.color='#fff'" onmouseout="this.style.background='none';this.style.color='rgba(255,255,255,0.65)'">
+        <span id="n-theme-row-icon" style="width:17px;height:17px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+          <!-- moon -->
+          <svg class="icon-moon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" style="width:17px;height:17px;">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+          <!-- sun -->
+          <svg class="icon-sun" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" style="width:17px;height:17px;display:none;">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+        </span>
+        <span id="n-theme-row-label">Dark Mode</span>
+      </button>
     </div>
   </div>
-
-  <!-- ── Theme toggle (always visible) ── -->
-  <button id="n-theme-btn" aria-label="Toggle dark mode">
-    <!-- Moon: shown in light mode -->
-    <svg class="icon-moon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-    </svg>
-    <!-- Sun: shown in dark mode -->
-    <svg class="icon-sun" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-      <circle cx="12" cy="12" r="5"/>
-      <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-      <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-    </svg>
-  </button>
 </nav>
 
 <script id="rcsc-nav-script">
@@ -676,24 +691,53 @@
     });
   }
 
-  /* ── Theme toggle ────────────────────────────────────────────────────── */
-  var themeBtn = document.getElementById('n-theme-btn');
-  if (themeBtn) {
-    // Apply saved theme before first paint
-    var savedTheme = localStorage.getItem('rcsc-theme') || 'light';
-    document.documentElement.dataset.theme = savedTheme;
+  /* ── Theme toggle (FAB on desktop, hamburger row on mobile) ─────────── */
+  var themeBtn = document.getElementById('n-theme-btn'); // legacy — remove if exists
+  if (themeBtn) themeBtn.remove();
 
-    themeBtn.addEventListener('click', function() {
-      var next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
-      document.documentElement.dataset.theme = next;
-      localStorage.setItem('rcsc-theme', next);
-      // Notify contour lines to repaint with new colour
-      if (window.ContourLines && ContourLines._instances) {
-        ContourLines._instances.forEach(function(inst) { inst.themeChanged && inst.themeChanged(); });
-      }
-      // Dispatch custom event for any page-specific listeners
-      window.dispatchEvent(new CustomEvent('rcsc-theme-change', { detail: { theme: next } }));
+  // Apply saved theme
+  var savedTheme = localStorage.getItem('rcsc-theme') || 'light';
+  document.documentElement.dataset.theme = savedTheme;
+
+  function applyTheme(next) {
+    document.documentElement.dataset.theme = next;
+    localStorage.setItem('rcsc-theme', next);
+    // Update hamburger row label + icon
+    var row = document.getElementById('n-theme-row');
+    var label = document.getElementById('n-theme-row-label');
+    if (row) {
+      row.querySelectorAll('.icon-moon').forEach(function(el){ el.style.display = next === 'dark' ? 'none' : 'block'; });
+      row.querySelectorAll('.icon-sun').forEach(function(el){ el.style.display = next === 'dark' ? 'block' : 'none'; });
+    }
+    if (label) label.textContent = next === 'dark' ? 'Light Mode' : 'Dark Mode';
+    // Notify contour lines
+    window.dispatchEvent(new CustomEvent('rcsc-theme-change', { detail: { theme: next } }));
+  }
+
+  // Inject floating theme FAB (desktop)
+  var fab = document.getElementById('rcsc-theme-fab');
+  if (!fab) {
+    fab = document.createElement('button');
+    fab.id = 'rcsc-theme-fab';
+    fab.setAttribute('aria-label', 'Toggle dark mode');
+    fab.innerHTML = '<svg class="icon-moon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
+    document.body.appendChild(fab);
+  }
+  fab.addEventListener('click', function() {
+    applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+  });
+
+  // Hamburger row toggle
+  var themeRow = document.getElementById('n-theme-row');
+  if (themeRow) {
+    // Set initial state
+    applyTheme(savedTheme);
+    themeRow.addEventListener('click', function(e) {
+      e.stopPropagation();
+      applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
     });
+  } else {
+    applyTheme(savedTheme);
   }
 
   /* ── Hamburger menu (mobile: About + Blog) ───────────────────────────── */
